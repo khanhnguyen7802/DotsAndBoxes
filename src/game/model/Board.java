@@ -26,6 +26,7 @@ public class Board {
      */
 
     private /*@ spec_public */ Mark[] fields;
+    Board board;
     /**
      * Constructor to create an empty board.
      */
@@ -54,9 +55,7 @@ public class Board {
         return newBoard;
     }
 
-    /**
-     * //TODO.
-     */
+
     public int index(int row, int col) {
         int indexes = 0;
         if(row % 2 == 0){
@@ -138,6 +137,12 @@ public class Board {
         int indexConvert = index(row, col);
         return getField(indexConvert) == Mark.EMPTY;
     }
+    public boolean isMarkedField(int i) {
+        if (isField(i) && fields[i] == Mark.FILLED)
+            return true;
+
+        return false;
+    }
 
     /**
      * Tests if the whole board is full.
@@ -152,8 +157,14 @@ public class Board {
          return true;
     }
 
-    public boolean hasSquare(){
-
+    public boolean hasSquare(int index, Mark m){
+        int sq1 = index +DIM;
+        int sq2 = index +DIM +1;
+        int sq3 = index +DIM+DIM+1;
+        if (toRow(index) % 2 == 0 && isMarkedField(index) && isMarkedField(sq1) && isMarkedField(sq2) && isMarkedField(sq3) && index <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)) {
+            setField(index,m);
+            return true;
+        }
         return false;
     }
 
@@ -163,7 +174,7 @@ public class Board {
      * or the whole board is full.
      * @return true if the game is over
      */
-    //@ ensures isFull() || hasWinner() ==> \result == true;
+    //@ ensures isFull() ==> \result == true;
     public boolean gameOver() {
         return isFull();
         // TODO: hasWinner() condition
@@ -179,7 +190,15 @@ public class Board {
     /*@ requires m == Mark.BB || m == Mark.AA;
      @*/
     public boolean isWinner(Mark m) {
-        //TODO
+        int wins = 0;
+        for (int i = 0; i <= 10; i++){
+            if(hasSquare(i,m)){
+                wins++;
+            }
+        }
+        if (wins>=(int)(DIM*DIM/2)){
+            return true;
+        }
         return false;
     }
 
@@ -298,6 +317,10 @@ public class Board {
         }
     }
 
+
+    public void setField(int row, int col) {
+        fields[index(row,col)] = Mark.FILLED;
+    }
     /**
      * Sets the content of the field represented by
      * the (row,col) pair to the mark m.
