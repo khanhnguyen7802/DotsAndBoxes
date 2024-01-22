@@ -8,7 +8,7 @@ public class Board {
     /**
      * Dimension of the board, i.e., if set to 5, the board has 5 rows and 5-6 columns.
      */
-    public static final int DIM = 5;
+    public static final int DIM = 6;
     private static final String DELIM = "     ";
     private static final String[] NUMBERING = {
             //TODO
@@ -33,8 +33,10 @@ public class Board {
      */
 
     public Board() {
-    //TODO
-
+    this.fields = new  Mark[Board.DIM*Board.DIM*2];
+    for (int i = 0; i<Board.DIM*Board.DIM*2; i++) {
+        this.fields[i] = Mark.EMPTY;
+        }
     }
 
     /**
@@ -44,26 +46,40 @@ public class Board {
      ensures (\forall int i; (i >= 0 && i < DIM*DIM); \result.fields[i] == this.fields[i]);
      @*/
     public Board deepCopy() {
-        //TODO
-        return null;
+        Board newBoard = new Board();
+        for (int i = 0; i >= 0 && i<Board.DIM*Board.DIM*2; i++){
+            newBoard.fields[i] = this.fields[i];
+        }
+
+        return newBoard;
     }
 
     /**
      * //TODO.
      */
     public int index(int row, int col) {
-        //TODO
-        return 0;
+        int indexes = 0;
+        if(row % 2 == 0){
+            return (DIM + DIM + 1)*row/2 + col;
+        }
+        else{
+            return (row*DIM)+col+(row-1)/2;
+        }
     }
+
+
 
 
     public boolean isField(int index) {
-        //TODO
-        return false;
+        return index >= 0 && index < Board.DIM*Board.DIM*2;
     }
     public boolean isField(int row, int col) {
-        //TODO
-        return false;
+        if(row % 2 == 0){
+            return row >= 0 && col >= 0 && row<=DIM*2 && col<=DIM-1;
+        }
+        else {
+            return row >= 0 && col >= 0 && row < DIM * 2 && col <= DIM;
+        }
     }
 
     /**
@@ -91,8 +107,9 @@ public class Board {
     ensures \result == Mark.EMPTY || \result == Mark.BB || \result == Mark.AA;
      @*/
     public Mark getField(int row, int col) {
-        //TODO
-    return null;
+        int indexConvert = index(row, col);
+
+        return getField(indexConvert);
     }
 
     /**
@@ -130,12 +147,18 @@ public class Board {
      */
     //@ ensures (\forall int i; (i >= 0 && i < DIM*DIM); fields[i] == Mark.AA || fields[i] == Mark.BB);
     public boolean isFull() {
-    	 for (int i = 0; i < DIM*DIM; i++){
+    	 for (int i = 0; i < Board.DIM*Board.DIM*2; i++){
              if (isEmptyField(i))
                  return false;
          }
          return true;
     }
+
+    public boolean hasSquare(){
+
+        return false;
+    }
+
 
     /**
      * Returns true if the game is over. The game is over when there is a winner
@@ -144,7 +167,7 @@ public class Board {
      */
     //@ ensures isFull() || hasWinner() ==> \result == true;
     public boolean gameOver() {
-        return isFull();
+        return isFull() ;
     }
 
 
@@ -185,7 +208,9 @@ public class Board {
      */
     //@ ensures (\forall int i; (i >= 0 && i < DIM*DIM); fields[i] == Mark.EMPTY);
     public void reset() {
-        //TODO
+        for(int i = 0; i< Board.DIM*Board.DIM*2;i++){
+            setField(i, Mark.EMPTY);
+        }
     }
 
     /**
@@ -196,9 +221,9 @@ public class Board {
     /*@ requires isField(i);
     ensures getField(i) == m;
      @*/
-    public void setField(int i, Mark m) {
+    public void setField(int i) {
         if(isField(i)){
-            fields[i] = m;
+            fields[i] = Mark.FILLED;
         }
     }
 
@@ -212,8 +237,8 @@ public class Board {
     /*@ requires isField(row, col);
     ensures getField(row, col) == m;
      @*/
-    public void setField(int row, int col, Mark m) {
-        //TODO
+    public void setField(int row, int col) {
+        fields[index(row,col)] = Mark.FILLED;
     }
 
     /**
@@ -222,12 +247,20 @@ public class Board {
      * @return
      */
     public int toRow(int index) {
-        //TODO
-        return (0);
+        if(index % 2 == 0){
+            return 0;
+        }
+        else {
+            return 0;
+        }
     }
 
     public int toColumn(int index) {
-        //TODO
-        return (0);
+        if(index % 2 == 0){
+            return 0;
+        }
+        else {
+            return 0;
+        }
     }
 }

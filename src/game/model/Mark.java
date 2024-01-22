@@ -5,7 +5,7 @@ package game.model;
  * Mark. AA, Mark. BB and Mark.EMPTY.
  */
 public enum Mark {
-    EMPTY, AA, BB;
+    EMPTY, AA, BB, FILLED;
 
     /**
      * Returns the other mark.
@@ -17,6 +17,9 @@ public enum Mark {
             return BB;
         } else if (this == BB) {
             return AA;
+        }
+        else if (this == FILLED) {
+                return AA;
         } else {
             return EMPTY;
         }
