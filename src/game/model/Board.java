@@ -189,7 +189,7 @@ public class Board {
         int sq1 = index + DIM;
         int sq2 = index + DIM +1;
         int sq3 = index + DIM + DIM + 1;
-        if (toRow(index) % 2 == 0 && isMarkedField(index) && isMarkedField(sq1) && isMarkedField(sq2) && isMarkedField(sq3) && index <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)) {
+        if (toRow(index) % 2 == 0 && isMarkedField(index) && isMarkedField(sq1) && isMarkedField(sq2) && isMarkedField(sq3) && index <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1) && index % (DIM+DIM+1) <5) {
             setField(index, m);
             return true;
         }
