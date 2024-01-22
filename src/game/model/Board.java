@@ -185,9 +185,9 @@ public class Board {
      * @param m the mark of the current player to set that field to
      * @return True if
      */
-    public boolean hasSquare(int index, Mark m){
+    public boolean hasSquare(int index, Mark m) {
         int sq1 = index + DIM;
-        int sq2 = index + DIM +1;
+        int sq2 = index + DIM + 1;
         int sq3 = index + DIM + DIM + 1;
         if (toRow(index) % 2 == 0 && isMarkedField(index) && isMarkedField(sq1) && isMarkedField(sq2) && isMarkedField(sq3) && index <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)) {
             setField(index, m);
@@ -203,7 +203,7 @@ public class Board {
      * @return true if the game is over
      */
     //@ ensures isFull() ==> \result == true;
-    public boolean gameOver() {
+    public boolean isGameOver() {
         return isFull();
     }
 
@@ -214,11 +214,11 @@ public class Board {
     public boolean isDraw() {
         int wins = 0;
         for (int i = 0; i <= 10; i++){
-            if(hasSquare(i,Mark.AA)){
+            if(hasSquare(i, Mark.AA)){
                 wins++;
             }
         }
-        if (wins==(int)(DIM*DIM/2)){
+        if (wins== (DIM*DIM/2)){
             return true;
         }
         return false;
@@ -381,10 +381,9 @@ public class Board {
      * @return the corresponding row for that index
      */
     public int toRow(int index) {
-        if(index % (DIM * 2 + 1) < DIM) {
+        if (index % (DIM * 2 + 1) < DIM) {
             return index - (DIM + (DIM + 1));
-        }
-        else {
+        } else {
             return index - (DIM * 2 + DIM + 1);
         }
     }
