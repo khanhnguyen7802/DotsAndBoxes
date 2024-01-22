@@ -1,5 +1,6 @@
 package game.ai;
 
+import game.model.Board;
 import game.model.Game;
 import game.model.Mark;
 import game.model.Move;
@@ -36,7 +37,45 @@ public class SmartStartegy implements Strategy{
      */
     @Override
     public Move determineMove(Game game) {
+        Board board = new Board();
+        Board board1= board.deepCopy();
+        Random rand = new Random();
+        int index = 0;
         List<Move> possibleMoves = game.getValidMoves();
+        int moves = 0;
+        if(moves > Board.DIM*3){
+            if(Board.DIM*Board.DIM - moves % 2 == 0){
+                while(board.hasSquare(index, Mark.FILLED)) {
+                    index = rand.nextInt(possibleMoves.size());
+                    Move thisMove = possibleMoves.get(index);
+                    if (!board.hasSquare(index, Mark.FILLED)) {
+                        moves++;
+                        return thisMove;
+                    }
+                }
+            }
+            else {
+                while (!board.hasSquare(index, Mark.FILLED)) {
+                    index = rand.nextInt(possibleMoves.size());
+                    Move thisMove = possibleMoves.get(index);
+                    if (board.hasSquare(index, Mark.FILLED)) {
+                        moves++;
+                        return thisMove;
+                    }
+                }
+            }
+
+        }
+
+
+        while(board.hasSquare(index, Mark.FILLED)){
+            index = rand.nextInt(possibleMoves.size());
+            Move randomMove = possibleMoves.get(index);
+            if(!board.hasSquare(index, Mark.FILLED))
+                moves++;
+                return randomMove;
+        }
         return null;
     }
+
 }
