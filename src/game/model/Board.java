@@ -12,8 +12,6 @@ public class Board {
      */
     public static final int DIM = 5;
     private static final String DELIM = "        ";
-    public static final int DIM = 6;
-    private static final String DELIM = "     ";
     private static final String[] NUMBERING = {
             //TODO
     };
@@ -37,8 +35,8 @@ public class Board {
      */
 
     public Board() {
-    this.fields = new  Mark[Board.DIM*Board.DIM*2];
-    for (int i = 0; i<Board.DIM*Board.DIM*2; i++) {
+    this.fields = new  Mark[Board.DIM*(Board.DIM+1)*2-1];
+    for (int i = 0; i<=Board.DIM*(Board.DIM+1)*2-1; i++) {
         this.fields[i] = Mark.EMPTY;
         }
     }
@@ -51,7 +49,7 @@ public class Board {
      @*/
     public Board deepCopy() {
         Board newBoard = new Board();
-        for (int i = 0; i >= 0 && i<Board.DIM*Board.DIM*2; i++){
+        for (int i = 0; i >= 0 && i<=Board.DIM*(Board.DIM+1)*2-1; i++){
             newBoard.fields[i] = this.fields[i];
         }
 
@@ -75,7 +73,7 @@ public class Board {
 
 
     public boolean isField(int index) {
-        return index >= 0 && index < Board.DIM*Board.DIM*2;
+        return index >= 0 && index < Board.DIM*(Board.DIM+1)*2-1;
     }
     public boolean isField(int row, int col) {
         if(row % 2 == 0){
@@ -151,7 +149,7 @@ public class Board {
      */
     //@ ensures (\forall int i; (i >= 0 && i < DIM*DIM); fields[i] == Mark.AA || fields[i] == Mark.BB);
     public boolean isFull() {
-    	 for (int i = 0; i < Board.DIM*Board.DIM*2; i++){
+    	 for (int i = 0; i <= Board.DIM*(Board.DIM+1)*2-1; i++){
              if (isEmptyField(i))
                  return false;
          }
@@ -285,7 +283,7 @@ public class Board {
      */
     //@ ensures (\forall int i; (i >= 0 && i < DIM*DIM); fields[i] == Mark.EMPTY);
     public void reset() {
-        for(int i = 0; i< Board.DIM*Board.DIM*2;i++){
+        for(int i = 0; i<= Board.DIM*(Board.DIM+1)*2-1;i++){
             setField(i, Mark.EMPTY);
         }
     }
@@ -303,6 +301,11 @@ public class Board {
             fields[i] = Mark.FILLED;
         }
     }
+    public void setField(int i, Mark m) {
+        if (isField(i)) {
+            fields[i] = m;
+        }
+    }
 
     /**
      * Sets the content of the field represented by
@@ -317,6 +320,9 @@ public class Board {
     public void setField(int row, int col) {
         fields[index(row,col)] = Mark.FILLED;
     }
+    public void setField(int row, int col, Mark m) {
+        fields[index(row,col)] = m;
+    }
 
     /**
      *
@@ -324,20 +330,20 @@ public class Board {
      * @return
      */
     public int toRow(int index) {
-        if(index % 2 == 0){
-            return 0;
+        if(index % (DIM*2+1) <DIM){
+            return index -(DIM+DIM+1);
         }
         else {
-            return 0;
+            return index-(DIM*2+DIM+1);
         }
     }
 
     public int toColumn(int index) {
-        if(index % 2 == 0){
-            return 0;
+        if(index % (DIM*2+1) <DIM){
+            return index-toRow(index)/(DIM+DIM+1);
         }
         else {
-            return 0;
+            return ((index - toRow(index) - DIM )/ (DIM + DIM + 1))+1;
         }
     }
 }
