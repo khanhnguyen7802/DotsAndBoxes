@@ -1,7 +1,9 @@
 package game.model;
 
+import utils.Helper;
+
 /**
- * Board for the Tic Tac Toe game.
+ * Board for the BoxAndDot game.
  */
 
 public class Board {
@@ -9,11 +11,7 @@ public class Board {
      * Dimension of the board, i.e., if set to 5, the board has 5 rows and 5-6 columns.
      */
     public static final int DIM = 5;
-    private static final String DELIM = "     ";
-    private static final String[] NUMBERING = {
-            //TODO
-    };
-    private static final String LINE = NUMBERING[1];
+    private static final String DELIM = "        ";
 
     //@ public invariant (fields.length == DIM*DIM);
     //@ public invariant (\num_of int i ; 0 <= i && i < DIM*DIM; fields[i] == Mark.AA) <= 5;
@@ -21,13 +19,8 @@ public class Board {
 
     //@ public invariant (\num_of int i;  0 <= i && i < DIM*DIM;fields[i] == Mark.AA) >= (\num_of int i;  0 <= i && i < DIM*DIM; fields[i] == Mark.BB);
 
-    /**
-     * The DIM by DIM fields of the Tic Tac Toe board. See NUMBERING for the
-     * coding of the fields.
-     */
-
     private /*@ spec_public */ Mark[] fields;
-    Board board;
+
     /**
      * Constructor to create an empty board.
      */
@@ -164,8 +157,7 @@ public class Board {
 
 
     public boolean hasWinner() {
-         return isWinner(Mark.AA) || isWinner(
-                 Mark.BB);
+        return isWinner(Mark.AA) || isWinner(Mark.BB);
     }
 
     /**
@@ -175,8 +167,81 @@ public class Board {
      * @return the game situation as String
      */
     public String toString() {
-        //TODO
-        return null;
+        String dot = String.valueOf('\u2022'); // unicode hex
+
+        int indexNumbering = 0;
+
+        String s = ""; // for both left and right board
+        for (int i = 0; i < DIM; i++) {
+            String row = "";
+            for (int j = 0; j < DIM; j++) {
+                //                String choice = getField(i, j).toString().substring(0, 1);
+                //                switch(choice) {
+                //                    case "X":
+                //                        row +=  getField(i, j).toString().substring(0, 1)
+                //                                .replace("X", "---");
+                //                        break;
+                //                    case "O":
+                //                        row += getField(i, j).toString().substring(0, 1)
+                //                                .replace("O", "|");
+                //                        break;
+                //                    default:
+                //                        row += getField(i, j).toString().substring(0, 1)
+                //                                .replace("E", "") + dot;
+                //                }
+                row += " " + getField(i, j).toString().substring(0, 1)
+                        .replace("E", " ") + dot;
+
+                if (j < DIM - 1) {
+                    row = row + "  "; // separate the dots of the left board
+                }
+
+            }
+
+            s = s + row + DELIM; // separate the two boards
+
+            // TODO: Creating the row for horizontal line
+            for (int j = 0; j < DIM - 1; j++) {
+                String temporaryRowForHorizontal = dot + "    ";
+                String indexStr = Integer.toString(indexNumbering);
+                temporaryRowForHorizontal = Helper.myReplace(temporaryRowForHorizontal, indexStr, 2);
+
+                s += temporaryRowForHorizontal;
+
+                if (j < DIM - 2) {
+                    row = row + "  "; // separate the dots
+                }
+                indexNumbering++;
+            }
+            s = s + dot; // last dot on the upper line
+
+            if (i < DIM - 1) { // transition to the vertical line
+                s = s + "\n";
+                String rowAlign = " " + "    ".repeat(DIM-1) + " ".repeat(DIM) + DELIM; // space for dot + horizontal line + DELIM
+                s+= rowAlign; // for separating 2 boards
+                //                s+= "1";
+
+                // TODO: Creating the row for vertical line
+                for (int k = 0; k < DIM; k++) {
+                    String indexStr = Integer.toString(indexNumbering);
+                    String temporaryRowForVertical =  "     ";
+                    temporaryRowForVertical = Helper.myReplace(temporaryRowForVertical, indexStr, 0);
+
+                    s += temporaryRowForVertical;
+
+
+                    if (k < DIM - 1) {
+                        row = row + " "; // separate the dots
+                    }
+
+                    indexNumbering++;
+                }
+
+                s += "\n";
+            }
+
+        }
+        return s;
     }
 
     /**
