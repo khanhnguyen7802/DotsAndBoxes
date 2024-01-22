@@ -32,10 +32,10 @@ public class Board {
      */
 
     public Board() {
-        int numberOfLines = Board.DIM * (Board.DIM + 1) * 2 - 1;
+        int numberOfLines = Board.DIM * (Board.DIM + 1) * 2;
 
         this.fields = new Mark[numberOfLines];
-        for (int i = 0; i <= numberOfLines; i++) {
+        for (int i = 0; i < numberOfLines; i++) {
             this.fields[i] = Mark.EMPTY;
         }
     }
@@ -48,7 +48,7 @@ public class Board {
      @*/
     public Board deepCopy() {
         Board newBoard = new Board();
-        for (int i = 0; i <= Board.DIM * (Board.DIM + 1) * 2 - 1; i++) {
+        for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2 - 1; i++) {
             newBoard.fields[i] = this.fields[i];
         }
 
@@ -75,7 +75,7 @@ public class Board {
      * @return True if it is a valid field; otherwise False.
      */
     public boolean isField(int index) {
-        return index >= 0 && index < Board.DIM * (Board.DIM + 1) * 2 - 1;
+        return index >= 0 && index < Board.DIM * (Board.DIM + 1) * 2;
     }
 
     /**
@@ -173,7 +173,7 @@ public class Board {
      */
     //@ ensures (\forall int i; (i >= 0 && i < DIM*DIM); fields[i] == Mark.AA || fields[i] == Mark.BB);
     public boolean isFull() {
-    	 for (int i = 0; i <= Board.DIM * (Board.DIM + 1) * 2 - 1; i++) {
+    	 for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
              if (isEmptyField(i))
                  return false;
          }
