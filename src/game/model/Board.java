@@ -55,33 +55,50 @@ public class Board {
         return newBoard;
     }
 
-
+    /**
+     * Given the row and col, return the corresponding index.
+     * @param row the index of the row
+     * @param col the index of the col
+     * @return the corresponding index of a field
+     */
     public int index(int row, int col) {
-        int indexes = 0;
-        if(row % 2 == 0){
-            return (DIM + DIM + 1)*row/2 + col;
-        }
-        else{
-            return (row*DIM)+col+(row-1)/2;
-        }
-    }
-
-    public boolean isField(int index) {
-        return index >= 0 && index < Board.DIM * (Board.DIM + 1) * 2 - 1;
-    }
-
-    public boolean isField(int row, int col) {
         if (row % 2 == 0) {
-            return row >= 0 && col >= 0 && row <= DIM * 2 && col <= DIM - 1;
-        }
-        else {
-            return row >= 0 && col >= 0 && row < DIM * 2 && col <= DIM;
+            return (DIM + DIM + 1) * row/2 + col;
+        } else {
+            return (row * DIM) + col + (row - 1)/2;
         }
     }
 
     /**
+     * Given the index, check if that index is valid in the field.
+     * @param index the index we want to check
+     * @return True if it is a valid field; otherwise False.
+     */
+    public boolean isField(int index) {
+        return index >= 0 && index < Board.DIM * (Board.DIM + 1) * 2 - 1;
+    }
+
+    /**
+     * Given row and col, check if they form a valid index in the field.
+     * @param row the index of the row
+     * @param col the index of the col
+     * @return True if it is valid; otherwise False
+     */
+    public boolean isField(int row, int col) {
+        int indexConverted = index(row, col);
+
+        return isField(indexConverted);
+
+        //        if (row % 2 == 0) {
+//            return row >= 0 && col >= 0 && row <= DIM * 2 && col <= DIM - 1;
+//        } else {
+//            return row >= 0 && col >= 0 && row < DIM * 2 && col <= DIM;
+//        }
+    }
+
+    /**
      * Returns the content of the field i.
-     * @param i the number of the field (see NUMBERING)
+     * @param i the number of the field
      * @return the mark on the field
      */
     /*@ requires isField(i);
@@ -110,7 +127,7 @@ public class Board {
     }
 
     /**
-     * Returns true if the field i is empty.
+     * Returns true if the field[i] is empty.
      * @param i the index of the field (see NUMBERING)
      * @return true if the field is empty
      */
@@ -128,7 +145,7 @@ public class Board {
      * Returns true if the field referred to by the (row,col) pair it empty.
      * @param row the row of the field
      * @param col the column of the field
-     * @return true if the field is empty
+     * @return True if the field is empty; otherwise False.
      */
     /*@ requires isField(row, col);
     ensures getField(row, col) == Mark.EMPTY ==> \result == true;
@@ -137,6 +154,12 @@ public class Board {
         int indexConvert = index(row, col);
         return getField(indexConvert) == Mark.EMPTY;
     }
+
+    /**
+     * Check if the field has been filled or not.
+     * @param i the index of the field
+     * @return True if that field has been filled.
+     */
     public boolean isMarkedField(int i) {
         if (isField(i) && fields[i] == Mark.FILLED)
             return true;
@@ -157,12 +180,21 @@ public class Board {
          return true;
     }
 
+    /**
+     * Given an index, check if the player is able to form a square at that index.
+     * If it is able, then set that field to the current player's mark
+     * (which means, that particular box belongs to that player)
+     *
+     * @param index the index of the field
+     * @param m the mark of the current player to set that field to
+     * @return True if
+     */
     public boolean hasSquare(int index, Mark m){
-        int sq1 = index +DIM;
-        int sq2 = index +DIM +1;
-        int sq3 = index +DIM+DIM+1;
+        int sq1 = index + DIM;
+        int sq2 = index + DIM +1;
+        int sq3 = index + DIM + DIM + 1;
         if (toRow(index) % 2 == 0 && isMarkedField(index) && isMarkedField(sq1) && isMarkedField(sq2) && isMarkedField(sq3) && index <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)) {
-            setField(index,m);
+            setField(index, m);
             return true;
         }
         return false;
@@ -179,7 +211,11 @@ public class Board {
         return isFull();
     }
 
-    public boolean isDraw(){
+    /**
+     * Check if the game is draw or not.
+     * @return True if game is draw; otherwise False
+     */
+    public boolean isDraw() {
         int wins = 0;
         for (int i = 0; i <= 10; i++){
             if(hasSquare(i,Mark.AA)){
@@ -317,8 +353,8 @@ public class Board {
 
 
     /**
-     * Sets the content of field i to the mark m.
-     * @param i the field number (see NUMBERING)
+     * Given the index, set the content of field i to the mark m.
+     * @param i the field number
      * @param m the mark to be placed
      */
     /*@ requires isField(i);
@@ -329,10 +365,6 @@ public class Board {
         }
     }
 
-
-    public void setField(int row, int col) {
-        fields[index(row,col)] = Mark.FILLED;
-    }
     /**
      * Sets the content of the field represented by
      * the (row,col) pair to the mark m.
@@ -348,7 +380,7 @@ public class Board {
     }
 
     /**
-     *
+     * Given an index of a field, convert to the index of the corresponding row.
      * @param index the index of the field
      * @return the corresponding row for that index
      */
@@ -361,6 +393,11 @@ public class Board {
         }
     }
 
+    /**
+     * Given an index of a field, convert to the index of the corresponding row.
+     * @param index the index of the field
+     * @return the corresponding col for that index
+     */
     public int toColumn(int index) {
         if(index % (DIM*2+1) <DIM){
             return index-toRow(index)/(DIM+DIM+1);
