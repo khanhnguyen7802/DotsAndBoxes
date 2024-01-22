@@ -89,7 +89,7 @@ public class BoardTest {
 
         assertTrue(board.isField(0, 0));
         assertTrue(board.isField(2, 2));
-        assertTrue(board.isField(10, 5));
+        assertFalse(board.isField(10, 5));
         assertFalse(board.isField(10, 6));
     }
 

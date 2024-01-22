@@ -85,15 +85,11 @@ public class Board {
      * @return True if it is valid; otherwise False
      */
     public boolean isField(int row, int col) {
-        int indexConverted = index(row, col);
-
-        return isField(indexConverted);
-
-        //        if (row % 2 == 0) {
-//            return row >= 0 && col >= 0 && row <= DIM * 2 && col <= DIM - 1;
-//        } else {
-//            return row >= 0 && col >= 0 && row < DIM * 2 && col <= DIM;
-//        }
+        if (row % 2 == 0) {
+            return row >= 0 && col >= 0 && row <= DIM * 2 && col <= DIM - 1;
+        } else {
+            return row >= 0 && col >= 0 && row <= DIM * 2 && col <= DIM;
+        }
     }
 
     /**
