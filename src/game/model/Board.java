@@ -177,7 +177,19 @@ public class Board {
     //@ ensures isFull() ==> \result == true;
     public boolean gameOver() {
         return isFull();
-        // TODO: hasWinner() condition
+    }
+
+    public boolean isDraw(){
+        int wins = 0;
+        for (int i = 0; i <= 10; i++){
+            if(hasSquare(i,Mark.AA)){
+                wins++;
+            }
+        }
+        if (wins==(int)(DIM*DIM/2)){
+            return true;
+        }
+        return false;
     }
 
 
