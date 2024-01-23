@@ -1,9 +1,6 @@
 package game.ai;
 
-import game.model.Board;
-import game.model.Game;
-import game.model.Mark;
-import game.model.Move;
+import game.model.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -38,8 +35,7 @@ public class SmartStrategy implements Strategy{
      */
     @Override
     public Move determineMove(Game game) {
-        Board board = new Board();
-        Board board1= board.deepCopy();
+        Board board1 = ((DotsGame) game).getBoard().deepCopy();
         Random rand = new Random();
         int index = 0;
         List<Move> possibleMoves = game.getValidMoves();
@@ -72,8 +68,14 @@ public class SmartStrategy implements Strategy{
             }
 
         }
+        if(!hasSq.isEmpty()){
+            index = rand.nextInt(hasSq.size());
+            Move hasMove = hasSq.get(index);
+            moves++;
+            return hasMove;
+        }
         //until the it matters the game does random moves
-        while(!board.hasSquare(index)){
+        while(!board1.hasSquare(index)){
             index = rand.nextInt(possibleMoves.size());
             Move randomMove = possibleMoves.get(index);
             moves++;

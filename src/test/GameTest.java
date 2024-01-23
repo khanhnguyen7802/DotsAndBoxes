@@ -77,7 +77,9 @@ public class GameTest {
 
     /**
      * This test checks wether or not is it possible to play
-     * a full game, and do we always get a winner
+     * a full game, and do we always get a winner.
+     * It also checks if every box is filled with either
+     * Mark.AA or Mark.BB.
      */
     @Test
     public void testRandom(){
@@ -93,6 +95,12 @@ public class GameTest {
         System.out.println("The winner is: " + game.getWinner());
         assertTrue(game.isGameover());
         assertTrue(game.getWinner() != null);
+        for(int i = 0; i < Board.DIM * (Board.DIM + 1) * 2 - DIM; i++) {
+            if(i % (DIM*2+1) == 0) {
+                assertFalse(game.getBoard().getField(i) == Mark.FILLED);
+                assertFalse(game.getBoard().getField(i) == Mark.EMPTY);
+            }
+        }
     }
 }
 
