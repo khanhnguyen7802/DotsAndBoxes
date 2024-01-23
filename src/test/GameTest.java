@@ -40,6 +40,10 @@ public class GameTest {
         assertTrue(Mark.FILLED == game.getBoard().getField(0));
     }
 
+    /**
+     * This test checks wether a box is filled in when the conditions
+     * are met.
+     */
     @Test
     public void testBox(){
         game.turnIndex = 1;
@@ -54,6 +58,10 @@ public class GameTest {
         assertTrue(game.getBoard().getField(0) == Mark.AA);
     }
 
+    /**
+     * This test checks if it is possible to whin and that the
+     * winning player is returned correctly.
+     */
     @Test
     public void testWinningCondition(){
         for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
@@ -67,6 +75,10 @@ public class GameTest {
         }
     }
 
+    /**
+     * This test checks wether or not is it possible to play
+     * a full game, and do we always get a winner
+     */
     @Test
     public void testRandom(){
         List<Move> possibleMoves = game.getValidMoves();
@@ -80,7 +92,7 @@ public class GameTest {
         }
         System.out.println("The winner is: " + game.getWinner());
         assertTrue(game.isGameover());
-
+        assertTrue(game.getWinner() != null);
     }
 }
 
