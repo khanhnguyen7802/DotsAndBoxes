@@ -26,7 +26,7 @@ public class GameTUI {
      */
     public void run() {
         boolean playAgain = true;
-        System.out.println("WELCOME TO TicTacToe");
+        System.out.println("WELCOME TO Dots and Boxes");
         Scanner input = new Scanner(System.in);
         System.out.print("Enter name for player 1: ");
         String pl1 = input.nextLine();
@@ -65,6 +65,7 @@ public class GameTUI {
                     System.out.println("It's " + currentPlayer.getName() + " turn");
                     Move determinedMove = currentPlayer.determineMove(game); // get the move
                     game.doMove(determinedMove);
+                    System.out.println(determinedMove.toString());
                 }
                 else {
 

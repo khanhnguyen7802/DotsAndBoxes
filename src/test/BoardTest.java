@@ -59,7 +59,7 @@ public class BoardTest {
         // check the index method with various row and column values
         assertEquals(0, board.index(0, 0));
         assertEquals(10, board.index(1, 5));
-        assertEquals(30, board.index(5, 3));
+        assertEquals(24, board.index(4, 2));
         assertEquals(59, board.index(10, 4));
     }
 
@@ -189,17 +189,17 @@ public class BoardTest {
      */
     @Test
     public void testHasSquare() {
-        assertFalse(board.hasSquare(0, Mark.FILLED));
+        assertFalse(board.hasSquare(0));
 
-        board.setField(0, Mark.FILLED);
-        board.setField(5, Mark.FILLED);
-        board.setField(6, Mark.FILLED);
-        board.setField(11, Mark.FILLED);
+        board.setField(24, Mark.FILLED);
+        board.setField(35, Mark.FILLED);
+        board.setField(29, Mark.FILLED);
+        board.setField(30, Mark.FILLED);
 
-        assertTrue(board.hasSquare(0, Mark.FILLED));
+        assertTrue(board.hasSquare(24));
 
-        board.setField(0, Mark.AA);
-        assertTrue(board.getField(0) == Mark.AA);
+        board.setField(24, Mark.AA);
+        assertTrue(board.getField(24) == Mark.AA);
     }
 
     /**

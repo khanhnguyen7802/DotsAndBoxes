@@ -44,27 +44,27 @@ public class SmartStrategy implements Strategy{
         List<Move> possibleMoves = game.getValidMoves();
         int pos = possibleMoves.size();
         int moves = 0;
-        if(moves > Board.DIM*3){
-            if(Board.DIM*Board.DIM - moves % 2 == 0){
-                while(board.hasSquare(index, Mark.FILLED)) {
+        if(moves > Board.DIM*3){ // the ai does random moves until it doesn't matter
+            if(Board.DIM*Board.DIM - moves % 2 == 0){ //it checks how many turns are left from the game
+                while(board.hasSquare(index)) {
                     index = rand.nextInt(possibleMoves.size());
                     Move thisMove = possibleMoves.get(index);
-                    pos--;
-                    if (!board.hasSquare(index, Mark.FILLED)) {
+                    pos--; // it checks if there are any possible moves that are beneficial
+                    if (!board.hasSquare(index)) {
                         moves++;
                         return thisMove;
                     }
-                    else if(pos == 0){
+                    else if(pos == 0){ //if there are no beneficial moves it returns a random move
                         return thisMove;
                     }
                 }
             }
-            else {
-                while (!board.hasSquare(index, Mark.FILLED)) {
+            else { // if the game has an odd number of moves it will fill in a sqaure to make advantage
+                while (!board.hasSquare(index)) {
                     index = rand.nextInt(possibleMoves.size());
                     Move thisMove = possibleMoves.get(index);
                     pos--;
-                    if (board.hasSquare(index, Mark.FILLED)) {
+                    if (board.hasSquare(index)) {
                         moves++;
                         return thisMove;
                     }else if(pos == 0){
@@ -74,10 +74,11 @@ public class SmartStrategy implements Strategy{
             }
 
         }
-        while(board.hasSquare(index, Mark.FILLED)){
+        //until the it matters the game does random moves
+        while(board.hasSquare(index)){
             index = rand.nextInt(possibleMoves.size());
             Move randomMove = possibleMoves.get(index);
-            if(!board.hasSquare(index, Mark.FILLED)) {
+            if(!board.hasSquare(index)) {
                 moves++;
                 pos--;
                 return randomMove;

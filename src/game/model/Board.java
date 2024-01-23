@@ -48,7 +48,7 @@ public class Board {
      @*/
     public Board deepCopy() {
         Board newBoard = new Board();
-        for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2 - 1; i++) {
+        for (int i = 0; i <= Board.DIM * (Board.DIM + 1) * 2 - 1; i++) {
             newBoard.fields[i] = this.fields[i];
         }
 
@@ -157,7 +157,7 @@ public class Board {
      * @return True if that field has been filled.
      */
     public boolean isMarkedField(int i) {
-        if (isField(i) && fields[i] == Mark.FILLED)
+        if (isField(i) && (fields[i] == Mark.FILLED ))
             return true;
 
         return false;
@@ -185,15 +185,16 @@ public class Board {
      * @param m the mark of the current player to set that field to
      * @return True if
      */
-    public boolean hasSquare(int index, Mark m) {
+    public boolean hasSquare(int index) {
         int sq1 = index + DIM;
         int sq2 = index + DIM + 1;
         int sq3 = index + DIM + DIM + 1;
-        if (toRow(index) % 2 == 0 && isMarkedField(index) && isMarkedField(sq1) && isMarkedField(sq2) && isMarkedField(sq3) && index <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)) {
-            setField(index, m);
+        //if the player has all sides of a box mark the box as the player's box
+        if (toRow(index) % 2 == 0 && getField(index) == Mark.FILLED && isMarkedField(sq1) && isMarkedField(sq2) && (getField(sq3) != Mark.EMPTY) && index <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)) {
             return true;
+        }else {
+            return false;
         }
-        return false;
     }
 
 
@@ -213,13 +214,13 @@ public class Board {
      */
     public boolean isDraw() {
         int wins = 0;
-        for (int i = 0; i <= (DIM*2+1); i++){
-            if(getField(i) == Mark.AA && toRow(i) % 2 == 0 && i <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)){
+        for (int i = 0; i <= ((Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1))); i++){
+            if(getField(i)==Mark.AA && toRow(i) % 2 == 0){
                 wins++;
+                if (wins == (int)(DIM*DIM/2)){
+                    return true;
+                }
             }
-        }
-        if (wins == (DIM*DIM/2)){
-            return true;
         }
         return false;
     }
@@ -235,13 +236,13 @@ public class Board {
      @*/
     public boolean isWinner(Mark m) {
         int wins = 0;
-        for (int i = 0; i <= (DIM*2+1); i++){
-            if(hasSquare(i,m) && getField(i) == m && toRow(i) % 2 == 0 && i <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)){
+        for (int i = 0; i <= ((Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1))); i++){
+            if(getField(i)==m && toRow(i) % 2 == 0){
                 wins++;
+                if (wins >= (int)(DIM*DIM/2)){
+                    return true;
             }
         }
-        if (wins >= (int)(DIM*DIM/2)){
-            return true;
         }
         return false;
     }

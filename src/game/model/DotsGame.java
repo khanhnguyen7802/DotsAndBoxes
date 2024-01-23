@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represent a TicTacToe game: keep track of whom the players and whose turn it is.
+ * Represent a DotsAndBoxes game: keep track of whom the players and whose turn it is.
  */
 public class DotsGame implements Game {
     private Board board;
@@ -14,9 +14,9 @@ public class DotsGame implements Game {
 
 
     /**
-     * Constructor that creates an instance of TicTacToe game.
-     * @param player1 - 1st player of the game with Mark.XX;
-     * @param player2 - 2nd player of the game with Mark.OO;
+     * Constructor that creates an instance of DotsAndBoxes game.
+     * @param player1 - 1st player of the game with Mark.AA;
+     * @param player2 - 2nd player of the game with Mark.BB;
      */
     public DotsGame(AbstractPlayer player1, AbstractPlayer player2) {
         this.board = new Board();
@@ -102,8 +102,8 @@ public class DotsGame implements Game {
     public List<Move> getValidMoves() { // considering all empty moves
         List<Move> moves = new ArrayList<>();
         Mark currentMark = turnIndex == 0 ? Mark.AA : Mark.BB;
-        for (int i = 0; i < board.DIM*2; i++)
-            if(i % 2 == 0) {
+        for (int i = 0; i <= board.DIM*2; i++)
+            if(i % 2 == 0) { // differentiate between vertical and horizontal lines
                 for (int j = 0; j < board.DIM; j++) {
                     Move currentMove = new DotsMove(i, j, currentMark);
                     if (board.isEmptyField(i, j)) moves.add(currentMove);
@@ -133,30 +133,36 @@ public class DotsGame implements Game {
     }
 
     /**
-     * Do a move in the game of TicTacToe.
+     * Do a move in the game of DotsAndBoxes.
      * @param move the move to play
      */
     //@ensures board != null && isValidMove(move);
     @Override
     public void doMove(Move move) {
         DotsMove tm = (DotsMove) move;
+        boolean extra= false;
         if(isValidMove(move)) {
             if (getTurn() == player1) {
+                // if its palayer one do move
                 board.setField(tm.getRow(), tm.getCol(), Mark.FILLED);
                 this.turnIndex = 1;
+                //if player one fills a box do another move and mark the box
                 for (int i = 0; i< Board.DIM * (Board.DIM + 1) * 2;i++){
-                    if(board.hasSquare(i,Mark.FILLED)){
+                    if(board.hasSquare(i)){
                         board.setField(i,Mark.AA);
                         this.turnIndex = 0;
                     }
                 }
             }
             else {
+                // simply fill in the line
                 board.setField(tm.getRow(), tm.getCol(), Mark.FILLED);
                 this.turnIndex = 0;
                 for (int i = 0; i< Board.DIM * (Board.DIM + 1) * 2;i++){
-                    if(board.hasSquare(i,Mark.FILLED)){
+                    if(board.hasSquare(i)){
+                        //mark the box
                         board.setField(i,Mark.BB);
+                        //do another turn
                         this.turnIndex = 1;
                     }
                 }
