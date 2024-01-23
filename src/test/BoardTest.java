@@ -64,7 +64,8 @@ public class BoardTest {
     }
 
     /**
-     * Test if a random index is a valid index of a field on the board.
+     * Test isField(int index) method.
+     * Check if a random index is a valid index of a field on the board.
      */
     @Test
     public void testIsFieldIndex() {
@@ -78,7 +79,8 @@ public class BoardTest {
 
 
     /**
-     * Given a row and col, test if it is a valid field.
+     * Test isField(int row, int col) method.
+     * Given a row and col, check if it is a valid field.
      */
     @Test
     public void testIsFieldRowCol() {
@@ -93,74 +95,190 @@ public class BoardTest {
         assertFalse(board.isField(10, 6));
     }
 
-//        @Test
-//        public void testSetAndGetFieldRowCol() {
-//            board.setField(5, 5, Mark.XX);
-//            assertEquals(Mark.XX, board.getField(5, 5));
-//            assertEquals(Mark.EMPTY, board.getField(0, 1));
-//            assertEquals(Mark.EMPTY, board.getField(1, 0));
-//            board.setField(1,1,Mark.OO);
-//            assertEquals(Mark.OO, board.getField(1, 1));
-//        }
-//
-//        @Test
-//        public void testIsEmptyField(){
-//            board.setField(0,0,Mark.XX);
-//            assertFalse(board.isEmptyField(0,0));
-//            board.setField(0,0,Mark.EMPTY);
-//            assertTrue(board.isEmptyField(0,0));
-//        }
-//
-//        @Test
-//        public void testIsFull() {
-//            //test if the whole board is full
-//            board.setField(0,1,Mark.XX);
-//            assertFalse(board.isFull());
-//
-//            Arrays.fill(board.fields, Mark.XX);
-//            assertTrue(board.isFull());
-//        }
-//
-//        @Test
-//        public void testGetFieldIndex() {
-//            board.setField(0, 1, Mark.XX);
-//            assertEquals(Mark.XX, board.getField(1));
-//
-//            //check the default centre
-//            assertEquals(Mark.OO, board.getField(27));
-//            assertEquals(Mark.OO, board.getField(36));
-//        }
-//
-//        @Test
-//        public void testReset() {
-//            //after resetting all fields should be empty
-//            board.setField(1,1,Mark.XX);
-//            board.setField(2,4,Mark.OO);
-//            board.reset();
-//            assertEquals(Mark.EMPTY, board.getField(1,1));
-//            assertEquals(Mark.EMPTY, board.getField(2,4));
-//        }
-//
-//
-//
-//        @Test
-//        public void testRow() {
-//            // check the row method with various index values
-//            assertEquals(0, board.row(0));
-//            assertEquals(0, board.row(7));
-//            assertEquals(1, board.row(8));
-//            assertEquals(1, board.row(15));
-//        }
-//
-//        @Test
-//        public void testCol() {
-//            // check the col method with various index values
-//            assertEquals(0, board.col(0));
-//            assertEquals(7, board.col(7));
-//            assertEquals(0, board.col(8));
-//            assertEquals(7, board.col(15));
-//        }
-//
+
+    /**
+     * Test setField(int index) and getField(int index) method.
+     * Check if we can set the field and get the field (given the index).
+     */
+    @Test
+    public void testSetAndGetFieldIndex() {
+        assertEquals(Mark.EMPTY, board.getField(0));
+
+        board.setField(0, Mark.FILLED);
+        assertEquals(Mark.FILLED, board.getField(0));
+
+        board.setField(1, Mark.AA);
+        assertEquals(Mark.AA, board.getField(1));
+
+        board.setField(2, Mark.BB);
+        assertEquals(Mark.BB, board.getField(2));
+    }
+
+    /**
+     * Test setField(int row, int col) and getField(int row, int col) method.
+     * Check if we can set the field and get the field (given the row and the col).
+     */
+    @Test
+    public void testGetFieldRowAndCol() {
+        assertEquals(Mark.EMPTY, board.getField(0, 0));
+
+        board.setField(0, 0, Mark.FILLED);
+        assertEquals(Mark.FILLED, board.getField(0, 0));
+
+        board.setField(1, 1, Mark.AA);
+        assertEquals(Mark.AA, board.getField(1, 1));
+
+        board.setField(2, 2, Mark.BB);
+        assertEquals(Mark.BB, board.getField(2, 2));
+    }
+
+    /**
+     * Test isEmptyField(int index) method.
+     * Check if the field is empty (given the index).
+     */
+    @Test
+    public void testIsEmptyFieldIndex(){
+        assertTrue(board.isEmptyField(0));
+
+        board.setField(0, Mark.FILLED);
+        assertFalse(board.isEmptyField(0));
+    }
+
+    /**
+     * Test isEmptyField(int row, int col) method.
+     * Check if the field is empty (given the row, col).
+     */
+    @Test
+    public void testIsEmptyFieldRowAndCol(){
+        assertTrue(board.isEmptyField(0,0));
+
+        board.setField(0,0, Mark.FILLED);
+        assertFalse(board.isEmptyField(0,0));
+    }
+
+    /**
+     * Test isMarkedField(int index) method.
+     * Check if at a given index, the field is marked as FILLED or not.
+     */
+    @Test
+    public void testIsMarkedField() {
+        assertFalse(board.isMarkedField(0));
+
+        board.setField(0, Mark.FILLED);
+        assertTrue(board.isMarkedField(0));
+
+    }
+
+    /**
+     * Test isFull() method.
+     * Check if the board is full or not.
+     */
+    @Test
+    public void testIsFull() {
+        assertFalse(board.isFull());
+
+        for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
+            board.setField(i, Mark.FILLED);
+        }
+        assertTrue(board.isFull());
+    }
+
+    /**
+     * Test hasSquare() method.
+     * Check if the player is able to form a square at that index
+     */
+    @Test
+    public void testHasSquare() {
+        assertFalse(board.hasSquare(0, Mark.AA));
+
+        board.setField(0, Mark.AA);
+        board.setField(5, Mark.AA);
+        board.setField(6, Mark.AA);
+
+        assertTrue(board.hasSquare(11, Mark.AA));
+    }
+
+    /**
+     * Test gameOver() method.
+     * Check if the game is over or not.
+     */
+    @Test
+    public void testIsGameOver() {
+        assertFalse(board.isGameOver());
+
+        for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
+            board.setField(i, Mark.AA);
+        }
+        assertTrue(board.isGameOver());
+
+    }
+
+    /**
+     * Test isDraw() method.
+     * Check if the board returns the draw case.
+     */
+    @Test
+    public void testIsDraw() {
+        // TODO
+    }
+
+    /**
+     * Test isWinner() method.
+     * Check if the player with a given mark is the winner.
+     */
+    @Test
+    public void testIsWinner() {
+        // TODO
+
+    }
+
+    /**
+     * Test hasWinner() method.
+     * Check if there is a winner on the board.
+     */
+    @Test
+    public void testHasWinner() {
+        // TODO
+
+    }
+
+    /**
+     * Test reset() method.
+     * Check if the board resets to all Mark.EMPTY
+     */
+    @Test
+    public void testReset() {
+        board.setField(0, 0, Mark.AA);
+        board.setField(1, 1, Mark.BB);
+        board.reset();
+        assertEquals(Mark.EMPTY, board.getField(0, 0));
+        assertEquals(Mark.EMPTY, board.getField(1, 1));
+    }
+
+    /**
+     * Test toRow() method.
+     * Check if it can convert to a row index (given a field index)
+     */
+    @Test
+    public void testToRow() {
+        assertEquals(0, board.toRow(0));
+        assertEquals(0, board.toRow(4));
+        assertEquals(10, board.toRow(59));
+        assertEquals(10, board.toRow(55));
+    }
+
+    /**
+     * Test toCol() method.
+     * Check if it can convert to a column index (given a field index)
+     */
+    @Test
+    public void testCol() {
+        assertEquals(0, board.toColumn(0));
+        assertEquals(4, board.toColumn(4));
+        assertEquals(10, board.toColumn(5));
+        assertEquals(21, board.toColumn(5));
+    }
+
 //        @Test
 //        public void testCheckMove() {
 //            // Test the checkMove method with various move values
