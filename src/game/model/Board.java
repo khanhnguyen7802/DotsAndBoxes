@@ -189,7 +189,7 @@ public class Board {
         int sq1 = index + DIM;
         int sq2 = index + DIM + 1;
         int sq3 = index + DIM + DIM + 1;
-        if (toRow(index) % 2 == 0 && isMarkedField(index) && isMarkedField(sq1) && isMarkedField(sq2) && isMarkedField(sq3) && index <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1) && index % (DIM+DIM+1) <5) {
+        if (toRow(index) % 2 == 0 && isMarkedField(index) && isMarkedField(sq1) && isMarkedField(sq2) && isMarkedField(sq3) && index <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)) {
             setField(index, m);
             return true;
         }
@@ -213,12 +213,12 @@ public class Board {
      */
     public boolean isDraw() {
         int wins = 0;
-        for (int i = 0; i <= 10; i++){
-            if(hasSquare(i, Mark.AA)){
+        for (int i = 0; i <= (DIM*2+1); i++){
+            if(getField(i) == Mark.AA && toRow(i) % 2 == 0 && i <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)){
                 wins++;
             }
         }
-        if (wins== (DIM*DIM/2)){
+        if (wins == (DIM*DIM/2)){
             return true;
         }
         return false;
@@ -235,12 +235,12 @@ public class Board {
      @*/
     public boolean isWinner(Mark m) {
         int wins = 0;
-        for (int i = 0; i <= 10; i++){
-            if(hasSquare(i,m)){
+        for (int i = 0; i <= (DIM*2+1); i++){
+            if(hasSquare(i,m) && getField(i) == m && toRow(i) % 2 == 0 && i <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)){
                 wins++;
             }
         }
-        if (wins>=(int)(DIM*DIM/2)){
+        if (wins >= (int)(DIM*DIM/2)){
             return true;
         }
         return false;
@@ -382,9 +382,9 @@ public class Board {
      */
     public int toRow(int index) {
         if (index % (DIM * 2 + 1) < DIM) {
-            return index - (DIM + (DIM + 1));
+            return (int) (index / (DIM + (DIM + 1)))*2;
         } else {
-            return index - (DIM * 2 + DIM + 1);
+            return (int) (index / (DIM + (DIM + 1)))*2+1;
         }
     }
 
@@ -395,10 +395,10 @@ public class Board {
      */
     public int toColumn(int index) {
         if(index % (DIM*2+1) <DIM){
-            return index-toRow(index)/(DIM+DIM+1);
+            return index-(toRow(index)*(DIM+DIM+1))/2;
         }
         else {
-            return ((index - toRow(index) - DIM )/ (DIM + DIM + 1))+1;
+            return index % (DIM+DIM+1)-DIM;
         }
     }
 }

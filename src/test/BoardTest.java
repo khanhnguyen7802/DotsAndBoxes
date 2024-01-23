@@ -189,13 +189,17 @@ public class BoardTest {
      */
     @Test
     public void testHasSquare() {
-        assertFalse(board.hasSquare(0, Mark.AA));
+        assertFalse(board.hasSquare(0, Mark.FILLED));
+
+        board.setField(0, Mark.FILLED);
+        board.setField(5, Mark.FILLED);
+        board.setField(6, Mark.FILLED);
+        board.setField(11, Mark.FILLED);
+
+        assertTrue(board.hasSquare(0, Mark.FILLED));
 
         board.setField(0, Mark.AA);
-        board.setField(5, Mark.AA);
-        board.setField(6, Mark.AA);
-
-        assertTrue(board.hasSquare(11, Mark.AA));
+        assertTrue(board.getField(0) == Mark.AA);
     }
 
     /**
@@ -264,7 +268,7 @@ public class BoardTest {
         assertEquals(0, board.toRow(0));
         assertEquals(0, board.toRow(4));
         assertEquals(10, board.toRow(59));
-        assertEquals(10, board.toRow(55));
+        assertEquals(7, board.toRow(42));
     }
 
     /**
@@ -274,9 +278,9 @@ public class BoardTest {
     @Test
     public void testCol() {
         assertEquals(0, board.toColumn(0));
-        assertEquals(4, board.toColumn(4));
-        assertEquals(10, board.toColumn(5));
-        assertEquals(21, board.toColumn(5));
+        assertEquals(4, board.toColumn(37));
+        assertEquals(5, board.toColumn(43));
+        assertEquals(0, board.toColumn(5));
     }
 
 //        @Test
