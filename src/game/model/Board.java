@@ -182,7 +182,6 @@ public class Board {
      * (which means, that particular box belongs to that player)
      *
      * @param index the index of the field
-     * @param m the mark of the current player to set that field to
      * @return True if
      */
     public boolean hasSquare(int index) {
@@ -261,79 +260,84 @@ public class Board {
      */
     public String toString() {
         String dot = String.valueOf('\u2022'); // unicode hex
-
         int indexNumbering = 0;
-
         String s = ""; // for both left and right board
-        for (int i = 0; i < DIM; i++) {
+
+        for (int i = 0; i < DIM * 2 + 1; i++) {
             String row = "";
-            for (int j = 0; j < DIM; j++) {
-                //                String choice = getField(i, j).toString().substring(0, 1);
-                //                switch(choice) {
-                //                    case "X":
-                //                        row +=  getField(i, j).toString().substring(0, 1)
-                //                                .replace("X", "---");
-                //                        break;
-                //                    case "O":
-                //                        row += getField(i, j).toString().substring(0, 1)
-                //                                .replace("O", "|");
-                //                        break;
-                //                    default:
-                //                        row += getField(i, j).toString().substring(0, 1)
-                //                                .replace("E", "") + dot;
-                //                }
-                row += " " + getField(i, j).toString().substring(0, 1)
-                        .replace("E", " ") + dot;
+            if (i % 2 == 0) { // horizontal row
+                // TODO: for the horizontal row on the left
+                for (int j = 0; j < DIM + 1; j++) {
+                    if (j == DIM) {
+                        row += dot + "  ";
+                        continue;
+                    }
 
-                if (j < DIM - 1) {
-                    row = row + "  "; // separate the dots of the left board
+                    row += dot + " " + getField(i, j).toString().substring(0, 1).replace("E", " ");
+
+                    if (j < DIM) {
+                        row += "  "; // separate the dots
+                    }
+
+
                 }
 
-            }
+                s += row + DELIM;
 
-            s = s + row + DELIM; // separate the two boards
-
-            // TODO: Creating the row for horizontal line
-            for (int j = 0; j < DIM - 1; j++) {
-                String temporaryRowForHorizontal = dot + "    ";
-                String indexStr = Integer.toString(indexNumbering);
-                temporaryRowForHorizontal = Helper.myReplace(temporaryRowForHorizontal, indexStr, 2);
-
-                s += temporaryRowForHorizontal;
-
-                if (j < DIM - 2) {
-                    row = row + "  "; // separate the dots
-                }
-                indexNumbering++;
-            }
-            s = s + dot; // last dot on the upper line
-
-            if (i < DIM - 1) { // transition to the vertical line
-                s = s + "\n";
-                String rowAlign = " " + "    ".repeat(DIM-1) + " ".repeat(DIM) + DELIM; // space for dot + horizontal line + DELIM
-                s+= rowAlign; // for separating 2 boards
-                //                s+= "1";
-
-                // TODO: Creating the row for vertical line
+                // TODO: for the horizontal row on the right
                 for (int k = 0; k < DIM; k++) {
+                    String temporaryRowForHorizontal = dot + "    ";
                     String indexStr = Integer.toString(indexNumbering);
-                    String temporaryRowForVertical =  "     ";
+                    temporaryRowForHorizontal = Helper.myReplace(temporaryRowForHorizontal, indexStr, 2);
+
+                    s += temporaryRowForHorizontal;
+
+                    indexNumbering++;
+                }
+                s = s + dot; // last dot on the upper line
+
+                s += "\n";
+
+            } else if (i % 2 != 0) { // vertical row
+
+                // TODO: for the vertical row on the left
+                for (int j = 0; j < DIM + 1; j++) {
+                    if (j == DIM) {
+                        //                        row += "  ";
+                        row += " " + getField(i, j).toString().substring(0, 1)
+                                .replace("E", " ");
+                        continue;
+                    }
+
+                    row += "  " + getField(i, j).toString().substring(0, 1)
+                            .replace("E", " ");
+
+                    if (j <  DIM) {
+                        row += "  "; // separate the dots
+                    }
+
+                }
+
+                s += row + DELIM; // separate the two boards
+
+                // TODO: for vertical row on the right
+                for (int m = 0; m <= DIM; m++) {
+                    String indexStr = Integer.toString(indexNumbering);
+                    String temporaryRowForVertical = "     ";
                     temporaryRowForVertical = Helper.myReplace(temporaryRowForVertical, indexStr, 0);
 
                     s += temporaryRowForVertical;
 
 
-                    if (k < DIM - 1) {
-                        row = row + " "; // separate the dots
-                    }
-
                     indexNumbering++;
                 }
 
                 s += "\n";
+
             }
 
         }
+
         return s;
     }
 
