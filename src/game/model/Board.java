@@ -12,7 +12,11 @@ public class Board {
      */
     public static final int DIM = 5;
     private static final String DELIM = "        ";
-
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_BLUE = "\033[0;34m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_GREEN = "\033[1;92m";
+    public static final String fullVertical = String.valueOf('\u2502');
 
     //@ public invariant (fields.length == DIM*DIM);
     //@ public invariant (\num_of int i ; 0 <= i && i < DIM*DIM; fields[i] == Mark.AA) <= 5;
@@ -273,10 +277,32 @@ public class Board {
                         continue;
                     }
 
-                    row += dot + " " + getField(i, j).toString().substring(0, 1).replace("E", " ");
+                    String choice = getField(i, j).toString().substring(0, 1);
+                    String temporaryRowForHorizontal = "";
+                    switch(choice) {
+                        case "A":
+                            temporaryRowForHorizontal += dot + ANSI_RED + "----" + ANSI_RESET;
+                            row += temporaryRowForHorizontal;
 
-                    if (j < DIM) {
-                        row += "  "; // separate the dots
+                            break;
+                        case "B":
+                            temporaryRowForHorizontal += dot + ANSI_BLUE + "----" + ANSI_RESET;
+                            row += temporaryRowForHorizontal;
+
+                            break;
+                        case "F":
+                            temporaryRowForHorizontal += dot + ANSI_GREEN + "----" + ANSI_RESET;
+                            row += temporaryRowForHorizontal;
+
+                            break;
+                        default:
+                            row += dot + " " + getField(i, j).toString().substring(0, 1)
+                                    .replace("E", " ");
+
+                            if (j < DIM) {
+                                row += "  "; // separate the dots
+
+                            }
                     }
 
 
@@ -302,19 +328,56 @@ public class Board {
 
                 // TODO: for the vertical row on the left
                 for (int j = 0; j < DIM + 1; j++) {
-                    if (j == DIM) {
-                        //                        row += "  ";
-                        row += " " + getField(i, j).toString().substring(0, 1)
-                                .replace("E", " ");
-                        continue;
+
+                    String choice = getField(i, j).toString().substring(0, 1);
+                    String temporaryRowForVertical = "";
+                    switch(choice) {
+                        case "A":
+                            if (j == DIM) {
+                                temporaryRowForVertical += ANSI_RED + fullVertical + " " + ANSI_RESET;
+                                row += temporaryRowForVertical;
+                                continue;
+                            }
+
+                            temporaryRowForVertical += ANSI_RED + fullVertical + "    " + ANSI_RESET;
+                            row += temporaryRowForVertical;
+
+                            break;
+                        case "B":
+                            if (j == DIM) {
+                                temporaryRowForVertical += ANSI_BLUE + fullVertical + " " + ANSI_RESET;
+                                row += temporaryRowForVertical;
+                                continue;
+                            }
+
+                            temporaryRowForVertical += ANSI_BLUE + fullVertical + "    " + ANSI_RESET;
+                            row += temporaryRowForVertical;
+                            break;
+                        case "F":
+                            if (j == DIM) {
+                                temporaryRowForVertical += ANSI_GREEN + fullVertical + " " + ANSI_RESET;
+                                row += temporaryRowForVertical;
+                                continue;
+                            }
+
+                            temporaryRowForVertical += ANSI_GREEN + fullVertical + "    " + ANSI_RESET;
+                            row += temporaryRowForVertical;
+                            break;
+                        default:
+                            if (j == DIM) {
+                                row += " " + getField(i, j).toString().substring(0, 1)
+                                        .replace("E", " ");
+                                continue;
+                            }
+
+                            row += "  " + getField(i, j).toString().substring(0, 1)
+                                    .replace("E", " ");
+                            if (j <  DIM) {
+                                row += "  "; // separate the dots
+                            }
+
                     }
 
-                    row += "  " + getField(i, j).toString().substring(0, 1)
-                            .replace("E", " ");
-
-                    if (j <  DIM) {
-                        row += "  "; // separate the dots
-                    }
 
                 }
 
@@ -340,6 +403,7 @@ public class Board {
 
         return s;
     }
+
 
     /**
      * Empties all fields of this board (i.e., let them refer to the value

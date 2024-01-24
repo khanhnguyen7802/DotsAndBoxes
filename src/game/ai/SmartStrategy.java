@@ -15,7 +15,7 @@ public class SmartStrategy implements Strategy{
 
     @Override
     public String getName() {
-        return "Naive";
+        return "Smart";
     }
 
     /**
