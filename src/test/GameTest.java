@@ -60,6 +60,26 @@ public class GameTest {
     }
 
     /**
+     * Test isGameover() method.
+     * Check if the game is over when the board is full.
+     */
+    @Test
+    public void testGameOverCondition() {
+        for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
+            int row = board.toRow(i);
+            int col = board.toColumn(i);
+            Move move = new DotsMove(row, col, Mark.AA);
+            game.doMove(move);
+
+            if (i == 59) { // last index
+                assertTrue(game.isGameover());
+            } else {
+                assertFalse(game.isGameover());
+            }
+        }
+    }
+
+    /**
      * This test checks if it is possible to win and that the
      * winning player is returned correctly.
      */
