@@ -224,6 +224,15 @@ public class BoardTest {
     @Test
     public void testIsDraw() {
         // TODO
+        for (int i = 0; i < 16; i++) {
+            board.setField(i, Mark.AA);
+        }
+
+        for (int i = 44; i < 60; i++) {
+            board.setField(i, Mark.BB);
+        }
+
+        assertFalse(board.isDraw());
     }
 
     /**
@@ -233,6 +242,15 @@ public class BoardTest {
     @Test
     public void testIsWinner() {
         // TODO
+        for (int i = 0; i < 49; i++) {
+            board.setField(i, Mark.AA);
+        }
+
+        for (int i = 49; i < 60; i++) {
+            board.setField(i, Mark.BB);
+        }
+
+        assertTrue(board.isWinner(Mark.AA));
 
     }
 
@@ -243,7 +261,15 @@ public class BoardTest {
     @Test
     public void testHasWinner() {
         // TODO
+        for (int i = 0; i < 49; i++) {
+            board.setField(i, Mark.AA);
+        }
 
+        for (int i = 49; i < 60; i++) {
+            board.setField(i, Mark.BB);
+        }
+
+        assertTrue(board.hasWinner());
     }
 
     /**
@@ -283,59 +309,4 @@ public class BoardTest {
         assertEquals(0, board.toColumn(5));
     }
 
-//        @Test
-//        public void testCheckMove() {
-//            // Test the checkMove method with various move values
-//            /**
-//             *   0  1  2  3  4  5  6  7
-//             * 0
-//             *  --+--+--+--+--+--+--+--
-//             * 1
-//             *  --+--+--+--+--+--+--+--
-//             * 2
-//             *  --+--+--+--+--+--+--+--
-//             * 3         o  x
-//             *  --+--+--+--+--+--+--+--
-//             * 4         x  o
-//             *  --+--+--+--+--+--+--+--
-//             * 5
-//             *  --+--+--+--+--+--+--+--
-//             * 6
-//             *  --+--+--+--+--+--+--+--
-//             * 7
-//             *  --+--+--+--+--+--+--+--
-//             */
-//            // for example the first move (row 4, col 5, Mark XX),
-//            // which is valid and after which 1 opponent's disc will be flipped
-//            assertTrue(board.checkMove(4,5,Mark.XX));
-//            assertEquals(1, Board.flippedDiscs.size());
-//            // second move is (row 0, col 0, Mark OO),
-//            // which is not valid and after which 0 opponent's disc will be flipped
-//            assertFalse(board.checkMove(0,0,Mark.OO));
-//            assertEquals(0, Board.flippedDiscs.size());
-//        }
-//
-//        @Test
-//        public void getWinnerMark() {
-//            //fill all fields with dark marks
-//            //the winner should be XX
-//            Arrays.fill(board.fields, Mark.XX);
-//            assertEquals(Mark.XX, board.getWinnerMark());
-//
-//            //fill 2 fields with OO marks and 1 field with XX mark
-//            //the winner should be OO
-//            Arrays.fill(board.fields, Mark.EMPTY);
-//            board.setField(0,1,Mark.OO);
-//            board.setField(0,2,Mark.OO);
-//            board.setField(0,3,Mark.XX);
-//            assertEquals(Mark.OO, board.getWinnerMark());
-//
-//            //Equal number of marks on the board
-//            //should return empty mark
-//            Arrays.fill(board.fields, Mark.EMPTY);
-//            board.setField(0,1,Mark.OO);
-//            board.setField(0,2,Mark.XX);
-//            assertEquals(Mark.EMPTY, board.getWinnerMark());
-//        }
-//    }
 }

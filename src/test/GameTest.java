@@ -31,39 +31,40 @@ public class GameTest {
     }
 
     /**
-     * This method checks wether doMove does a Move correctly
+     * Test doMove() method.
+     * It checks whether doMove indeed does a Move correctly.
      */
     @Test
-    public void testMove(){
+    public void testDoMove(){
         Move determinedMove = new DotsMove(0, 0, Mark.AA);
         game.doMove(determinedMove);
         assertTrue(Mark.FILLED == game.getBoard().getField(0));
     }
 
     /**
-     * This test checks wether a box is filled in when the conditions
+     * This test checks whether a box is filled in when the conditions
      * are met.
      */
     @Test
     public void testBox(){
         game.turnIndex = 1;
-        Move move1 = new DotsMove(0, 0, Mark.AA);
+        Move move1 = new DotsMove(0, 0, Mark.FILLED);
         game.doMove(move1);
-        Move move2 = new DotsMove(2, 0, Mark.AA);
+        Move move2 = new DotsMove(2, 0, Mark.FILLED);
         game.doMove(move2);
-        Move move3 = new DotsMove(1, 0, Mark.AA);
+        Move move3 = new DotsMove(1, 0, Mark.FILLED);
         game.doMove(move3);
-        Move move4 = new DotsMove(1, 1, Mark.AA);
+        Move move4 = new DotsMove(1, 1, Mark.FILLED);
         game.doMove(move4);
         assertTrue(game.getBoard().getField(0) == Mark.AA);
     }
 
     /**
-     * This test checks if it is possible to whin and that the
+     * This test checks if it is possible to win and that the
      * winning player is returned correctly.
      */
     @Test
-    public void testWinningCondition(){
+    public void testWinningCondition() {
         for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
             int row = board.toRow(i);
             int col = board.toColumn(i);
@@ -76,7 +77,7 @@ public class GameTest {
     }
 
     /**
-     * This test checks wether or not is it possible to play
+     * This test checks whether it is possible to play
      * a full game, and do we always get a winner.
      * It also checks if every box is filled with either
      * Mark.AA or Mark.BB.

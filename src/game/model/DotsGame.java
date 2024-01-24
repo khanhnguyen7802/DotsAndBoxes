@@ -22,7 +22,7 @@ public class DotsGame implements Game {
         this.board = new Board();
         this.player1 = player1;
         this.player2 = player2;
-        turnIndex = 0; // player X starts first
+        turnIndex = 0; // player AA starts first
     }
 
 
@@ -63,10 +63,11 @@ public class DotsGame implements Game {
     //@pure;
     @Override
     public Player getTurn() {
-        if (turnIndex == 0)
+        if (turnIndex == 0) {
             return player1;
-        else
+        } else {
             return player2;
+        }
     }
 
     /**
@@ -77,9 +78,11 @@ public class DotsGame implements Game {
     @Override
     public Player getWinner() {
         if (board.hasWinner()) {
-            if (board.isWinner(Mark.AA))
+            if (board.isWinner(Mark.AA)) {
                 return player1;
-            else return player2;
+            } else {
+                return player2;
+            }
         }
         return null;
     }
@@ -88,11 +91,13 @@ public class DotsGame implements Game {
      * Switch the turn index (i.e., give turn to the other player).
      */
     public void switchTurnIndex() {
-        if(this.turnIndex == 0)
+        if (this.turnIndex == 0) {
             this.turnIndex = 1;
-        else
+        } else {
             this.turnIndex = 0;
+        }
     }
+
     /**
      * Return the list containing all the valid moves.
      * @return a list of valid moves
@@ -102,18 +107,23 @@ public class DotsGame implements Game {
     public List<Move> getValidMoves() { // considering all empty moves
         List<Move> moves = new ArrayList<>();
         Mark currentMark = turnIndex == 0 ? Mark.AA : Mark.BB;
-        for (int i = 0; i <= board.DIM*2; i++)
-            if(i % 2 == 0) { // differentiate between vertical and horizontal lines
-                for (int j = 0; j < board.DIM; j++) {
+        for (int i = 0; i <= Board.DIM * 2; i++) {
+            if (i % 2 == 0) { // differentiate between vertical and horizontal lines
+                for (int j = 0; j < Board.DIM; j++) {
                     Move currentMove = new DotsMove(i, j, currentMark);
-                    if (board.isEmptyField(i, j)) moves.add(currentMove);
+                    if (board.isEmptyField(i, j)) {
+                        moves.add(currentMove);
+                    }
                 }
-            }else {
-                for (int j = 0; j <= board.DIM; j++) {
-                Move currentMove = new DotsMove(i, j, currentMark);
-                if (board.isEmptyField(i, j)) moves.add(currentMove);
+            } else {
+                for (int j = 0; j <= Board.DIM; j++) {
+                    Move currentMove = new DotsMove(i, j, currentMark);
+                    if (board.isEmptyField(i, j)) {
+                        moves.add(currentMove);
+                    }
                 }
             }
+        }
         return moves;
     }
 
@@ -124,10 +134,9 @@ public class DotsGame implements Game {
      */
     @Override
     public boolean isValidMove(Move move) {
-        if (!(move instanceof DotsMove)) {
+        if (!(move instanceof DotsMove dotsMove)) {
             return false;
         }
-        DotsMove dotsMove = (DotsMove) move;
         return board.isEmptyField(dotsMove.getRow(), dotsMove.getCol()) && board.isField(
                 dotsMove.getRow(), dotsMove.getCol());
     }
@@ -140,25 +149,24 @@ public class DotsGame implements Game {
     @Override
     public void doMove(Move move) {
         DotsMove tm = (DotsMove) move;
-        boolean extra= false;
-        if(isValidMove(move)) {
+        boolean extra = false;
+        if (isValidMove(move)) {
             if (getTurn() == player1) {
-                // if its palayer one do move
+                // if its player one do move
                 board.setField(tm.getRow(), tm.getCol(), Mark.FILLED);
                 this.turnIndex = 1;
-                //if player one fills a box do another move and mark the box
-                for (int i = 0; i< Board.DIM * (Board.DIM + 1) * 2;i++){
-                    if(board.hasSquare(i)){
-                        board.setField(i,Mark.AA);
+                //if player one fills a box, do another move and mark the box
+                for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
+                    if (board.hasSquare(i)) {
+                        board.setField(i, Mark.AA);
                         this.turnIndex = 0;
                     }
                 }
-            }
-            else {
+            } else {
                 // simply fill in the line
                 board.setField(tm.getRow(), tm.getCol(), Mark.FILLED);
                 this.turnIndex = 0;
-                for (int i = 0; i< Board.DIM * (Board.DIM + 1) * 2;i++){
+                for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
                     if(board.hasSquare(i)){
                         //mark the box
                         board.setField(i,Mark.BB);
