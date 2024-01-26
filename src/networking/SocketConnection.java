@@ -1,5 +1,6 @@
 package networking;
 
+import dotandboxclient.WrongFormatProtocol;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -75,6 +76,8 @@ public abstract class SocketConnection {
             }
         } catch (IOException e) {
             // ignore the exception, just close the connection
+        } catch (WrongFormatProtocol e) {
+            throw new RuntimeException(e);
         } finally {
             close();
             handleDisconnect();
@@ -126,7 +129,7 @@ public abstract class SocketConnection {
      * Handles a message received from the connection.
      * @param message the message received from the connection
      */
-    protected abstract void handleMessage(String message);
+    protected abstract void handleMessage(String message) throws WrongFormatProtocol;
 
     /**
      * Handles a disconnect from the connection, i.e., when the connection is closed.

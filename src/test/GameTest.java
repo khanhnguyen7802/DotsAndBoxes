@@ -88,7 +88,7 @@ public class GameTest {
         for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
             int row = board.toRow(i);
             int col = board.toColumn(i);
-            Move move = new DotsMove(row, col, Mark.AA);
+            Move move = new DotsMove(row, col, Mark.BB);
             game.doMove(move);
             if (game.isGameover()){
                 assertTrue(game.getWinner() == player2);

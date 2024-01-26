@@ -33,7 +33,7 @@ public class ClientConnection extends SocketConnection {
      * @param messageFromServer the messageFromServer received from the connection
      */
     @Override
-    protected void handleMessage(String messageFromServer) {
+    protected void handleMessage(String messageFromServer) throws WrongFormatProtocol {
         String[] parse = messageFromServer.split(Protocol.SEPARATOR);
 
         switch(parse[0]) {
