@@ -115,11 +115,12 @@ public class DotAndBoxClient {
     }
 
     public void handleList(String receivedMessage) {
+        System.out.println(receivedMessage);
         String[] activePlayers = receivedMessage.split("~");
         System.out.print("Active players:");
 
-        for (String activePlayer : activePlayers)
-            System.out.print(" " + activePlayer);
+        for (int i = 1; i < activePlayers.length; i++)
+            System.out.print(" " + activePlayers[i]);
         System.out.println("");
     }
 

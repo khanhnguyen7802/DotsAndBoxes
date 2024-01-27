@@ -39,10 +39,6 @@ public class DotAndBoxClientTUI implements ClientListener {
 
     }
 
-    @Override
-    public void printToConsole(String s) {
-
-    }
 
     public void runTUI() {
         System.out.println("[CLIENT_TUI] Start runTUI()");
