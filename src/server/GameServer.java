@@ -213,9 +213,8 @@ public class GameServer extends SocketServer {
                 }else if (games.size() <= 1){
                     handler.gameOver(Protocol.DISCONNECT + Protocol.SEPARATOR + handler.getUsername());
                     }
-                games.remove(handler);
-                players.remove(handler);
                 allGames.remove(dotsGame);
+
                 }
             }
 
