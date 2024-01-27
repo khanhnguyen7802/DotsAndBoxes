@@ -131,6 +131,14 @@ public class GameServer extends SocketServer {
         }
     }
 
+    public void handleList(ClientHandler requester) {
+        String list = Protocol.LIST+Protocol.SEPARATOR;
+        for(ClientHandler handler : clientHandlerList) {
+            list.concat(handler.getUsername());
+        }
+        requester.listPrinter(list);
+    }
+
     public synchronized void handleQueue(ClientHandler handlers) throws IOException {
         inQueue.add(handlers);
         List<String> user = new ArrayList<>();
