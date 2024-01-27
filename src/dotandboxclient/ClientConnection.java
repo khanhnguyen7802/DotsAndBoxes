@@ -27,7 +27,7 @@ public class ClientConnection extends SocketConnection {
 
     @Override
     public void handleStart() {
-        System.out.println("Start reading ");
+        System.out.println("[CLIENT_CONNECTION] Start reading from the socket");
     }
     /**
      * Handle the received messageFromServer from server socket.
@@ -37,10 +37,10 @@ public class ClientConnection extends SocketConnection {
      * @param messageFromServer the messageFromServer received from the connection
      */
     @Override
-    protected void handleMessage(String messageFromServer) throws WrongFormatProtocol {
+    public void handleMessage(String messageFromServer) throws WrongFormatProtocol {
         String[] parse = messageFromServer.split(Protocol.SEPARATOR);
 
-        switch(parse[0]) {
+        switch (parse[0]) {
             case Protocol.HELLO:
                 try {
                     client.handleHello(messageFromServer);
@@ -56,14 +56,16 @@ public class ClientConnection extends SocketConnection {
                 client.handleList(messageFromServer);
                 break;
             case Protocol.NEWGAME:
-                client.handleNewGame();
+                client.handleNewGame(messageFromServer);
                 break;
             case Protocol.MOVE:
+                client.handleMove(messageFromServer);
                 break;
-            case Protocol.GAMEOVER:
-                break;
-            case Protocol.ERROR:
-                break;
+//            case Protocol.GAMEOVER:
+//                client.handleGameOver();
+//                break;
+//            case Protocol.ERROR:
+//                break;
             default:
                 throw new WrongFormatProtocol("The command is in wrong format");
         }
@@ -98,7 +100,9 @@ public class ClientConnection extends SocketConnection {
         sendMessage(Protocol.QUEUE);
     }
 
-
+    public void sendMove(int idx) {
+        sendMessage(Protocol.MOVE + Protocol.SEPARATOR + idx);
+    }
 
 
 }

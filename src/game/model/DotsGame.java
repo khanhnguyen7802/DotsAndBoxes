@@ -152,7 +152,7 @@ public class DotsGame implements Game {
         boolean extra = false;
         if (isValidMove(move)) {
             if (getTurn() == player1) {
-                // if its player one do move
+                // if it's player one do move
                 board.setField(tm.getRow(), tm.getCol(), Mark.FILLED);
                 this.turnIndex = 1;
                 //if player one fills a box, do another move and mark the box
@@ -167,9 +167,9 @@ public class DotsGame implements Game {
                 board.setField(tm.getRow(), tm.getCol(), Mark.FILLED);
                 this.turnIndex = 0;
                 for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
-                    if(board.hasSquare(i)){
+                    if (board.hasSquare(i)) {
                         //mark the box
-                        board.setField(i,Mark.BB);
+                        board.setField(i, Mark.BB);
                         //do another turn
                         this.turnIndex = 1;
                     }

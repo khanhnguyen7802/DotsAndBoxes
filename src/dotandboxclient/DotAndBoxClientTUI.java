@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.InputMismatchException;
 import protocol.Protocol;
 
 public class DotAndBoxClientTUI implements ClientListener {
@@ -52,24 +51,20 @@ public class DotAndBoxClientTUI implements ClientListener {
                 break;
             } catch (IOException e) {
                 System.out.println("[CLIENT_TUI] IOException occurs when creating a client");
-            } catch (InputMismatchException g) {
-                System.out.println("The port must be a positive number");
-                System.out.println("Please try again");
             } catch (IllegalArgumentException g) {
                 System.out.println("Port number must be within [0, 65535]");
                 System.out.println("Please try again");
             }
 
         }
-
+        System.out.println("[CLIENT_TUI] Client connected to server");
         boolean connectedToServer = true;
 
         while(connectedToServer) {
+            System.out.println("[CLIENT_TUI] in loop");
             // a separate thread is created to read from socket
             dotAndBoxClient.sendHello();
-            printMenu();
-
-
+            start();
         }
     }
 
@@ -78,7 +73,7 @@ public class DotAndBoxClientTUI implements ClientListener {
         InetAddress address = null;
 
         while (address == null) {
-            System.out.println("Enter IP Address: ");
+            System.out.print("Enter IP Address: ");
 
             try {
                 ip = in.readLine();
@@ -94,7 +89,7 @@ public class DotAndBoxClientTUI implements ClientListener {
     }
 
     public int getPortNumber() {
-        System.out.println("Enter port number: ");
+        System.out.print("Enter port number: ");
         int portNumber;
 
         try {
@@ -131,6 +126,7 @@ public class DotAndBoxClientTUI implements ClientListener {
 
         switch(command) {
             case Protocol.LOGIN:
+                System.out.println("[CLIENT_TUI] Login sent");
                 String username = "";
                 if (parse.length == 2) { // LOGIN <name>
                     username = parse[1];
@@ -149,23 +145,25 @@ public class DotAndBoxClientTUI implements ClientListener {
                 dotAndBoxClient.sendQueue();
                 break;
             case Protocol.MOVE:
-                dotAndBoxClient.sendMove();
+                int index = Integer.parseInt(parse[1]);
+                dotAndBoxClient.sendMove(index);
+                break;
             case "HELP":
                 printMenu();
                 break;
             case "EXIT":
-                client.closeEverything();
+//                client.closeEverything();
                 stopReceivingInput();
-                printToConsole("Exited successfully! See you again!");
+                System.out.println("Exited successfully! See you again!");
                 break;
             default:
-                printToConsole("Command is not recognized! Please choose again");
+                System.out.println("Command is not recognized! Please choose again");
                 printMenu();
         }
     }
 
     public void start() {
-        while(keepReading) {
+        while (keepReading) {
             try {
                 handleInputCommands();
             } catch (RuntimeException e) {
@@ -174,9 +172,13 @@ public class DotAndBoxClientTUI implements ClientListener {
         }
         this.keepReading = true;
     }
+
     public void stopReceivingInput() {
         this.keepReading = false;
     }
 
+    public static void main(String[] args) {
+        new DotAndBoxClientTUI().runTUI();
+    }
 
 }
