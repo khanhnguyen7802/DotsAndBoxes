@@ -1,5 +1,6 @@
 package dotandboxclient;
 
+import exception.WrongFormatProtocol;
 import java.io.IOException;
 import java.net.InetAddress;
 import networking.SocketConnection;
@@ -24,7 +25,10 @@ public class ClientConnection extends SocketConnection {
         start();
     }
 
-
+    @Override
+    public void handleStart() {
+        System.out.println("Start reading ");
+    }
     /**
      * Handle the received messageFromServer from server socket.
      * The protocol can be either HELLO, LOGIN, ALREADYLOGGEDIN, LIST
@@ -38,7 +42,11 @@ public class ClientConnection extends SocketConnection {
 
         switch(parse[0]) {
             case Protocol.HELLO:
-                client.handleHello(messageFromServer);
+                try {
+                    client.handleHello(messageFromServer);
+                } catch (WrongFormatProtocol e) {
+                    System.out.println("[CLIENT_CONNECTION] Invalid protocol");;
+                }
                 break;
             case Protocol.LOGIN:
             case Protocol.ALREADYLOGGEDIN:
@@ -48,6 +56,7 @@ public class ClientConnection extends SocketConnection {
                 client.handleList(messageFromServer);
                 break;
             case Protocol.NEWGAME:
+                client.handleNewGame();
                 break;
             case Protocol.MOVE:
                 break;
@@ -62,6 +71,34 @@ public class ClientConnection extends SocketConnection {
 
     @Override
     protected void handleDisconnect() {
-
     }
+
+    /**
+     * Send HELLO command to the server.
+     */
+    public void sendHello() {
+        sendMessage(Protocol.HELLO + Protocol.SEPARATOR + DotAndBoxClient.gameName);
+    }
+
+    /**
+     * Send LOGIN command to the server.
+     */
+    public void sendLogin(String username) {
+        sendMessage(Protocol.LOGIN + Protocol.SEPARATOR + username);
+    }
+
+    /**
+     * Send LIST command to the server.
+     */
+    public void sendList() {
+        sendMessage(Protocol.LIST);
+    }
+
+    public void sendQueue() {
+        sendMessage(Protocol.QUEUE);
+    }
+
+
+
+
 }
