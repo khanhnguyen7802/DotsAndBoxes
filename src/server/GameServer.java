@@ -1,14 +1,22 @@
 package server;
 
+import game.model.*;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import networking.SocketServer;
+import protocol.Protocol;
 
 public class GameServer extends SocketServer {
     List<ClientHandler> clientHandlerList = new ArrayList<>();
+    List<ClientHandler> inQueue = new ArrayList<>();
+
+    Set<Set<ClientHandler>> games = new HashSet<Set<ClientHandler>>();
+
+    private DotsGame dotsGame;
+    private DotsMove move;
+    private AbstractPlayer player1;
+    private AbstractPlayer player2;
 
 
     /**
@@ -77,6 +85,17 @@ public class GameServer extends SocketServer {
 
     }
 
+
+    public synchronized void addQueue(ClientHandler client) {
+        this.inQueue.add(client);
+    }
+
+
+    public synchronized void removeQueue(ClientHandler client) {
+        this.inQueue.remove(client);
+    }
+
+
     /**
      * This adds a client to the server.
      * @param client
@@ -106,6 +125,65 @@ public class GameServer extends SocketServer {
             handler.recieveMove(msgContent);
         }
     }
+
+    public synchronized void handleQueue(ClientHandler handlers) throws IOException {
+        inQueue.add(handlers);
+        List<String> user = new ArrayList<>();
+        List<ClientHandler> inHandler = new ArrayList<>();
+        Set<ClientHandler> inGame= new HashSet<ClientHandler>();
+        int counter=0;
+        if (inQueue.size() >1 && inQueue.size() % 2 == 0){
+        for(ClientHandler handler : inQueue) {
+            user.add(handler.getUsername());
+            inHandler.add(handler);
+            counter++;
+            if(counter == 2){
+                for (int i = 0; i < 2; i++ ) {
+                    inHandler.get(i).startGame(user.get(0), user.get(1));
+                    removeQueue(inHandler.get(i));
+                    inGame.add(inHandler.get(i));
+                    games.add(inGame);
+                }
+                player1 = new HumanPlayer(user.get(0), Mark.AA);
+                player2 = new HumanPlayer(user.get(1), Mark.BB);
+                dotsGame = new DotsGame(player1, player2);
+                counter = 0;
+                user = new ArrayList<>();
+                inHandler = new ArrayList<ClientHandler>();
+                inGame = new HashSet<ClientHandler>();
+                break;
+            }
+            }
+        }
+    }
+
+    public synchronized void allIngame(String msg){
+        String[] tokens = msg.split(Protocol.SEPARATOR);
+        Integer move = Integer.parseInt(tokens[1]);
+        HumanPlayer currentPlayer = (HumanPlayer) dotsGame.getTurn(); // current player
+        Move determinedMove = new DotsMove(dotsGame.getBoard().toRow(move),
+                                           dotsGame.getBoard().toColumn(move),
+                                           currentPlayer.getMark()); // get the move
+        dotsGame.doMove(determinedMove);
+        for(Set<ClientHandler> handlers : games) {
+            for (ClientHandler handler : handlers) {
+                if (handlers.size() > 1 && !dotsGame.isGameover()){
+                    handler.move(msg);
+                if (dotsGame.getBoard().hasWinner()) {
+                    handler.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + dotsGame.getWinner());
+                }
+                if (dotsGame.isGameover() && !dotsGame.getBoard().hasWinner()){
+                    handler.gameOver(Protocol.DRAW);
+                }
+
+            }else {
+                    handler.gameOver(Protocol.DISCONNECT + Protocol.SEPARATOR + handler.getUsername());
+            }
+            }
+            break;
+        }
+    }
+
 
     /**
      * This is the main runnable method.

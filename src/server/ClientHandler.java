@@ -49,11 +49,27 @@ public class ClientHandler {
 
     }
 
-    /**
-     * If a chat msg is received (by a client that already had a username),
-     * then handleMessage() should be called.
-     * @param msg - the chat msg
-     */
+    public void recieveQueue() throws IOException {
+        gameServer.handleQueue(this);
+    }
+
+    public void disconnectQueue() throws IOException {
+        gameServer.removeQueue(this);
+    }
+
+    public void handShake(){
+        if (serverConnection.currentState == ServerConnection.State.IDLE){
+        serverConnection.send(Protocol.HELLO+Protocol.SEPARATOR);}
+        else {
+            serverConnection.send(Protocol.LOGIN);
+        }
+    }
+
+    public void errorHandling(String msg){
+        serverConnection.send(Protocol.ERROR+Protocol.SEPARATOR+msg);
+    }
+
+
     public void receiveMessage(String msg){
         if (username!=null) { // SAY~<msg>
             String[] parse = msg.split(Protocol.SEPARATOR);
@@ -75,16 +91,21 @@ public class ClientHandler {
     }
 
 
-    public void startGame() {
-        serverConnection.send(Protocol.NEWGAME);
+    public void startGame(String player1, String player2) {
+        serverConnection.send(Protocol.NEWGAME+Protocol.SEPARATOR+player1+Protocol.SEPARATOR+ player2);
     }
 
     public void recieveMove(String msg) {
-        serverConnection.send(Protocol.MOVE+Protocol.SEPARATOR+msg);
+        this.gameServer.allIngame(msg);
+
+    }
+    public void move(String msg){
+        serverConnection.send(msg);
     }
 
-    public void gameOver(){
-        serverConnection.send(Protocol.GAMEOVER);
+    public void gameOver(String msg){
+        serverConnection.send(Protocol.GAMEOVER+Protocol.SEPARATOR+msg);
+        serverConnection.currentState = ServerConnection.State.LOGGED_IN;
     }
 
     public void alreadyLoggedIn(){
