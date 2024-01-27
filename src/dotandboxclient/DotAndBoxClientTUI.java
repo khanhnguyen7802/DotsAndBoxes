@@ -61,7 +61,6 @@ public class DotAndBoxClientTUI implements ClientListener {
         boolean connectedToServer = true;
 
         while(connectedToServer) {
-            System.out.println("[CLIENT_TUI] in loop");
             // a separate thread is created to read from socket
             dotAndBoxClient.sendHello();
             start();

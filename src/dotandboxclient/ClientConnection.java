@@ -42,10 +42,12 @@ public class ClientConnection extends SocketConnection {
 
         switch (parse[0]) {
             case Protocol.HELLO:
+                System.out.println(messageFromServer);
+
                 try {
                     client.handleHello(messageFromServer);
                 } catch (WrongFormatProtocol e) {
-                    System.out.println("[CLIENT_CONNECTION] Invalid protocol");;
+                    System.out.println("[CLIENT_CONNECTION] Invalid protocol");
                 }
                 break;
             case Protocol.LOGIN:
