@@ -119,8 +119,9 @@ public class DotAndBoxClient {
         String[] activePlayers = receivedMessage.split("~");
         System.out.print("Active players:");
 
-        for (int i = 1; i < activePlayers.length; i++)
+        for (int i = 1; i < activePlayers.length; i++) {
             System.out.print(" " + activePlayers[i]);
+        }
         System.out.println("");
     }
 
