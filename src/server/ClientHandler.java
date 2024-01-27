@@ -70,11 +70,11 @@ public class ClientHandler {
     }
 
     public void listClients(){
-        String list = Protocol.LIST+Protocol.SEPARATOR;
-        for (ClientHandler handler :this.gameServer.clientHandlerList){
-            list.concat(handler.getUsername()+Protocol.SEPARATOR);
-        }
-        serverConnection.send(list);
+        this.gameServer.handleList(this);
+    }
+
+    public void listPrinter(String msg){
+        serverConnection.send(msg);
     }
 
 
