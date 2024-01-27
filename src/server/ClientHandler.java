@@ -69,6 +69,14 @@ public class ClientHandler {
         serverConnection.send(Protocol.ERROR+Protocol.SEPARATOR+msg);
     }
 
+    public void listClients(){
+        String list = Protocol.LIST+Protocol.SEPARATOR;
+        for (ClientHandler handler :this.gameServer.clientHandlerList){
+            list.concat(handler.getUsername()+Protocol.SEPARATOR);
+        }
+        serverConnection.send(list);
+    }
+
 
     public void receiveMessage(String msg){
         if (username!=null) { // SAY~<msg>

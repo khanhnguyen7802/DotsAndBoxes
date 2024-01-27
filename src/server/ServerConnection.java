@@ -67,7 +67,10 @@ public class ServerConnection extends SocketConnection {
                         clientHandler.recieveQueue();
                         currentState = State.GAME_STARTED;
                         break;
-                    }else {clientHandler.errorHandling("QUEUE expected");
+                    } else if (Protocol.LIST.equals(command)) {
+                        clientHandler.listClients();
+                        break;
+                    } else {clientHandler.errorHandling("QUEUE expected");
                     break;}
                 case GAME_STARTED:
                     if (Protocol.MOVE.equals(command)){
@@ -75,7 +78,10 @@ public class ServerConnection extends SocketConnection {
                         break;
                     } else if (Protocol.QUEUE.equals(command)) {
                         clientHandler.disconnectQueue();
-                    } else {clientHandler.errorHandling("Incorrect MOVE expected");
+                    }  else if (Protocol.LIST.equals(command)) {
+                        clientHandler.listClients();
+                        break;
+                    }else {clientHandler.errorHandling("Incorrect MOVE expected");
                     break;}
 
                 default:
