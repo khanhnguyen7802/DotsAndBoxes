@@ -59,7 +59,7 @@ public class ClientHandler {
 
     public void handShake(){
         if (serverConnection.currentState == ServerConnection.State.IDLE){
-        serverConnection.send(Protocol.HELLO+Protocol.SEPARATOR);}
+        serverConnection.send(Protocol.HELLO+Protocol.SEPARATOR+"Server of resit-8");}
         else {
             serverConnection.send(Protocol.LOGIN);
         }
