@@ -144,6 +144,7 @@ public class DotAndBoxClient {
                 System.out.println("Cannot queue because you're in a game");
             } else {
                 isQueued = true;
+                clientConnection.sendQueue();
                 System.out.println("Successfully joined the queue !!!");
             }
 
@@ -159,6 +160,7 @@ public class DotAndBoxClient {
      *
      */
     public void handleNewGame(String receivedMessage) {
+        System.out.println(receivedMessage);
         Scanner scanner = new Scanner(System.in);
         String[] parse = receivedMessage.split("~");
 

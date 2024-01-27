@@ -127,7 +127,7 @@ public abstract class SocketConnection {
      * Handles a message received from the connection.
      * @param message the message received from the connection
      */
-    protected abstract void handleMessage(String message) throws WrongFormatProtocol, exception.WrongFormatProtocol;
+    protected abstract void handleMessage(String message) throws WrongFormatProtocol, exception.WrongFormatProtocol, IOException;
 
     /**
      * Handles a disconnect from the connection, i.e., when the connection is closed.
