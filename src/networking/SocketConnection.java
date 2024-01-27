@@ -76,7 +76,7 @@ public abstract class SocketConnection {
             }
         } catch (IOException e) {
             // ignore the exception, just close the connection
-        } catch (WrongFormatProtocol e) {
+        } catch (WrongFormatProtocol | exception.WrongFormatProtocol e) {
             throw new RuntimeException(e);
         } finally {
             close();
@@ -129,7 +129,7 @@ public abstract class SocketConnection {
      * Handles a message received from the connection.
      * @param message the message received from the connection
      */
-    protected abstract void handleMessage(String message) throws WrongFormatProtocol, IOException;
+    protected abstract void handleMessage(String message) throws WrongFormatProtocol, IOException, exception.WrongFormatProtocol;
 
     /**
      * Handles a disconnect from the connection, i.e., when the connection is closed.

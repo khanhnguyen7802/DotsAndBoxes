@@ -96,14 +96,14 @@ public class ClientHandler {
     }
 
     public void recieveMove(String msg) {
-        this.gameServer.allIngame(msg);
+        this.gameServer.allIngame(msg,this);
 
     }
     public void move(String msg){
         serverConnection.send(msg);
     }
 
-    public void gameOver(String msg){
+    public synchronized void gameOver(String msg){
         serverConnection.send(Protocol.GAMEOVER+Protocol.SEPARATOR+msg);
         serverConnection.currentState = ServerConnection.State.LOGGED_IN;
     }

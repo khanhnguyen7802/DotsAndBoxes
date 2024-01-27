@@ -11,9 +11,14 @@ public class GameServer extends SocketServer {
     List<ClientHandler> clientHandlerList = new ArrayList<>();
     List<ClientHandler> inQueue = new ArrayList<>();
 
-    Set<Set<ClientHandler>> games = new HashSet<Set<ClientHandler>>();
+    private Integer totalNoOfGames = 0;
+    private Map<ClientHandler, Integer> games = new HashMap();
 
-    private DotsGame dotsGame;
+    Map<DotsGame, List<AbstractPlayer>> allGames = new HashMap<>();
+
+    private ArrayList players = new ArrayList<ClientHandler>();
+
+    private DotsGame dotGame;
     private DotsMove move;
     private AbstractPlayer player1;
     private AbstractPlayer player2;
@@ -130,7 +135,6 @@ public class GameServer extends SocketServer {
         inQueue.add(handlers);
         List<String> user = new ArrayList<>();
         List<ClientHandler> inHandler = new ArrayList<>();
-        Set<ClientHandler> inGame= new HashSet<ClientHandler>();
         int counter=0;
         if (inQueue.size() >1 && inQueue.size() % 2 == 0){
         for(ClientHandler handler : inQueue) {
@@ -141,47 +145,80 @@ public class GameServer extends SocketServer {
                 for (int i = 0; i < 2; i++ ) {
                     inHandler.get(i).startGame(user.get(0), user.get(1));
                     removeQueue(inHandler.get(i));
-                    inGame.add(inHandler.get(i));
-                    games.add(inGame);
+                    players.add(inHandler.get(i));
+                    games.put(inHandler.get(i),totalNoOfGames);
+                    createGame(user.get(0), user.get(1));
                 }
-                player1 = new HumanPlayer(user.get(0), Mark.AA);
-                player2 = new HumanPlayer(user.get(1), Mark.BB);
-                dotsGame = new DotsGame(player1, player2);
                 counter = 0;
                 user = new ArrayList<>();
                 inHandler = new ArrayList<ClientHandler>();
-                inGame = new HashSet<ClientHandler>();
+                totalNoOfGames ++;
                 break;
             }
             }
         }
     }
 
-    public synchronized void allIngame(String msg){
-        String[] tokens = msg.split(Protocol.SEPARATOR);
-        Integer move = Integer.parseInt(tokens[1]);
-        HumanPlayer currentPlayer = (HumanPlayer) dotsGame.getTurn(); // current player
-        Move determinedMove = new DotsMove(dotsGame.getBoard().toRow(move),
-                                           dotsGame.getBoard().toColumn(move),
-                                           currentPlayer.getMark()); // get the move
-        dotsGame.doMove(determinedMove);
-        for(Set<ClientHandler> handlers : games) {
+    public void createGame(String pl1, String pl2){
+        player1 = new HumanPlayer(pl1, Mark.AA);
+        player2 = new HumanPlayer(pl2, Mark.BB);
+        List players = new ArrayList<>();
+        players.add(player1);
+        players.add(player2);
+        dotGame = new DotsGame(player1, player2);
+        allGames.put(dotGame,players);
+    }
+
+    public DotsGame currentGame(ArrayList<String> users){
+        for (Map.Entry<DotsGame, List<AbstractPlayer>> dotsGame : allGames.entrySet()) {
+            if (dotsGame.getValue().get(0).getName() == users.get(0).toString() || dotsGame.getValue().get(0).getName() == users.get(1).toString()) {
+                return dotsGame.getKey();
+            }
+        }
+        return null;
+    }
+
+    public synchronized void allIngame(String msg, ClientHandler current){
+        int no = games.get(current);
+        List<ClientHandler> handlers = new ArrayList<>();
+        ArrayList<String> users = new ArrayList<>();
+        for (Map.Entry<ClientHandler, Integer> entry : games.entrySet()) {
+            if (entry.getValue() == no) {
+                handlers.add(entry.getKey());
+                users.add(entry.getKey().getUsername());
+                if (handlers.size() == 2) {
+                    break; // Stop after finding two keys
+                }
+            }
+        }
+        DotsGame dotsGame = currentGame(users);
+
             for (ClientHandler handler : handlers) {
-                if (handlers.size() > 1 && !dotsGame.isGameover()){
-                    handler.move(msg);
-                if (dotsGame.getBoard().hasWinner()) {
+
+                String[] tokens = msg.split(Protocol.SEPARATOR);
+                Integer move = Integer.parseInt(tokens[1]);
+                HumanPlayer currentPlayer = (HumanPlayer) dotsGame.getTurn(); // current player
+                Move determinedMove = new DotsMove(dotsGame.getBoard().toRow(move),
+                                                   dotsGame.getBoard().toColumn(move),
+                                                   currentPlayer.getMark()); // get the move
+                dotsGame.doMove(determinedMove);
+                handler.move(msg);
+                if (dotsGame.isGameover() || games.size() <= 1){
+                if (dotsGame.getBoard().hasWinner() && dotsGame.isGameover()) {
                     handler.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + dotsGame.getWinner());
                 }
                 if (dotsGame.isGameover() && !dotsGame.getBoard().hasWinner()){
                     handler.gameOver(Protocol.DRAW);
-                }
 
-            }else {
+                }else if (games.size() <= 1){
                     handler.gameOver(Protocol.DISCONNECT + Protocol.SEPARATOR + handler.getUsername());
+                    }
+                games.remove(handler);
+                players.remove(handler);
+                allGames.remove(dotsGame);
+                }
             }
-            }
-            break;
-        }
+
     }
 
 
