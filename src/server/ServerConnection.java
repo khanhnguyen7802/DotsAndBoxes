@@ -39,47 +39,49 @@ public class ServerConnection extends SocketConnection {
      * @param msg the message received from the connection
      */
     @Override
-    public void handleMessage(String msg) {
+    public void handleMessage(String msg) throws IOException {
         String[] parse = msg.split(Protocol.SEPARATOR);
         String command = parse[0];
         List extras = new ArrayList<>();
-        if (parse.length == 2) {
             switch (currentState){
                 case IDLE :
                     if (Protocol.HELLO.equals(command)){
+                        clientHandler.handShake();
                         currentState = State.HELLO;
                         for (int i =2; i < parse.length; i++) {
                             extras.add(parse[i]);
                         }
                         break;
-                    }
+                    } else {clientHandler.errorHandling("HELLO expected");
+                    break;}
                 case HELLO:
                     if (Protocol.LOGIN.equals(command)){
                         clientHandler.receiveUsername(msg);
                         currentState = State.LOGGED_IN;
+                        clientHandler.handShake();
                         break;
-                    }
+                    } else {clientHandler.errorHandling("LOGIN expected");
+                    break;}
                 case LOGGED_IN:
-                    if (Protocol.NEWGAME.equals(command)){
-                        clientHandler.startGame();
+                    if (Protocol.QUEUE.equals(command)){
+                        clientHandler.recieveQueue();
                         currentState = State.GAME_STARTED;
                         break;
-                    }
+                    }else {clientHandler.errorHandling("QUEUE expected");
+                    break;}
                 case GAME_STARTED:
                     if (Protocol.MOVE.equals(command)){
                         clientHandler.recieveMove(msg);
                         break;
-                    } else {
-                        clientHandler.gameOver();
-                    }
+                    } else if (Protocol.QUEUE.equals(command)) {
+                        clientHandler.disconnectQueue();
+                    } else {clientHandler.errorHandling("Incorrect MOVE expected");
+                    break;}
+
                 default:
-                    System.out.println("Incorrect command please try again");
+                    clientHandler.errorHandling("incorrect command please try again");
             }
         }
-        else {
-            System.out.println("Invalid message");
-        }
-    }
     /**
      * Handle when the server connection is disconnected.
      */
