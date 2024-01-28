@@ -142,9 +142,9 @@ public class GameServer extends SocketServer {
     }
 
     public void handleList(ClientHandler requester) {
-        String list = Protocol.LIST+Protocol.SEPARATOR;
+        String list = Protocol.LIST;
         for(ClientHandler handler : clientHandlerList) {
-            list = list.concat(handler.getUsername()+Protocol.SEPARATOR);
+            list = list.concat(Protocol.SEPARATOR+handler.getUsername());
         }
         requester.listPrinter(list);
     }

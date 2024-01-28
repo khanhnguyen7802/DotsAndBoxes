@@ -56,8 +56,8 @@ public class ServerConnection extends SocketConnection {
                     break;}
                 case HELLO:
                     if (Protocol.LOGIN.equals(command)){
-                        clientHandler.receiveUsername(msg);
                         currentState = State.LOGGED_IN;
+                        clientHandler.receiveUsername(msg);
                         clientHandler.handShake();
                         break;
                     } else {clientHandler.errorHandling("LOGIN expected");
