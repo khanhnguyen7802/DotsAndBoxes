@@ -1,10 +1,16 @@
 package dotandboxclient;
 
+import game.ai.ComputerPlayer;
+import game.ai.NaiveStrategy;
+import game.ai.SmartStrategy;
+import game.model.HumanPlayer;
+import game.model.Mark;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 import protocol.Protocol;
 
 public class DotAndBoxClientTUI implements ClientListener {
@@ -51,7 +57,7 @@ public class DotAndBoxClientTUI implements ClientListener {
                 dotAndBoxClient = new DotAndBoxClient(inetAddress, portNumber);
                 break;
             } catch (IOException e) {
-                System.out.println("[CLIENT_TUI] IOException occurs when creating a client");
+                System.out.println("[CLIENT_TUI] Cannot access the desired port");
             } catch (IllegalArgumentException g) {
                 System.out.println("Port number must be within [0, 65535]");
                 System.out.println("Please try again");
@@ -158,7 +164,6 @@ public class DotAndBoxClientTUI implements ClientListener {
                 break;
             default:
                 System.out.println("Command is not recognized! Please choose again");
-                printMenu();
         }
     }
 

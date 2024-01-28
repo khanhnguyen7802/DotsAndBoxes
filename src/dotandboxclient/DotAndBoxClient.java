@@ -18,6 +18,8 @@ public class DotAndBoxClient {
     private String usernameLoggedIn;
     private AbstractPlayer currentPlayer;
     private DotsGame game;
+    private boolean isBot = false;
+    private boolean isSmart = false;
     private boolean isLoggedIn;
     private boolean isConnectedToServer;
     private boolean isQueued;
@@ -43,6 +45,14 @@ public class DotAndBoxClient {
         this.isLoggedIn = false;
         this.isQueued = false;
         this.isInGame = false;
+    }
+
+    public void confirmIsBot() {
+        this.isBot = true;
+    }
+
+    public void confirmIsSmart() {
+        this.isSmart = true;
     }
 
     /**
@@ -150,8 +160,42 @@ public class DotAndBoxClient {
                 System.out.println("Cannot queue because you're in a game");
             } else {
                 isQueued = true;
-                clientConnection.sendQueue();
+
+                Scanner scanner = new Scanner(System.in);
+                String typeOfPlayer;
+                String typeOfAI;
+
+                // Choose AI or not?
+                System.out.println("Do you want AI to play for you? (y/n):");
+                typeOfPlayer = scanner.nextLine();
+
+                while (!typeOfPlayer.equalsIgnoreCase("y") && !typeOfPlayer.equalsIgnoreCase("n")) {
+                    System.out.println("Please enter your option again (y/n):");
+                    typeOfPlayer = scanner.nextLine();
+                }
+
+                // if AI is chosen
+                if (typeOfPlayer.equalsIgnoreCase("y")) {
+                    isBot = true;
+                    // Ask which AI
+                    System.out.print("What type (naive/smart) of AI do you want to use (-n/-s)?: ");
+                    typeOfAI = scanner.nextLine();
+
+                    while (!typeOfAI.equalsIgnoreCase("-n") && !typeOfAI.equalsIgnoreCase("-s")) {
+                        System.out.print("Please enter your option again (-n/-s): ");
+                        typeOfAI = scanner.nextLine();
+                    }
+
+                    // if this is indeed our turn
+                    // then create a corresponding player
+                    if (typeOfAI.equalsIgnoreCase("-s")) {
+                        isSmart = true;
+                    }
+                }
+
                 System.out.println("Successfully joined the queue !!!");
+
+                clientConnection.sendQueue();
             }
 
 
@@ -167,7 +211,6 @@ public class DotAndBoxClient {
      */
     public void handleNewGame(String receivedMessage) {
         System.out.println(receivedMessage);
-        Scanner scanner = new Scanner(System.in);
         String[] parse = receivedMessage.split("~");
 
         this.isInGame = true;
@@ -180,54 +223,71 @@ public class DotAndBoxClient {
         // check if the first turn belongs to us
         boolean playFirst = namePlayer1.equals(this.usernameLoggedIn);
 
-        String typeOfPlayer;
-        String typeOfAI;
+        //        String typeOfPlayer;
+        //        String typeOfAI;
+        //
+        //        // Choose AI or not?
+        //        System.out.println("Do you want AI to play for you? (y/n):");
+        //        typeOfPlayer = scanner.nextLine();
+        //
+        //        while (!typeOfPlayer.equalsIgnoreCase("y") && !typeOfPlayer.equalsIgnoreCase("n")) {
+        //            System.out.println("Please enter your option again (y/n):");
+        //            typeOfPlayer = scanner.nextLine();
+        //        }
+        //
+        //        if (typeOfPlayer.equalsIgnoreCase("y")) {
+        //            // Ask which AI
+        //            System.out.print("What type (naive/smart) of AI do you want to use (-n/-s)?: ");
+        //            typeOfAI = scanner.nextLine();
+        //
+        //            while (!typeOfAI.equalsIgnoreCase("-n") && !typeOfAI.equalsIgnoreCase("-s")) {
+        //                System.out.print("Please enter your option again (-n/-s): ");
+        //                typeOfAI = scanner.nextLine();
+        //            }
+        //
+        //            // if this is indeed our turn
+        //            // then create a corresponding player
+        //            if (playFirst) {
+        //                if (typeOfAI.equalsIgnoreCase("-n")) {
+        //                    this.currentPlayer = new ComputerPlayer(Mark.AA, new NaiveStrategy(Mark.AA));
+        //                } else {
+        //                    this.currentPlayer = new ComputerPlayer(Mark.AA, new SmartStrategy(Mark.AA));
+        //                }
+        //            } else {
+        //                if (typeOfAI.equalsIgnoreCase("-n")) {
+        //                    this.currentPlayer = new ComputerPlayer(Mark.BB, new NaiveStrategy(Mark.BB));
+        //                } else {
+        //                    this.currentPlayer = new ComputerPlayer(Mark.BB, new SmartStrategy(Mark.BB));
+        //                }
+        //            }
+        //        } else { // if no bot
+        //            if (playFirst) {
+        //                this.currentPlayer = new HumanPlayer(this.usernameLoggedIn, Mark.AA);
+        //            } else {
+        //                this.currentPlayer = new HumanPlayer(this.usernameLoggedIn, Mark.BB);
+        //            }
+        //        }
 
-        // Choose AI or not?
-        System.out.print("Do you want AI to play for you? (y/n): ");
-        typeOfPlayer = scanner.nextLine();
 
-        while (!typeOfPlayer.equalsIgnoreCase("y") && !typeOfPlayer.equalsIgnoreCase("n")) {
-            System.out.print("Please enter your option again (y/n): ");
-            typeOfPlayer = scanner.nextLine();
-        }
-
-        if (typeOfPlayer.equalsIgnoreCase("y")) {
-            // Ask which AI
-            System.out.print("What type (naive/smart) of AI do you want to use (-n/-s)?: ");
-            typeOfAI = scanner.nextLine();
-
-            while (!typeOfAI.equalsIgnoreCase("-n") && !typeOfAI.equalsIgnoreCase("-s")) {
-                System.out.print("Please enter your option again (-n/-s): ");
-                typeOfAI = scanner.nextLine();
-            }
-
-            // if this is indeed our turn
-            // then create a corresponding player
-            if (playFirst) {
-                if (typeOfAI.equalsIgnoreCase("-n")) {
-                    this.currentPlayer = new ComputerPlayer(Mark.AA, new NaiveStrategy(Mark.AA));
-                } else {
-                    this.currentPlayer = new ComputerPlayer(Mark.AA, new SmartStrategy(Mark.AA));
-                }
+        System.out.println("Player " + namePlayer1 + " goes first");
+        AbstractPlayer otherPlayer;
+        if (isBot) {
+            if (isSmart && playFirst) {
+                this.currentPlayer = new ComputerPlayer(Mark.AA, new SmartStrategy(Mark.AA));
+            } else if ((isSmart && !playFirst)) {
+                this.currentPlayer = new ComputerPlayer(Mark.BB, new SmartStrategy(Mark.BB));
+            } else if (!isSmart && playFirst) {
+                this.currentPlayer = new ComputerPlayer(Mark.AA, new NaiveStrategy(Mark.AA));
             } else {
-                if (typeOfAI.equalsIgnoreCase("-n")) {
-                    this.currentPlayer = new ComputerPlayer(Mark.BB, new NaiveStrategy(Mark.BB));
-                } else {
-                    this.currentPlayer = new ComputerPlayer(Mark.BB, new SmartStrategy(Mark.BB));
-                }
+                this.currentPlayer = new ComputerPlayer(Mark.BB, new NaiveStrategy(Mark.BB));
             }
-        } else { // if no bot
+        } else { // human player
             if (playFirst) {
                 this.currentPlayer = new HumanPlayer(this.usernameLoggedIn, Mark.AA);
             } else {
                 this.currentPlayer = new HumanPlayer(this.usernameLoggedIn, Mark.BB);
             }
         }
-
-
-        System.out.println("Player " + namePlayer1 + " goes first");
-        AbstractPlayer otherPlayer;
 
         // next, create a game object between the 2 players
         if (playFirst) {
