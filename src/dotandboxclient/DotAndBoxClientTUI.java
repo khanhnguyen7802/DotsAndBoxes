@@ -1,16 +1,10 @@
 package dotandboxclient;
 
-import game.ai.ComputerPlayer;
-import game.ai.NaiveStrategy;
-import game.ai.SmartStrategy;
-import game.model.HumanPlayer;
-import game.model.Mark;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 import protocol.Protocol;
 
 public class DotAndBoxClientTUI implements ClientListener {
@@ -42,6 +36,11 @@ public class DotAndBoxClientTUI implements ClientListener {
 
     @Override
     public void connectionLost() {
+
+    }
+
+    @Override
+    public void printToConsole(String s) {
 
     }
 

@@ -23,4 +23,5 @@ public interface ClientListener {
      */
     void connectionLost();
 
+    void printToConsole(String s);
 }

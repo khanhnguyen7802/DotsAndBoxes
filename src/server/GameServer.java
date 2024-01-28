@@ -144,6 +144,7 @@ public class GameServer extends SocketServer {
     public void handleList(ClientHandler requester) {
         String list = Protocol.LIST;
         for(ClientHandler handler : clientHandlerList) {
+            if (handler.getUsername() != null)
             list = list.concat(Protocol.SEPARATOR+handler.getUsername());
         }
         requester.listPrinter(list);

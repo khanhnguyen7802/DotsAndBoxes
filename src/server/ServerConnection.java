@@ -94,6 +94,7 @@ public class ServerConnection extends SocketConnection {
     @Override
     public void handleDisconnect() {
         System.out.println("[SERVER CONNECTION] this is the handler disconnect");
+        clientHandler.handleDisconnect();
     }
 
     /**
