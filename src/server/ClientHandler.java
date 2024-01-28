@@ -62,7 +62,9 @@ public class ClientHandler {
     public void handShake(){
         if (serverConnection.currentState == ServerConnection.State.IDLE){
         serverConnection.send(Protocol.HELLO+Protocol.SEPARATOR+"Server of resit-8");}
-        else {
+        else if (serverConnection.currentState == ServerConnection.State.HELLO) {
+            serverConnection.send(Protocol.ALREADYLOGGEDIN);
+        } else {
             serverConnection.send(Protocol.LOGIN);
         }
     }
@@ -119,7 +121,6 @@ public class ClientHandler {
     }
 
     public void alreadyLoggedIn(){
-        serverConnection.send(Protocol.ALREADYLOGGEDIN);
         serverConnection.currentState = ServerConnection.State.HELLO;
     }
 }
