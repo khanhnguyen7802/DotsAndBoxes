@@ -161,7 +161,7 @@ public class DotAndBoxClient {
      * which is NEWGAME~<pl1_name>~<pl2_name>.
      *
      */
-    public void handleNewGame(String receivedMessage) {
+    public synchronized void handleNewGame(String receivedMessage) {
         System.out.println(receivedMessage);
         Scanner scanner = new Scanner(System.in);
         String[] parse = receivedMessage.split("~");
@@ -181,11 +181,11 @@ public class DotAndBoxClient {
 
         // Choose AI or not?
         System.out.print("Do you want AI to play for you? (y/n): ");
-        typeOfPlayer = scanner.nextLine();
+        typeOfPlayer = scanner.next();
 
         while (!typeOfPlayer.equalsIgnoreCase("y") && !typeOfPlayer.equalsIgnoreCase("n")) {
             System.out.print("Please enter your option again (y/n): ");
-            typeOfPlayer = scanner.nextLine();
+            typeOfPlayer = scanner.next();
         }
 
         if (typeOfPlayer.equalsIgnoreCase("y")) {
