@@ -349,6 +349,7 @@ public class DotAndBoxClient {
             System.out.println(this.game.getBoard());
             if (this.game.isGameover()) {
                 System.out.println("Game Over");
+                this.isInGame = false;
             }
         }
 
