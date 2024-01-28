@@ -67,9 +67,11 @@ public class DotAndBoxClientTUI implements ClientListener {
         System.out.println("[CLIENT_TUI] Client connected to server");
         boolean connectedToServer = true;
 
+        // a separate thread is created to read from socket
+        dotAndBoxClient.sendHello();
+
         while(connectedToServer) {
-            // a separate thread is created to read from socket
-            dotAndBoxClient.sendHello();
+            System.out.println("1");
             start();
         }
     }
@@ -132,7 +134,6 @@ public class DotAndBoxClientTUI implements ClientListener {
 
         switch(command) {
             case Protocol.LOGIN:
-                System.out.println("[CLIENT_TUI] Login sent");
                 String username = "";
                 if (parse.length == 2) { // LOGIN <name>
                     username = parse[1];
