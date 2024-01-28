@@ -35,42 +35,85 @@ public class SmartStrategy implements Strategy{
      * @return the naive valid move
      */
 
-        @Override
-        public Move determineMove(Game game) {
-            List<Move> possibleMoves = game.getValidMoves();
-            Board board1 = ((DotsGame) game).getBoard().deepCopy();
+    @Override
+    public Move determineMove(Game game) {
+
+        int index = 0;
+        int moves = 0;
+        List<Move> possibleMoves = game.getValidMoves();
+        Board board1 = ((DotsGame) game).getBoard().deepCopy();
 
 
-            List<Move> hasSq = new ArrayList<>();
-            List<Move> noSq = new ArrayList<>();
+        List<Move> hasSq = new ArrayList<>();
+        List<Move> noSq = new ArrayList<>();
 
-            for (int j = 0; j <= ((Board.DIM*(Board.DIM+1)*2-1));j++){
+        for (int j = 0; j <= ((Board.DIM * (Board.DIM + 1) * 2 - 1)); j++) {
+            for (int i = 0; i <= ((Board.DIM * (Board.DIM + 1) * 2 - 1)); i++){
+                board1.setField(i, Mark.FILLED);
                 if(board1.toRow(j) % 2 == 0 && board1.hasSquare(j)){
-                    if(possibleMoves.contains(new DotsMove(board1.toRow(j), board1.toColumn(j), Mark.EMPTY))){
-                    hasSq.add(new DotsMove(board1.toRow(j), board1.toColumn(j), Mark.EMPTY));}
-                    else if (possibleMoves.contains(j+Board.DIM)) {
-                        hasSq.add(new DotsMove(board1.toRow(j+Board.DIM), board1.toColumn(j+Board.DIM), Mark.EMPTY));
-                    } else if (possibleMoves.contains(j+Board.DIM + 1)) {
-                        hasSq.add(new DotsMove(board1.toRow(j+Board.DIM + 1), board1.toColumn(j+Board.DIM + 1), Mark.EMPTY));
-                    } else if (possibleMoves.contains(j+Board.DIM*2+1)) {
-                        hasSq.add(new DotsMove(board1.toRow(j+Board.DIM*2+1), board1.toColumn(j+Board.DIM*2+1), Mark.EMPTY));
-                    }
-                } else {
-                    noSq.add(new DotsMove(board1.toRow(j), board1.toColumn(j), Mark.EMPTY));
+                    if (board1.toRow(j) % 2 == 0 && board1.hasSquare(j)) {
+                        board1 = ((DotsGame) game).getBoard().deepCopy();
+                        if (game.isValidMove(
+                                new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()))) {
+                            hasSq.add(new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()));
+                        } else if (game.isValidMove(new DotsMove(board1.toRow(j + Board.DIM),
+                                                                 board1.toColumn(j + Board.DIM), getMark()))) {
+                            hasSq.add(new DotsMove(board1.toRow(j + Board.DIM),
+                                                   board1.toColumn(j + Board.DIM), getMark()));
+                        } else if (game.isValidMove(new DotsMove(board1.toRow(j + Board.DIM + 1),
+                                                                 board1.toColumn(j + Board.DIM + 1),
+                                                                 getMark()))) {
+                            hasSq.add(new DotsMove(board1.toRow(j + Board.DIM + 1),
+                                                   board1.toColumn(j + Board.DIM + 1), getMark()));
+                        } else if (game.isValidMove(new DotsMove(board1.toRow(j + Board.DIM * 2 + 1),
+                                                                 board1.toColumn(j + Board.DIM * 2 + 1),
+                                                                 getMark()))) {
+                            hasSq.add(new DotsMove(board1.toRow(j + Board.DIM * 2 + 1),
+                                                   board1.toColumn(j + Board.DIM * 2 + 1), getMark()));
+                        }
+                    break;
                 }
+                    else {
+                        if (game.isValidMove(
+                                new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()))) {
+                            noSq.add(new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()));
+                        }
+                    }
             }
-            System.out.println(hasSq.size());
-
-            if (!hasSq.isEmpty() && rand.nextBoolean()) {
-                int index = rand.nextInt(hasSq.size());
-                return hasSq.get(index);
-            } else if (!noSq.isEmpty()) {
-                int index = rand.nextInt(noSq.size());
-                return noSq.get(index);
+                board1 = ((DotsGame) game).getBoard().deepCopy();
             }
-
-            return null;
         }
+        if (noSq.isEmpty()) {
+            if (!(Board.DIM * Board.DIM - moves % 2 == 0)) { //it checks how many turns are left
+                if (!hasSq.isEmpty()) {
+                    // Make random move to potentially complete a square
+                    index = rand.nextInt(hasSq.size());
+                    Move thisMove = hasSq.get(index);
+                    moves++;
+                    return thisMove;
+                }
+
+                // If there are moves that don't complete a square, prioritize them
+                index = rand.nextInt(possibleMoves.size());
+                Move noMove = possibleMoves.get(index);
+                moves++;
+                return noMove;
+            }
+        }
+        if (!hasSq.isEmpty() || ((Board.DIM * Board.DIM - moves % 2 == 0) && noSq.isEmpty())) {
+            // Make random move to potentially complete a square
+            index = rand.nextInt(hasSq.size());
+            Move thisMove = hasSq.get(index);
+            moves++;
+            return thisMove;
+        }
+
+        // If there are moves that don't complete a square, prioritize them
+        index = rand.nextInt(noSq.size());
+        Move noSqMove = noSq.get(index);
+        moves++;
+        return noSqMove;
+    }
 
 
 }
