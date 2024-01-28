@@ -100,7 +100,7 @@ public class SmartStrategy implements Strategy{
                 return noMove;
             }
         }
-        if (!hasSq.isEmpty()) {
+        if (!hasSq.isEmpty() || ((Board.DIM * Board.DIM - moves % 2 == 0) && noSq.isEmpty())) {
             // Make random move to potentially complete a square
             index = rand.nextInt(hasSq.size());
             Move thisMove = hasSq.get(index);
