@@ -131,10 +131,20 @@ public class GameServer extends SocketServer {
         }
     }
 
+    public boolean handleUsername(ClientHandler requester, String name) {
+        ArrayList<String> list = new ArrayList<>();
+        for(ClientHandler handler : clientHandlerList) {
+            if(name.equals(handler.getUsername())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void handleList(ClientHandler requester) {
         String list = Protocol.LIST+Protocol.SEPARATOR;
         for(ClientHandler handler : clientHandlerList) {
-            list = list.concat(handler.getUsername());
+            list = list.concat(handler.getUsername()+Protocol.SEPARATOR);
         }
         requester.listPrinter(list);
     }

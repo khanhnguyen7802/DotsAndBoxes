@@ -22,4 +22,6 @@ public interface ClientListener {
      * Dealing with connection lost.
      */
     void connectionLost();
+
+    void printToConsole(String s);
 }
