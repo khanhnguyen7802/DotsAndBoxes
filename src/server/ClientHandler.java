@@ -39,12 +39,14 @@ public class ClientHandler {
      * @param msg the protocol that clients send to server (LOGIN~<msg>)
      */
     public void receiveUsername(String msg) {
-        if (username==null) { // LOGIN~<msg>
-            String[] tokens = msg.split(Protocol.SEPARATOR);
-            String name = tokens[1];
-            username = name;
-        } else {
+        String[] tokens = msg.split(Protocol.SEPARATOR);
+        String name = tokens[1];
+        if (gameServer.handleUsername(this,name)){
             alreadyLoggedIn();
+        } else {
+        if (username==null) { // LOGIN~<msg>
+            username = name;
+        }
         }
 
     }

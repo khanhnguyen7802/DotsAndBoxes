@@ -23,7 +23,11 @@ public class DotAndBoxClient {
     private boolean isQueued;
     private boolean isInGame;
 
-//    private List<ClientListener> listeners;
+    //added so i can run it
+    private List<ClientListener> listeners;
+
+    //added so i can run it
+    ClientListener clientTUI = null;
 
     /**
      * This is the constructor for the Client.
