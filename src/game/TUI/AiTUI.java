@@ -32,7 +32,6 @@ public class AiTUI implements ClientListener {
     }
 
 
-
     public void printMenu() {
         System.out.println("What should the AI be called");
     }
@@ -44,7 +43,7 @@ public class AiTUI implements ClientListener {
 
     /**
      * This is the method to run each AI's TUI.
-     * As soon as a AI client is created, run this method to start the client.
+     * As soon as an AI client is created, run this method to start the client.
      */
     public void runTUI() {
         System.out.println("[AI_TUI] Welcome to the AI");
@@ -69,10 +68,11 @@ public class AiTUI implements ClientListener {
 
         // a separate thread is created to read from socket
         dotAndBoxClient.sendHello();
+        start();
+        dotAndBoxClient.doMove();
 
-        while (connectedToServer) {
-            start();
-        }
+        //        while (connectedToServer) {
+        //        }
     }
 
     /**
@@ -134,7 +134,6 @@ public class AiTUI implements ClientListener {
      * send those to the server to handle accordingly
      */
     public void handleInputCommands() {
-        System.out.println("input name for the AI");
         String input = "";
 
         try {
@@ -143,12 +142,11 @@ public class AiTUI implements ClientListener {
             System.out.println("[AI_TUI] Error in getting input from user");
         }
 
-        boolean isValid = false;
         String[] parse = input.split("\\s+");
         String command = parse[0];
 
-        switch (currentState) {
-            case InQ:
+        switch (command) {
+            case Protocol.LOGIN:
                 String username = parse[1];
                 if (parse.length == 2) { // LOGIN <name>
                     username = parse[1];
@@ -158,11 +156,11 @@ public class AiTUI implements ClientListener {
                     }
                 }
                 dotAndBoxClient.sendLogin(username);
-                dotAndBoxClient.sendQueueAI();
-                currentState = State.InGame;
+//                dotAndBoxClient.sendQueueAI();
+//                currentState = State.InGame;
                 break;
-            case InGame:
-                dotAndBoxClient.doMove();
+            case Protocol.QUEUE:
+                dotAndBoxClient.sendQueueAI();
                 break;
             default:
                 System.out.println("Command is not recognized! Please choose again");

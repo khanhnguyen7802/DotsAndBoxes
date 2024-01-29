@@ -1,6 +1,7 @@
 package dotandboxclient;
 
 import exception.WrongFormatProtocol;
+import game.TUI.AiTUI;
 import game.ai.ComputerPlayer;
 import game.ai.NaiveStrategy;
 import game.ai.SmartStrategy;
@@ -8,6 +9,8 @@ import game.ai.Strategy;
 import game.model.*;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import protocol.Protocol;
 
@@ -32,7 +35,7 @@ public class DotAndBoxClient {
     private boolean isConnectedToServer;
     private boolean isQueued;
     private boolean isInGame;
-
+    private List<ClientListener> listeners;
     public enum ClientState {
         IDLE, LOGGED_IN, IN_QUEUE,IN_GAME
     }
@@ -55,7 +58,9 @@ public class DotAndBoxClient {
         this.clientConnection = new ClientConnection(address, port, this);
         this.isConnectedToServer = true;
         this.dotAndBoxClientTUI = new DotAndBoxClientTUI();
+        this.listeners = new ArrayList<>();
         this.aiTUI = new AiTUI();
+
 
         this.usernameLoggedIn = null;
         this.isLoggedIn = false;
@@ -317,23 +322,21 @@ public class DotAndBoxClient {
                 // Ask which AI
                 System.out.print("What type (naive/smart) of AI do you want to use (-n/-s)?: ");
                 Scanner scanner = new Scanner(System.in);
-                String typeOfPlayer;
                 String typeOfAI;
                 typeOfAI = scanner.nextLine();
-                    while (!typeOfAI.equalsIgnoreCase("-n") && !typeOfAI.equalsIgnoreCase("-s")) {
-                        System.out.print("Please enter your option again (-n/-s): ");
-                        typeOfAI = scanner.nextLine();
-                    }
+                while (!typeOfAI.equalsIgnoreCase("-n") && !typeOfAI.equalsIgnoreCase("-s")) {
+                    System.out.print("Please enter your option again (-n/-s): ");
+                    typeOfAI = scanner.nextLine();
+                }
 
-                    // if this is indeed our turn
-                    // then create a corresponding player
-                    if (typeOfAI.equalsIgnoreCase("-s")) {
-                        isSmart = true;
-                    }
-
+                // if this is indeed our turn
+                // then create a corresponding player
+                if (typeOfAI.equalsIgnoreCase("-s")) {
+                    isSmart = true;
+                }
 
                 System.out.println("Successfully joined the queue !!!");
-
+                aiTUI.stopReceivingUserInput();
                 clientConnection.sendQueue();
             }
 
