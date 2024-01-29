@@ -68,9 +68,9 @@ public class ClientConnection extends SocketConnection {
             case Protocol.MOVE:
                 client.handleMove(messageFromServer);
                 break;
-//            case Protocol.GAMEOVER:
-//                client.handleGameOver();
-//                break;
+            case Protocol.GAMEOVER:
+                client.handleGameOver(messageFromServer);
+                break;
 //            case Protocol.ERROR:
 //                break;
             default:
@@ -85,6 +85,8 @@ public class ClientConnection extends SocketConnection {
      */
     @Override
     protected void handleDisconnect() {
+        System.out.println("[CLIENT_CONNECTION] Closing the socket");
+        super.close();
     }
 
     /**

@@ -178,7 +178,7 @@ public class DotAndBoxClientTUI implements ClientListener {
                 break;
             case "HELP":
                 printMenu();
-                handleInputCommands();
+//                handleInputCommands();
                 break;
             case "EXIT":
                 //                client.closeEverything();

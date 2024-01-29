@@ -231,8 +231,8 @@ public class DotAndBoxClient {
 
                 if (answer.toUpperCase().equals("Y")) {
                     clientConnection.sendQueue();
-                    System.out.println("Successfully left the queue !!!");
                     isQueued = false;
+                    System.out.println("Successfully left the queue !!!");
                     this.currentState = ClientState.LOGGED_IN;
                 }
 
@@ -463,7 +463,7 @@ public class DotAndBoxClient {
             System.out.println(this.game.getBoard());
             if (game.isGameover()) {
                 System.out.println("Game Over");
-                System.out.println("The winner is: " + game.getWinner());
+//                System.out.println("The winner is: " + game.getWinner());
                 this.isInGame = false;
                 return;
             }
@@ -476,6 +476,27 @@ public class DotAndBoxClient {
 //            System.out.println("Your turn");
 //            sendMove();
 //        }
+    }
+
+    public void handleGameOver(String messageReceived) {
+        String[] parse = messageReceived.split(Protocol.SEPARATOR);
+        String result = parse[1];
+        this.isInGame = false;
+
+        switch (result) {
+            case Protocol.DISCONNECT:
+                System.out.println("Your opponent is disconnected, so you're the winner");
+                break;
+            case Protocol.DRAW:
+                System.out.println("Draw! No winner");
+                break;
+            case Protocol.VICTORY:
+                String winner = parse[2];
+                if (winner.equals(usernameLoggedIn)) {
+                    winner = "you";
+                }
+                System.out.println("The winner is " + winner + "!");
+        }
     }
 
 }
