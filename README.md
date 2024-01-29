@@ -58,4 +58,4 @@ the client requests the ip of the server, if we host the server we can just type
 Starting the server will only require us to type in a port number, or 0 for a random port. Then we can view the connecting and disconnecting clients printed out by the server.
 
 # Acknowledgements
-Made by : Koppány Heizer s2936011, and Khan Nguyen s2950944
+Made by : Koppány Heizer s2936011, and Khanh Nguyen s2950944

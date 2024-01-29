@@ -157,6 +157,7 @@ public class DotAndBoxClient {
                 this.usernameLoggedIn = username;
 
                 this.clientConnection.sendLogin(username);
+                isLoggedIn = true;
             }
         }
     }

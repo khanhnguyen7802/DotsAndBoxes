@@ -156,11 +156,8 @@ public class AiTUI implements ClientListener {
                     }
                 }
                 dotAndBoxClient.sendLogin(username);
-//                dotAndBoxClient.sendQueueAI();
-//                currentState = State.InGame;
-                break;
-            case Protocol.QUEUE:
                 dotAndBoxClient.sendQueueAI();
+                currentState = State.InGame;
                 break;
             default:
                 System.out.println("Command is not recognized! Please choose again");
