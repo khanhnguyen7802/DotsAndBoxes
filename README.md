@@ -28,6 +28,7 @@ src
 --server
 --test
 --utils
+![Alt text](image.png)
 
 In the .idea and out folder Intellijs files are being stored so that the project is correctly handled
 --in the src is the written code for the java
