@@ -1,6 +1,7 @@
 package dotandboxclient;
 
 import exception.WrongFormatProtocol;
+import game.TUI.AiTUI;
 import game.ai.ComputerPlayer;
 import game.ai.NaiveStrategy;
 import game.ai.SmartStrategy;
@@ -20,6 +21,7 @@ public class DotAndBoxClient {
 
     private ClientConnection clientConnection;
     private DotAndBoxClientTUI dotAndBoxClientTUI;
+    private AiTUI aiTUI;
     private String usernameLoggedIn;
     private AbstractPlayer currentPlayer;
     private DotsGame game;
@@ -36,10 +38,11 @@ public class DotAndBoxClient {
      * @param port the port to connect to
      * @throws IOException
      */
-    DotAndBoxClient(InetAddress address, int port) throws IOException {
+    public DotAndBoxClient(InetAddress address, int port) throws IOException {
         this.clientConnection = new ClientConnection(address, port, this);
         this.isConnectedToServer = true;
         this.dotAndBoxClientTUI = new DotAndBoxClientTUI();
+        this.aiTUI = new AiTUI();
 
         this.usernameLoggedIn = null;
         this.isLoggedIn = false;
@@ -248,6 +251,60 @@ public class DotAndBoxClient {
 //                        throw new RuntimeException(e);
 //                    }
 //                }
+            }
+
+
+        } else {
+            System.out.println("You're not logged in yet.");
+        }
+    }
+
+    /**
+     * Send QUEUE command to the server socket
+     * by delegating to the clientConnection to do its job.
+     *
+     * ClientConnection will use the sendMessage() method to
+     * send the command QUEUE to the server socket.
+     */
+    //@pure;
+    public void sendQueueAI() {
+        if (isLoggedIn) {
+            if (isQueued && !isInGame) { // in queue but not in game
+                System.out.println("You're already in a queue! Are you sure you want to leave (Y/N)?");
+                Scanner scanner = new Scanner(System.in);
+                String answer = scanner.nextLine();
+
+                if (answer.toUpperCase().equals("Y")) {
+                    clientConnection.sendQueue();
+                    System.out.println("Successfully left the queue !!!");
+                    isQueued = false;
+                }
+
+            } else if (isQueued && isInGame) {
+                System.out.println("Cannot queue because you're in a game");
+            } else { // join the queue
+                isBot = true;
+                // Ask which AI
+                System.out.print("What type (naive/smart) of AI do you want to use (-n/-s)?: ");
+                Scanner scanner = new Scanner(System.in);
+                String typeOfPlayer;
+                String typeOfAI;
+                typeOfAI = scanner.nextLine();
+                    while (!typeOfAI.equalsIgnoreCase("-n") && !typeOfAI.equalsIgnoreCase("-s")) {
+                        System.out.print("Please enter your option again (-n/-s): ");
+                        typeOfAI = scanner.nextLine();
+                    }
+
+                    // if this is indeed our turn
+                    // then create a corresponding player
+                    if (typeOfAI.equalsIgnoreCase("-s")) {
+                        isSmart = true;
+                    }
+
+
+                System.out.println("Successfully joined the queue !!!");
+
+                clientConnection.sendQueue();
             }
 
 

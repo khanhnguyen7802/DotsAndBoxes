@@ -1,5 +1,8 @@
 package utils;
 
+import java.util.Scanner;
+import protocol.Protocol;
+
 /**
  * This is the Helper class, which has additional self-written functions
  * to facilitate the flow of program.
@@ -15,7 +18,13 @@ public class Helper {
      * @param start starting index in the original string
      * @return
      */
+
+
+
     public static String myReplace(String origin, String replacement, int start) {
+
+
+
         char[] originCharArray = origin.toCharArray();
         char[] replacedCharArray = replacement.toCharArray();
 

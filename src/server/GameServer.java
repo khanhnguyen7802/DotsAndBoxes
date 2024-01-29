@@ -261,6 +261,8 @@ public class GameServer extends SocketServer {
                 System.out.println("Port number should be a number");
             } catch (IllegalArgumentException e) {
                 System.out.println("The port must be a positive number");
+            } catch (IOException e){
+                System.out.println("The server has been disconnected");
             }
         }
 
@@ -268,8 +270,9 @@ public class GameServer extends SocketServer {
 
         if(portNumber == 0) {
             portNumber = server.getPort();
-            System.out.println("Port " + portNumber + " is used");
+
         }
+        System.out.println("Port " + portNumber + " is used");
 
         server.acceptConnections();
     }
