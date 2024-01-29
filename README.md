@@ -13,21 +13,6 @@ as well
 - [Acknowledgements](#acknowledgements)
 
 # Folder Structure
-|resit-8 - project folder
-.idea
-out
-src
---dotsandboxclient
---exception
---game
-----ai
-----model
-----tui
---networking
---protocol
---server
---test
---utils
 ![Alt text](image.png)
 
 In the .idea and out folder Intellijs files are being stored so that the project is correctly handled
