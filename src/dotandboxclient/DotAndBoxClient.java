@@ -4,10 +4,11 @@ import exception.WrongFormatProtocol;
 import game.ai.ComputerPlayer;
 import game.ai.NaiveStrategy;
 import game.ai.SmartStrategy;
-import game.ai.Strategy;
 import game.model.*;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import protocol.Protocol;
 
@@ -20,15 +21,30 @@ public class DotAndBoxClient {
 
     private ClientConnection clientConnection;
     private DotAndBoxClientTUI dotAndBoxClientTUI;
+    private List<ClientListener> listeners;
     private String usernameLoggedIn;
     private AbstractPlayer currentPlayer;
     private DotsGame game;
+    private ClientState currentState;
     private boolean isBot = false;
+    private boolean isBotTurn;
     private boolean isSmart = false;
     private boolean isLoggedIn;
     private boolean isConnectedToServer;
     private boolean isQueued;
     private boolean isInGame;
+
+    public enum ClientState {
+        IDLE, LOGGED_IN, IN_QUEUE,IN_GAME
+    }
+
+    public void setCurrentState(ClientState state) {
+        this.currentState = state;
+    }
+
+    public ClientState getCurrentState() {
+        return this.currentState;
+    }
 
     /**
      * This is the constructor for the Client.
@@ -40,6 +56,8 @@ public class DotAndBoxClient {
         this.clientConnection = new ClientConnection(address, port, this);
         this.isConnectedToServer = true;
         this.dotAndBoxClientTUI = new DotAndBoxClientTUI();
+        this.listeners = new ArrayList<>();
+        this.currentState = ClientState.IDLE;
 
         this.usernameLoggedIn = null;
         this.isLoggedIn = false;
@@ -47,18 +65,12 @@ public class DotAndBoxClient {
         this.isInGame = false;
     }
 
-    /**
-     * Set isBot to true (which means the AI option was chosen).
-     */
-    public void confirmIsBot() {
-        this.isBot = true;
+    public boolean chooseBot() {
+        return isBot;
     }
 
-    /**
-     * Set isSmart to true (which means the Smart strategy was chosen).
-     */
-    public void confirmIsSmart() {
-        this.isSmart = true;
+    public boolean isBotTurn() {
+        return isBotTurn;
     }
 
     /**
@@ -68,7 +80,28 @@ public class DotAndBoxClient {
     void close() {
         clientConnection.handleDisconnect();
     }
+    public void handleDisconnect() {
+        System.out.println("[CLIENT]: Disconnected");
+        for (ClientListener listener : listeners) {
+            listener.connectionLost();
+        }
+    }
 
+    /**
+     * Adds a listener to the client (a listener is considered a receiver).
+     * @param listener the particular Listener
+     */
+    public void addListener(ClientListener listener){
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes a listener from the client.
+     * @param listener the particular Listener
+     */
+    void removeListener(ClientListener listener){
+        listeners.remove(listener);
+    }
 
     /**
      * Send HELLO command to the server socket
@@ -197,12 +230,14 @@ public class DotAndBoxClient {
                     clientConnection.sendQueue();
                     System.out.println("Successfully left the queue !!!");
                     isQueued = false;
+                    this.currentState = ClientState.LOGGED_IN;
                 }
 
             } else if (isQueued && isInGame) {
                 System.out.println("Cannot queue because you're in a game");
             } else { // join the queue
                 isQueued = true;
+                this.currentState = ClientState.IN_QUEUE;
 
                 Scanner scanner = new Scanner(System.in);
                 String typeOfPlayer;
@@ -263,19 +298,24 @@ public class DotAndBoxClient {
      * Determine a new DotAndBox game with the pre-chosen players.
      */
     public void handleNewGame(String receivedMessage) {
-        System.out.println(receivedMessage);
+        this.currentState = ClientState.IN_GAME;
         String[] parse = receivedMessage.split("~");
-
-        this.isInGame = true;
-        this.isQueued = false;
-
         // name of the 2 players respectively
         String namePlayer1 = parse[1];
         String namePlayer2 = parse[2];
 
+        if (namePlayer1.equals(this.usernameLoggedIn)) {
+            System.out.println("You're playing against " + namePlayer2);
+        } else {
+            System.out.println("You're playing against " + namePlayer1);
+        }
+
+        this.isInGame = true;
+        this.isQueued = false;
+
+
         // check if the first turn belongs to us
         boolean playFirst = namePlayer1.equals(this.usernameLoggedIn);
-
 
         System.out.println("Player " + namePlayer1 + " goes first");
         AbstractPlayer otherPlayer;
@@ -310,23 +350,6 @@ public class DotAndBoxClient {
         // then print out the board to observe the state
         System.out.println("Current board:");
         System.out.println(game.getBoard());
-//        if (game.getTurn() == currentPlayer && currentPlayer instanceof Strategy)
-//
-//        if (game.getTurn() == currentPlayer && isInGame) {
-//
-//            // then, we'll find a move and send this move
-//            Move currentMove = this.currentPlayer.determineMove(this.game);
-//            int row = ((DotsMove) currentMove).getRow();
-//            int col = ((DotsMove) currentMove).getCol();
-//            int actualIndex = game.getBoard().index(row, col);
-//
-//            clientConnection.sendMove(actualIndex);
-//
-//        } else if (game.getTurn() != currentPlayer) {
-//            System.out.println("Waiting for the other's turn!");
-//        } else {
-//            System.out.println("You need to join the queue for game first");
-//        }
     }
 
     /**
@@ -382,13 +405,14 @@ public class DotAndBoxClient {
         if (game.isValidMove(moveToPlaceInCell)) {
             game.doMove(moveToPlaceInCell);
             System.out.println(this.game.getBoard());
-            System.out.println("It's " + game.getTurn() + "'s turn");
             if (game.isGameover()) {
                 System.out.println("Game Over");
-                System.out.println(game.getWinner());
+                System.out.println("The winner is: " + game.getWinner());
                 this.isInGame = false;
                 return;
             }
+
+            System.out.println("It's " + game.getTurn() + "'s turn");
         }
 
         // continuously check if the next move is our move or not

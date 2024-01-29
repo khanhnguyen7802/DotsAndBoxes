@@ -1,9 +1,5 @@
 package dotandboxclient;
 
-import game.ai.NaiveStrategy;
-import game.ai.SmartStrategy;
-import game.ai.Strategy;
-import game.model.Mark;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -46,7 +42,11 @@ public class DotAndBoxClientTUI implements ClientListener {
 
     @Override
     public void connectionLost() {
-
+        this.dotAndBoxClient.removeListener(this);
+        System.out.println("[CLIENT_TUI] Connection lost");
+        dotAndBoxClient.handleDisconnect();
+        System.out.println("Connection lost");
+        System.exit(0);
     }
 
     /**
@@ -73,6 +73,7 @@ public class DotAndBoxClientTUI implements ClientListener {
         }
         System.out.println("[CLIENT_TUI] Client connected to server");
         boolean connectedToServer = true;
+        this.dotAndBoxClient.addListener(this);
 
         // a separate thread is created to read from socket
         dotAndBoxClient.sendHello();
@@ -138,13 +139,16 @@ public class DotAndBoxClientTUI implements ClientListener {
     public void handleInputCommands() {
         String input = "";
 
-        try {
-            input = in.readLine();
-        } catch (IOException e) {
-            System.out.println("[CLIENT_TUI] Error in getting input from user");
+        if (dotAndBoxClient.chooseBot()) {
+            input = Protocol.MOVE;
+        } else {
+            try {
+                input = in.readLine();
+            } catch (IOException e) {
+                System.out.println("[CLIENT_TUI] Error in getting input from user");
+            }
         }
 
-        boolean isValid = false;
         String[] parse = input.split("\\s+");
         String command = parse[0];
 
@@ -160,12 +164,14 @@ public class DotAndBoxClientTUI implements ClientListener {
                     }
                 }
                 dotAndBoxClient.sendLogin(username);
+                dotAndBoxClient.setCurrentState(DotAndBoxClient.ClientState.LOGGED_IN);
                 break;
             case Protocol.LIST:
                 dotAndBoxClient.sendList();
                 break;
             case Protocol.QUEUE:
                 dotAndBoxClient.sendQueue();
+                dotAndBoxClient.setCurrentState(DotAndBoxClient.ClientState.IN_QUEUE);
                 break;
             case Protocol.MOVE:
                 dotAndBoxClient.doMove();

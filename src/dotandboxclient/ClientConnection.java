@@ -49,8 +49,6 @@ public class ClientConnection extends SocketConnection {
 
         switch (parse[0]) {
             case Protocol.HELLO:
-                System.out.println(messageFromServer);
-
                 try {
                     client.handleHello(messageFromServer);
                 } catch (WrongFormatProtocol e) {
