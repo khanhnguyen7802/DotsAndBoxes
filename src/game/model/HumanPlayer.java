@@ -25,6 +25,7 @@ public class HumanPlayer extends AbstractPlayer {
      *
      * @return the mark of the player
      */
+    //@pure;
     public Mark getMark() {
         return mark;
     }
@@ -35,6 +36,8 @@ public class HumanPlayer extends AbstractPlayer {
      *
      * @return the move to be determined
      */
+    //@ensures game.getValidMoves().contains(\result);
+    //@requires game != null;
     @Override
     public Move determineMove(Game game) {
         DotsGame dotsGame = (DotsGame) game;

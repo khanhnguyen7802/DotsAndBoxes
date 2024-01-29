@@ -90,6 +90,7 @@ public class ClientConnection extends SocketConnection {
     /**
      * Send HELLO command to the server.
      */
+    //@pure;
     public void sendHello() {
         sendMessage(Protocol.HELLO + Protocol.SEPARATOR + DotAndBoxClient.gameName);
     }
@@ -97,6 +98,7 @@ public class ClientConnection extends SocketConnection {
     /**
      * Send LOGIN command to the server.
      */
+    //@pure;
     public void sendLogin(String username) {
         sendMessage(Protocol.LOGIN + Protocol.SEPARATOR + username);
     }
@@ -104,6 +106,7 @@ public class ClientConnection extends SocketConnection {
     /**
      * Send LIST command to the server.
      */
+    //@pure;
     public void sendList() {
         sendMessage(Protocol.LIST);
     }
@@ -111,6 +114,7 @@ public class ClientConnection extends SocketConnection {
     /**
      * Send QUEUE command to the server.
      */
+    //@pure;
     public void sendQueue() {
         sendMessage(Protocol.QUEUE);
     }
@@ -119,6 +123,7 @@ public class ClientConnection extends SocketConnection {
      * Send MOVE command to the server.
      * @param idx the index (on the board) of that move
      */
+    //@pure;
     public void sendMove(int idx) {
         sendMessage(Protocol.MOVE + Protocol.SEPARATOR + idx);
     }

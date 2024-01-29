@@ -12,6 +12,11 @@ import protocol.Protocol;
 
 public class DotAndBoxClient {
     public static final String gameName = "Resit-8 game";
+    //@ private invariant clientConnection != null;
+    //@ private invariant isLoggedIn == false || isLoggedIn == true;
+    //@ private invariant isQueued == false || isQueued == true;
+    //@ private invariant isInGame == false || isInGame == true;
+
     private ClientConnection clientConnection;
     private DotAndBoxClientTUI dotAndBoxClientTUI;
     private String usernameLoggedIn;
@@ -71,6 +76,7 @@ public class DotAndBoxClient {
      * ClientConnection will use the sendMessage() method to
      * send the command HELLO to the server socket.
      */
+    //@pure;
     public void sendHello() {
         this.clientConnection.sendHello();
     }
@@ -99,6 +105,7 @@ public class DotAndBoxClient {
      * ClientConnection will use the sendMessage() method to
      * send the command LOGIN to the server socket.
      */
+    //@pure;
     public void sendLogin(String username) {
         if (isLoggedIn) { // if the client has already logged in
             System.out.println("You have already logged in");
@@ -143,6 +150,7 @@ public class DotAndBoxClient {
      * ClientConnection will use the sendMessage() method to
      * send the command LIST to the server socket.
      */
+    //@pure;
     public void sendList() {
         if (isLoggedIn) {
             clientConnection.sendList();
@@ -155,6 +163,7 @@ public class DotAndBoxClient {
      *
      * Show all the users that are currently logged into the server.
      */
+    //@pure;
     public void handleList(String receivedMessage) {
         System.out.println(receivedMessage);
         String[] activePlayers = receivedMessage.split("~");
@@ -175,6 +184,7 @@ public class DotAndBoxClient {
      * ClientConnection will use the sendMessage() method to
      * send the command QUEUE to the server socket.
      */
+    //@pure;
     public void sendQueue() {
         if (isLoggedIn) {
             if (isQueued && !isInGame) { // in queue but not in game
@@ -325,6 +335,7 @@ public class DotAndBoxClient {
      * ClientConnection will use the sendMessage() method to
      * send the command MOVE to the server socket with an index of that move.
      */
+    //@pure;
     public void sendMove() {
         // if this is our turn
         if (game.getTurn() == currentPlayer && isInGame) {

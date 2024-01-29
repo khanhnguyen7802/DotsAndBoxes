@@ -20,6 +20,7 @@ public abstract class AbstractPlayer implements Player {
      * Returns the name of the player.
      * @return the name of the player
      */
+    //@ensures \result.equals(name);
     public String getName() {
         return name;
     }

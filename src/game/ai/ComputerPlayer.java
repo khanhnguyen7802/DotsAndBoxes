@@ -29,6 +29,8 @@ public class ComputerPlayer extends AbstractPlayer {
      *
      * @return the mark of the player
      */
+    //@ensures \result instanceof Mark;
+    //@ensures \result.equals(mark);
     public Mark getMark() {
         return mark;
     }
@@ -37,6 +39,8 @@ public class ComputerPlayer extends AbstractPlayer {
      * Get the strategy.
      * @return the strategy
      */
+    //@ensures \result instanceof Strategy;
+    //@ensures \result.equals(strategy);
     public Strategy getStrategy() {
         return strategy;
     }
@@ -46,6 +50,7 @@ public class ComputerPlayer extends AbstractPlayer {
      * Set the strategy.
      * @param strategy the strategy we want to set into
      */
+    //@ensures getStrategy().equals(strategy);
     public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
     }
@@ -56,6 +61,7 @@ public class ComputerPlayer extends AbstractPlayer {
      * @param game the current game
      * @return the Move to be determined based on the Strategy that is being used
      */
+    //@requires game!=null;
     @Override
     public Move determineMove(Game game) {
        return strategy.determineMove(game);

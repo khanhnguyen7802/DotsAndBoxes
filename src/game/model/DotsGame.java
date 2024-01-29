@@ -102,6 +102,7 @@ public class DotsGame implements Game {
      * Return the list containing all the valid moves.
      * @return a list of valid moves
      */
+    //@ensures ((\forall Move move; getValidMoves().contains(move); \result.contains(move)));
     //@pure;
     @Override
     public List<Move> getValidMoves() { // considering all empty moves
@@ -132,6 +133,8 @@ public class DotsGame implements Game {
      * @param move - the move to check
      * @return True if the move is valid; otherwise False
      */
+    //@requires board.isField(((DotsMove) move).getRow(), ((DotsMove) move).getCol());
+    //@ensures board.isEmptyField(((DotsMove) move).getRow(), ((DotsMove) move).getCol()) ==> \result == true;
     @Override
     public boolean isValidMove(Move move) {
         if (!(move instanceof DotsMove dotsMove)) {
@@ -182,6 +185,7 @@ public class DotsGame implements Game {
      * Given the board, reset it (i.e., all fields = Mark.EMPTY).
      * @param board - the state of the given board
      */
+    //@ensures (\forall int i; i > 0 && i < DIM * (DIM + 1) * 2; board.getField(i) == Mark.EMPTY);
     @Override
     public void resetBoard(Board board) {
         this.board = board;

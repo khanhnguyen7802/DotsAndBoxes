@@ -7,9 +7,14 @@ import utils.Helper;
  */
 
 public class Board {
-    /**
-     * Dimension of the board, i.e., if set to 5, the board has 5 rows and 5-6 columns.
+
+    /*@public invariant ANSI_RED == "\u001B[31m";
+    @public invariant ANSI_BLUE == "\033[0;34m";
+    @public invariant ANSI_RESET == "\u001B[0m";
+    @public invariant ANSI_GREEN == "\033[1;92m";
+    @public invariant fullVertical == String.valueOf('\u2502');
      */
+
     public static final int DIM = 5;
     private static final String DELIM = "        ";
     public static final String ANSI_RED = "\u001B[31m";
@@ -18,11 +23,9 @@ public class Board {
     public static final String ANSI_GREEN = "\033[1;92m";
     public static final String fullVertical = String.valueOf('\u2502');
 
-    //@ public invariant (fields.length == DIM*DIM);
-    //@ public invariant (\num_of int i ; 0 <= i && i < DIM*DIM; fields[i] == Mark.AA) <= 5;
-    //@ public invariant (\num_of int i ; 0 <= i && i < DIM*DIM; fields[i] == Mark.BB) <= 5;
-
-    //@ public invariant (\num_of int i;  0 <= i && i < DIM*DIM;fields[i] == Mark.AA) >= (\num_of int i;  0 <= i && i < DIM*DIM; fields[i] == Mark.BB);
+    //@ public invariant (fields.length == DIM * (DIM + 1) * 2);
+    //@ public invariant (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2; fields[i] == Mark.AA) <= 25;
+    //@ public invariant (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2; fields[i] == Mark.BB) <= 25;
 
     /**
      * The DIM by DIM fields of the Tic Tac Toe board. See NUMBERING for the
@@ -47,7 +50,7 @@ public class Board {
      * Creates a deep copy of this field.
      */
     /*@ ensures \result != this;
-     ensures (\forall int i; (i >= 0 && i < DIM*DIM); \result.fields[i] == this.fields[i]);
+     ensures (\forall int i; (i >= 0 && i < Board.DIM * (Board.DIM + 1) * 2); \result.fields[i] == this.fields[i]);
      @*/
     public Board deepCopy() {
         Board newBoard = new Board();
@@ -64,11 +67,12 @@ public class Board {
      * @param col the index of the col
      * @return the corresponding index of a field
      */
+    //@requires isField(row, col);
     public int index(int row, int col) {
         if (row % 2 == 0) {
-            return (DIM + DIM + 1) * row/2 + col;
+            return (DIM + DIM + 1) * row / 2 + col;
         } else {
-            return (row * DIM) + col + (row - 1)/2;
+            return (row * DIM) + col + (row - 1) / 2;
         }
     }
 
@@ -117,7 +121,7 @@ public class Board {
      * @return the mark on the field
      */
     /*@ requires isField(row, col);
-    ensures \result == Mark.EMPTY || \result == Mark.BB || \result == Mark.AA;
+    ensures \result == Mark.EMPTY || \result == Mark.BB || \result == Mark.AA || \result == Mark.FILLED;
      @*/
     public Mark getField(int row, int col) {
         int indexConvert = index(row, col);
@@ -134,8 +138,7 @@ public class Board {
     ensures getField(i) == Mark.EMPTY ==> \result == true;
      @*/
     public boolean isEmptyField(int i) {
-        if (isField(i) && fields[i] == Mark.EMPTY)
-            return true;
+        if (isField(i) && fields[i] == Mark.EMPTY) return true;
 
         return false;
     }
@@ -159,9 +162,11 @@ public class Board {
      * @param i the index of the field
      * @return True if that field has been filled.
      */
+    /*@ requires isField(i);
+    ensures getField(i) == Mark.FILLED ==> \result == true;
+     @*/
     public boolean isMarkedField(int i) {
-        if (isField(i) && (fields[i] == Mark.FILLED ))
-            return true;
+        if (isField(i) && (fields[i] == Mark.FILLED)) return true;
 
         return false;
     }
@@ -170,7 +175,7 @@ public class Board {
      * Tests if the whole board is full.
      * @return true if all fields are occupied
      */
-    //@ ensures (\forall int i; (i >= 0 && i < DIM*DIM); fields[i] == Mark.AA || fields[i] == Mark.BB);
+    //@ ensures (\forall int i; (i >= 0 && i < Board.DIM * (Board.DIM + 1) * 2); fields[i] == Mark.AA || fields[i] == Mark.BB);
     public boolean isFull() {
         for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
             if (isEmptyField(i)) {
@@ -186,16 +191,24 @@ public class Board {
      * (which means, that particular box belongs to that player)
      *
      * @param index the index of the field
-     * @return True if
+     * @return True if there is a square that has been formed; otherwise false
      */
+    /*@ requires isField(index);
+    ensures (getField(index) == Mark.FILLED
+            && getField(index + DIM) == Mark.FILLED
+            && getField(index + DIM + 1) == Mark.FILLED
+            && getField(index + DIM + DIM + 1) == Mark.FILLED) ==> \result == true;
+     @*/
     public boolean hasSquare(int index) {
         int sq1 = index + DIM;
         int sq2 = index + DIM + 1;
         int sq3 = index + DIM + DIM + 1;
         //if the player has all sides of a box mark the box as the player's box
-        if (toRow(index) % 2 == 0 && getField(index) == Mark.FILLED && isMarkedField(sq1) && isMarkedField(sq2) && (getField(sq3) != Mark.EMPTY) && index <= Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1)) {
+        if (toRow(index) % 2 == 0 && getField(index) == Mark.FILLED && isMarkedField(
+                sq1) && isMarkedField(sq2) && (getField(
+                sq3) != Mark.EMPTY) && index <= Board.DIM * (Board.DIM + 1) * 2 - 1 - (DIM * 2 + 1)) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
@@ -215,9 +228,10 @@ public class Board {
      * Check if the game is draw or not.
      * @return True if game is draw; otherwise False
      */
+    //@ensures (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2; fields[i] == Mark.AA) == (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2; fields[i] == Mark.BB);
     public boolean isDraw() {
         int wins = 0;
-        for (int i = 0; i <= (Board.DIM * (Board.DIM + 1) * 2 - 1 - (DIM * 2 + 1)); i++) {
+        for (int i = 0; i <= (Board.DIM * (Board.DIM + 1) * 2 - 1 - (Board.DIM * 2 + 1)); i++) {
             if (getField(i) == Mark.AA && toRow(i) % 2 == 0) {
                 wins++;
                 if (wins == (int) (DIM * DIM / 2)) {
@@ -254,6 +268,7 @@ public class Board {
      * Check if there is a winner at the end of the game.
      * @return true if there is a winner (either A or B); otherwise false.
      */
+    //@pure;
     public boolean hasWinner() {
         return isWinner(Mark.AA) || isWinner(Mark.BB);
     }
@@ -411,7 +426,7 @@ public class Board {
      * Empties all fields of this board (i.e., let them refer to the value
      * Mark.EMPTY).
      */
-    //@ ensures (\forall int i; (i >= 0 && i < DIM*DIM); fields[i] == Mark.EMPTY);
+    //@ ensures (\forall int i; (i >= 0 && i < Board.DIM * (Board.DIM + 1) * 2); fields[i] == Mark.EMPTY);
     public void reset() {
         for (int i = 0; i <= Board.DIM * (Board.DIM + 1) * 2 - 1; i++) {
             setField(i, Mark.EMPTY);
@@ -425,6 +440,7 @@ public class Board {
      * @param m the mark to be placed
      */
     /*@ requires isField(i);
+    ensures getField(i) == m;
      @*/
     public void setField(int i, Mark m) {
         if (isField(i)) {
@@ -451,6 +467,7 @@ public class Board {
      * @param index the index of the field
      * @return the corresponding row for that index
      */
+    //@requires isField(index);
     public int toRow(int index) {
         if (index % (DIM * 2 + 1) < DIM) {
             return (int) (index / (DIM + DIM + 1)) * 2;
@@ -464,6 +481,7 @@ public class Board {
      * @param index the index of the field
      * @return the corresponding col for that index
      */
+    //@requires isField(index);
     public int toColumn(int index) {
         if (index % (DIM * 2 + 1) < DIM) {
             return index - (toRow(index) * (DIM + DIM + 1)) / 2;

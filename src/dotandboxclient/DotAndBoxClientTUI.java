@@ -9,6 +9,8 @@ import protocol.Protocol;
 
 public class DotAndBoxClientTUI implements ClientListener {
     private DotAndBoxClient dotAndBoxClient;
+    //@private invariant keepReading == true || keepReading == false;
+
     private boolean keepReading;
     BufferedReader in;
 
@@ -23,6 +25,7 @@ public class DotAndBoxClientTUI implements ClientListener {
     /**
      * Format of a help menu.
      */
+    //@pure;
     @Override
     public void printMenu() {
         System.out.println("=================MENU================\n");
@@ -79,6 +82,7 @@ public class DotAndBoxClientTUI implements ClientListener {
      * Ask the user and get the address from the user input.
      * @return the address (type InetAddress)
      */
+    //@ensures \result instanceof InetAddress;
     public InetAddress getAddress() {
         String ip;
         InetAddress address = null;
@@ -192,6 +196,7 @@ public class DotAndBoxClientTUI implements ClientListener {
         }
     }
 
+    //@ensures keepReading == false;
     public void stopReceivingUserInput() {
         this.keepReading = false;
     }

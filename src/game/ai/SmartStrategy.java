@@ -8,19 +8,20 @@ import java.util.Random;
 /**
  * This class is the Smart Strategy of ComputerPlayer.
  */
-public class SmartStrategy implements Strategy{
+public class SmartStrategy implements Strategy {
     private Random rand = new Random();
 
     private final Mark mark;
-    public SmartStrategy(Mark mark){
-        this.mark = mark;
 
+    public SmartStrategy(Mark mark) {
+        this.mark = mark;
     }
 
     /**
      * Get the name of the strategy.
      * @return name of the strategy
      */
+    //@ensures \result.equals("Smart");
     @Override
     public String getName() {
         return "Smart";
@@ -31,6 +32,7 @@ public class SmartStrategy implements Strategy{
      *
      * @return the mark of the player
      */
+    //@ensures \result instanceof Mark;
     public Mark getMark() {
         return mark;
     }
@@ -43,6 +45,7 @@ public class SmartStrategy implements Strategy{
      * @param game - current state of the game
      * @return the naive valid move
      */
+    //@ensures game.getValidMoves().contains(\result);
     @Override
     public Move determineMove(Game game) {
 
@@ -55,10 +58,10 @@ public class SmartStrategy implements Strategy{
         List<Move> hasSq = new ArrayList<>();
         List<Move> noSq = new ArrayList<>();
 
-        for (int j = 0; j <= ((Board.DIM * (Board.DIM + 1) * 2 - 1)); j++) {
-            for (int i = 0; i <= ((Board.DIM * (Board.DIM + 1) * 2 - 1)); i++){
+        for (int j = 0; j <= (Board.DIM * (Board.DIM + 1) * 2 - 1); j++) {
+            for (int i = 0; i <= (Board.DIM * (Board.DIM + 1) * 2 - 1); i++) {
                 board1.setField(i, Mark.FILLED);
-                if(board1.toRow(j) % 2 == 0 && board1.hasSquare(j)){
+                if (board1.toRow(j) % 2 == 0 && board1.hasSquare(j)) {
                     if (board1.toRow(j) % 2 == 0 && board1.hasSquare(j)) {
                         board1 = ((DotsGame) game).getBoard().deepCopy();
                         if (game.isValidMove(
@@ -87,7 +90,7 @@ public class SmartStrategy implements Strategy{
                             noSq.add(new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()));
                         }
                     }
-            }
+                }
                 board1 = ((DotsGame) game).getBoard().deepCopy();
             }
         }
