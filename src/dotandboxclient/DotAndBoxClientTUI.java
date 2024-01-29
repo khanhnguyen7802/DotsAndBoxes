@@ -20,6 +20,9 @@ public class DotAndBoxClientTUI implements ClientListener {
         this.in = new BufferedReader(new InputStreamReader(System.in));
     }
 
+    /**
+     * Format of a help menu.
+     */
     @Override
     public void printMenu() {
         System.out.println("=================MENU================\n");
@@ -39,12 +42,10 @@ public class DotAndBoxClientTUI implements ClientListener {
 
     }
 
-    @Override
-    public void printToConsole(String s) {
-
-    }
-
-
+    /**
+     * This is the method to run each client's TUI.
+     * As soon as a client is created, run this method to start the client.
+     */
     public void runTUI() {
         System.out.println("[CLIENT_TUI] Start runTUI()");
         InetAddress inetAddress = getAddress();
@@ -69,12 +70,15 @@ public class DotAndBoxClientTUI implements ClientListener {
         // a separate thread is created to read from socket
         dotAndBoxClient.sendHello();
 
-        while(connectedToServer) {
-            System.out.println("1");
+        while (connectedToServer) {
             start();
         }
     }
 
+    /**
+     * Ask the user and get the address from the user input.
+     * @return the address (type InetAddress)
+     */
     public InetAddress getAddress() {
         String ip;
         InetAddress address = null;
@@ -95,6 +99,10 @@ public class DotAndBoxClientTUI implements ClientListener {
         return address;
     }
 
+    /**
+     * Ask the user and get the port number from the user input.
+     * @return the port number
+     */
     public int getPortNumber() {
         System.out.print("Enter port number: ");
         int portNumber;
@@ -128,43 +136,50 @@ public class DotAndBoxClientTUI implements ClientListener {
             System.out.println("[CLIENT_TUI] Error in getting input from user");
         }
 
+        boolean isValid = false;
         String[] parse = input.split("\\s+");
         String command = parse[0];
 
-        switch(command) {
-            case Protocol.LOGIN:
-                String username = "";
-                if (parse.length == 2) { // LOGIN <name>
-                    username = parse[1];
-                }
-                else if (parse.length > 2) { // LOGIN <first> <last> <blabla>
-                    for (int i = 1; i < parse.length; i++) {
-                        username += parse[i];
+//        while(!isValid) {
+            switch (command) {
+                case Protocol.LOGIN:
+                    String username = "";
+                    if (parse.length == 2) { // LOGIN <name>
+                        username = parse[1];
+                    } else if (parse.length > 2) { // LOGIN <first> <last> <blabla>
+                        for (int i = 1; i < parse.length; i++) {
+                            username += parse[i];
+                        }
                     }
-                }
-                dotAndBoxClient.sendLogin(username);
-                break;
-            case Protocol.LIST:
-                dotAndBoxClient.sendList();
-                break;
-            case Protocol.QUEUE:
-                dotAndBoxClient.sendQueue();
-                break;
-            case Protocol.MOVE:
-                int index = Integer.parseInt(parse[1]);
-                dotAndBoxClient.sendMove(index);
-                break;
-            case "HELP":
-                printMenu();
-                break;
-            case "EXIT":
-//                client.closeEverything();
-                stopReceivingInput();
-                System.out.println("Exited successfully! See you again!");
-                break;
-            default:
-                System.out.println("Command is not recognized! Please choose again");
-        }
+                    dotAndBoxClient.sendLogin(username);
+                    isValid = true;
+                    break;
+                case Protocol.LIST:
+                    dotAndBoxClient.sendList();
+                    isValid = true;
+                    break;
+                case Protocol.QUEUE:
+                    dotAndBoxClient.sendQueue();
+                    isValid = true;
+                    break;
+                case Protocol.MOVE:
+                    dotAndBoxClient.sendMove();
+                    isValid = true;
+                    break;
+                case "HELP":
+                    printMenu();
+                    handleInputCommands();
+                    isValid = true;
+                    break;
+                case "EXIT":
+                    //                client.closeEverything();
+                    System.out.println("Exited successfully! See you again!");
+                    break;
+                default:
+                    System.out.println("Command is not recognized! Please choose again");
+                    handleInputCommands();
+            }
+//        }
     }
 
     public void start() {
@@ -175,15 +190,17 @@ public class DotAndBoxClientTUI implements ClientListener {
                 System.out.println("[CLIENT_TUI] Runtime exception");
             }
         }
-        this.keepReading = true;
     }
 
-    public void stopReceivingInput() {
+    public void stopReceivingUserInput() {
         this.keepReading = false;
     }
 
+    /**
+     * Main function to run the TUI.
+     * @param args parameters
+     */
     public static void main(String[] args) {
         new DotAndBoxClientTUI().runTUI();
     }
-
 }

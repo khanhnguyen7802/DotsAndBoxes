@@ -6,6 +6,9 @@ import java.net.InetAddress;
 import networking.SocketConnection;
 import protocol.Protocol;
 
+/**
+ * This is the class which is in charge of handling and sending messages to the server socket.
+ */
 public class ClientConnection extends SocketConnection {
     private DotAndBoxClient client;
 
@@ -25,10 +28,14 @@ public class ClientConnection extends SocketConnection {
         start();
     }
 
+    /**
+     * Handle at the start when the thread starts receiving message from the socket.
+     */
     @Override
     public void handleStart() {
         System.out.println("[CLIENT_CONNECTION] Start reading from the socket");
     }
+
     /**
      * Handle the received messageFromServer from server socket.
      * The protocol can be either HELLO, LOGIN, ALREADYLOGGEDIN, LIST
@@ -73,6 +80,9 @@ public class ClientConnection extends SocketConnection {
         }
     }
 
+    /**
+     * How client handles in case there's a disconnect.
+     */
     @Override
     protected void handleDisconnect() {
     }
@@ -98,10 +108,17 @@ public class ClientConnection extends SocketConnection {
         sendMessage(Protocol.LIST);
     }
 
+    /**
+     * Send QUEUE command to the server.
+     */
     public void sendQueue() {
         sendMessage(Protocol.QUEUE);
     }
 
+    /**
+     * Send MOVE command to the server.
+     * @param idx the index (on the board) of that move
+     */
     public void sendMove(int idx) {
         sendMessage(Protocol.MOVE + Protocol.SEPARATOR + idx);
     }

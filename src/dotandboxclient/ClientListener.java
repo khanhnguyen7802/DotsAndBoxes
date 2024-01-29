@@ -1,5 +1,9 @@
 package dotandboxclient;
 
+/**
+ * This interface is designed for the TUI.
+ * It works as the View in MVC.
+ */
 public interface ClientListener {
     /**
      * This method is to print out the menu with options to be chosen.
@@ -12,16 +16,9 @@ public interface ClientListener {
      */
     void printMenu();
 
-    //    /**
-    //     * Choose a number corresponding to the command
-    //     * @return an integer that indicates the corresponding option
-    //     */
-    //    int chooseCommand();
-
     /**
      * Dealing with connection lost.
      */
     void connectionLost();
 
-    void printToConsole(String s);
 }
