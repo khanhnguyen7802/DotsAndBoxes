@@ -147,6 +147,7 @@ public class ClientHandler {
     /**
      * This method checks sets the state back to non Logged in.
      */
+    // @
     public void alreadyLoggedIn() {
         serverConnection.currentState = ServerConnection.State.H;
     }

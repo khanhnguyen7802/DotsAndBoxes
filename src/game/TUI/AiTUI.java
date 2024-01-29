@@ -134,19 +134,17 @@ public class AiTUI implements ClientListener {
      * send those to the server to handle accordingly
      */
     public void handleInputCommands() {
-        String input = "";
+        switch (currentState) {
+            case InQ:
+                String input = "";
+                try {
+                    input = in.readLine();
+                } catch (IOException e) {
+                    System.out.println("[AI_TUI] Error in getting input from user");
+                }
 
-        try {
-            input = in.readLine();
-        } catch (IOException e) {
-            System.out.println("[AI_TUI] Error in getting input from user");
-        }
-
-        String[] parse = input.split("\\s+");
-        String command = parse[0];
-
-        switch (command) {
-            case Protocol.LOGIN:
+                String[] parse = input.split("\\s+");
+                String command = parse[0];
                 String username = parse[1];
                 if (parse.length == 2) { // LOGIN <name>
                     username = parse[1];
@@ -159,6 +157,8 @@ public class AiTUI implements ClientListener {
                 dotAndBoxClient.sendQueueAI();
                 currentState = State.InGame;
                 break;
+            case InGame:
+                dotAndBoxClient.doMove();
             default:
                 System.out.println("Command is not recognized! Please choose again");
                 handleInputCommands();
@@ -167,7 +167,7 @@ public class AiTUI implements ClientListener {
     }
 
     public void start() {
-        while (keepReading) {
+        while (keepReading && currentState == State.InQ) {
             try {
                 handleInputCommands();
             } catch (RuntimeException e) {
