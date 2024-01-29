@@ -65,7 +65,6 @@ public abstract class SocketServer {
     /**
      * Creates a new connection handler for the given socket.
      * @param socket the socket for the connection
-     * @return the connection handler
      */
     protected abstract void handleConnection(Socket socket);
 }

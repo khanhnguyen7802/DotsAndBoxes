@@ -7,27 +7,23 @@ import java.util.*;
 import networking.SocketServer;
 import protocol.Protocol;
 
+/**
+ * This class hosts the server for the game Dots and boxes.
+ */
 public class GameServer extends SocketServer {
-    List<ClientHandler> clientHandlerList = new ArrayList<>();
-    List<ClientHandler> inQueue = new ArrayList<>();
+    private final List<ClientHandler> clientHandlerList = new ArrayList<>();
+    private final List<ClientHandler> inQueue = new ArrayList<>();
 
     private Integer totalNoOfGames = 0;
-    private Map<ClientHandler, Integer> games = new HashMap();
+    private final Map<ClientHandler, Integer> games = new HashMap<>();
 
     Map<DotsGame, List<AbstractPlayer>> allGames = new HashMap<>();
-
-    private ArrayList players = new ArrayList<ClientHandler>();
-
-    private DotsGame dotGame;
-    private DotsMove move;
-    private AbstractPlayer player1;
-    private AbstractPlayer player2;
-
 
     /**
      * Constructs a new ChatServer.
      * @param port the port to listen on
-     * @throws IOException if the server socket cannot be created, for example, because the port is already bound.
+     * @throws IOException if the server socket cannot be created,
+     * for example, because the port is already bound.
      */
     public GameServer(int port) throws IOException {
         super(port);
@@ -45,7 +41,8 @@ public class GameServer extends SocketServer {
 
     /**
      * Accepts connections and starts a new thread for each connection.
-     * This method will block until the server socket is closed, for example by invoking closeServerSocket.
+     * This method will block until the server socket is closed,
+     * for example by invoking closeServerSocket.
      *
      * @throws IOException if an I/O error occurs when waiting for a connection
      */
@@ -56,7 +53,8 @@ public class GameServer extends SocketServer {
 
     /**
      * Closes the server socket. This will cause the server to stop accepting new connections.
-     * If called from a different thread than the one running acceptConnections, then that thread will return from
+     * If called from a different thread than the one running acceptConnections,
+     * then that thread will return from
      * acceptConnections.
      */
     @Override
@@ -70,16 +68,18 @@ public class GameServer extends SocketServer {
      * Creates a new connection handler for the given socket.
      *
      * @param socket the socket for the connection
-     * @return the connection handler
      */
     @Override
     public void handleConnection(Socket socket) {
         System.out.println("A client has connected");
         try {
-            var serverConnection = new ServerConnection(socket); // create a connection using a socket
-            ClientHandler clientHandler = new ClientHandler(this); // create a handler for the given socket
+            var serverConnection = new ServerConnection(
+                    socket); // create a connection using a socket
+            ClientHandler clientHandler = new ClientHandler(
+                    this); // create a handler for the given socket
             clientHandler.setServerConnection(serverConnection);
-            serverConnection.setClientHandler(clientHandler); // give reference to client handler for the connection
+            serverConnection.setClientHandler(
+                    clientHandler); // give reference to client handler for the connection
 
             addClient(clientHandler);
             serverConnection.start();
@@ -90,12 +90,19 @@ public class GameServer extends SocketServer {
 
     }
 
-
+    /**
+     * This adds a client to the Queue.
+     * @param client - the current client that has just joined the QUEUE
+     */
     public synchronized void addQueue(ClientHandler client) {
         this.inQueue.add(client);
     }
 
 
+    /**
+     * This removes a client from the Queue.
+     * @param client - the current client that will be removed from the QUEUE
+     */
     public synchronized void removeQueue(ClientHandler client) {
         this.inQueue.remove(client);
     }
@@ -103,7 +110,7 @@ public class GameServer extends SocketServer {
 
     /**
      * This adds a client to the server.
-     * @param client
+     * @param client - The current client that has just finished the handshake
      */
     public synchronized void addClient(ClientHandler client) {
         this.clientHandlerList.add(client);
@@ -112,96 +119,125 @@ public class GameServer extends SocketServer {
 
     /**
      * A client is removed from the server.
-     * @param client
+     * @param client - the client that has just disconnected
      */
     public synchronized void removeClient(ClientHandler client) {
         this.clientHandlerList.remove(client);
         System.out.println("client is removed");
     }
 
-
     /**
-     * Handle  a chat message that is received (by a client that already has a username).
-     * @param from - the client that sends the msg
-     * @param msgContent - content of the msg
+     * This method receives the Username and checks if there
+     * is a Username with the same name.
+     * @param name - username of the client.
+     * @return true || false
      */
-    public void handleMove(String msgContent) {
-        for(ClientHandler handler : clientHandlerList) {
-            handler.recieveMove(msgContent);
-        }
-    }
-
-    public boolean handleUsername(ClientHandler requester, String name) {
-        ArrayList<String> list = new ArrayList<>();
-        for(ClientHandler handler : clientHandlerList) {
-            if(name.equals(handler.getUsername())){
+    public boolean handleUsername(String name) {
+        for (ClientHandler handler : clientHandlerList) {
+            if (name.equals(handler.getUsername())) {
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     * This method will create the list of all client names.
+     * That are logged in.
+     * @param requester - the client requesting the list
+     */
     public void handleList(ClientHandler requester) {
         String list = Protocol.LIST;
-        for(ClientHandler handler : clientHandlerList) {
-            if (handler.getUsername() != null)
-            list = list.concat(Protocol.SEPARATOR+handler.getUsername());
+        for (ClientHandler handler : clientHandlerList) {
+            if (handler.getUsername() != null) {
+                list = list.concat(Protocol.SEPARATOR + handler.getUsername());
+            }
         }
         requester.listPrinter(list);
     }
 
-    public synchronized void handleQueue(ClientHandler handlers) throws IOException {
-        inQueue.add(handlers);
+    /**
+     * This method will receive the client that requests QUEUE, and will add it to a new game
+     * if there are enough clients to play a game.
+     * @param handlers - client requesting to join the queue
+     */
+    public synchronized void handleQueue(ClientHandler handlers) {
+        addQueue(handlers); // add handlers to be in the queue
         List<String> user = new ArrayList<>();
         List<ClientHandler> inHandler = new ArrayList<>();
-        int counter=0;
-        if (inQueue.size() >1 && inQueue.size() % 2 == 0){
-        for(ClientHandler handler : inQueue) {
-            user.add(handler.getUsername());
-            inHandler.add(handler);
-            counter++;
-            if(counter == 2){
-                for (int i = 0; i < 2; i++ ) {
-                    inHandler.get(i).startGame(user.get(0), user.get(1));
-                    removeQueue(inHandler.get(i));
-                    players.add(inHandler.get(i));
-                    games.put(inHandler.get(i),totalNoOfGames);
-                    createGame(user.get(0), user.get(1));
+        int counter = 0;
+        if (inQueue.size() > 1 && inQueue.size() % 2 == 0) {
+            // if there are enough players create
+            //a game
+            for (ClientHandler handler : inQueue) { //iterate through only the players in queue
+                user.add(handler.getUsername());
+                inHandler.add(handler);
+                counter++;
+                if (counter == 2) {
+                    for (int i = 0; i < 2; i++) {
+                        inHandler.get(i).startGame(user.get(0), user.get(1));
+                        games.put(inHandler.get(i), totalNoOfGames);
+                        createGame(user.get(0), user.get(1));
+                        //create a game with the current players, having the index of the total no
+                        // of games ever started
+                    }
+                    totalNoOfGames++; // number of games +1
+                    break;
                 }
-                counter = 0;
-                user = new ArrayList<>();
-                inHandler = new ArrayList<ClientHandler>();
-                totalNoOfGames ++;
-                break;
-            }
             }
         }
     }
 
-    public void createGame(String pl1, String pl2){
-        player1 = new HumanPlayer(pl1, Mark.AA);
-        player2 = new HumanPlayer(pl2, Mark.BB);
-        List players = new ArrayList<>();
-        players.add(player1);
-        players.add(player2);
-        dotGame = new DotsGame(player1, player2);
-        allGames.put(dotGame,players);
+    /**
+     * This method will create the game for two players.
+     * @param pl1 - first player
+     * @param pl2 - second player
+     */
+    public void createGame(String pl1, String pl2) {
+        AbstractPlayer player1 = new HumanPlayer(pl1, Mark.AA);
+        AbstractPlayer player2 = new HumanPlayer(pl2, Mark.BB);
+        // create the player objects for a game of Dots and Boxes
+        List<AbstractPlayer> currentPlayers = new ArrayList<>();
+        currentPlayers.add(player1);
+        currentPlayers.add(player2);
+        DotsGame dotGame = new DotsGame(player1, player2); // create the game for the players
+        allGames.put(dotGame, currentPlayers); // add the game to the list of all games
     }
 
-    public DotsGame currentGame(ArrayList<String> users){
+    /**
+     * This method checks if players are in a game together. And checks
+     * where is their game stored in the list of all games
+     * @param users -
+     * @return players in a game together.
+     */
+    public DotsGame currentGame(ArrayList<String> users) {
         for (Map.Entry<DotsGame, List<AbstractPlayer>> dotsGame : allGames.entrySet()) {
-            if (dotsGame.getValue().get(0).getName() == users.get(0).toString() || dotsGame.getValue().get(0).getName() == users.get(1).toString()) {
+            // iterate through all games and find the players, having their names as
+            //the unique identifier
+            if (Objects.equals(dotsGame.getValue().get(0).getName(),
+                               users.get(0)) || Objects.equals(dotsGame.getValue().get(0).getName(),
+                                                               users.get(1))) {
                 return dotsGame.getKey();
             }
         }
         return null;
     }
 
-    public synchronized void allIngame(String msg, ClientHandler current){
+    /**
+     * This method will initiate the game, and selects the players that are in
+     * a game together. And afterward it will receive the moves, checks for the
+     * validity of the move, if valid it will send the move to all players
+     * in the current game.
+     * @param msg - the move
+     * @param current - the current player doing the move
+     */
+    public synchronized void allIngame(String msg, ClientHandler current) {
         int no = games.get(current);
         List<ClientHandler> handlers = new ArrayList<>();
         ArrayList<String> users = new ArrayList<>();
         for (Map.Entry<ClientHandler, Integer> entry : games.entrySet()) {
+            // searches through all games to find the current game
+            // by the players usernames.
             if (entry.getValue() == no) {
                 handlers.add(entry.getKey());
                 users.add(entry.getKey().getUsername());
@@ -211,39 +247,44 @@ public class GameServer extends SocketServer {
             }
         }
         DotsGame dotsGame = currentGame(users);
+        // create a temporary game obj from the stored game
 
-            for (ClientHandler handler : handlers) {
+        for (ClientHandler handler : handlers) {
 
-                String[] tokens = msg.split(Protocol.SEPARATOR);
-                Integer move = Integer.parseInt(tokens[1]);
-                HumanPlayer currentPlayer = (HumanPlayer) dotsGame.getTurn(); // current player
-                Move determinedMove = new DotsMove(dotsGame.getBoard().toRow(move),
-                                                   dotsGame.getBoard().toColumn(move),
-                                                   currentPlayer.getMark()); // get the move
-                dotsGame.doMove(determinedMove);
-                handler.move(msg);
-                if (dotsGame.isGameover() || games.size() <= 1){
+            String[] tokens = msg.split(Protocol.SEPARATOR);
+            int integer = Integer.parseInt(tokens[1]);
+            HumanPlayer currentPlayer = (HumanPlayer) dotsGame.getTurn(); // current player
+            Move determinedMove = new DotsMove(dotsGame.getBoard().toRow(integer),
+                                               dotsGame.getBoard().toColumn(integer),
+                                               currentPlayer.getMark());
+            dotsGame.doMove(determinedMove);
+            handler.move(msg); // make the move of the player
+            if (dotsGame.isGameover() || games.size() <= 1) {
                 if (dotsGame.getBoard().hasWinner() && dotsGame.isGameover()) {
+                    // finish game if there is a winner
                     handler.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + dotsGame.getWinner());
                 }
-                if (dotsGame.isGameover() && !dotsGame.getBoard().hasWinner()){
+                if (dotsGame.isGameover() && !dotsGame.getBoard().hasWinner()) {
+                    // finish game if it ends in a draw
                     handler.gameOver(Protocol.DRAW);
 
-                }else if (games.size() <= 1){
-                    handler.gameOver(Protocol.DISCONNECT + Protocol.SEPARATOR + handler.getUsername());
-                    }
+                } else if (games.size() <= 1) {
+                    // finish game if a player loses connection
+                    handler.gameOver(
+                            Protocol.DISCONNECT + Protocol.SEPARATOR + handler.getUsername());
+                }
                 allGames.remove(dotsGame);
 
-                }
             }
+        }
 
     }
 
 
     /**
      * This is the main runnable method.
-     * @param args
-     * @throws IOException
+     * @param args - arguments of the main method
+     * @throws IOException - Signals that an I/O exception, of some sort has occurred.
      */
     public static void main(String[] args) throws IOException {
         GameServer server;
@@ -261,14 +302,13 @@ public class GameServer extends SocketServer {
                 System.out.println("Port number should be a number");
             } catch (IllegalArgumentException e) {
                 System.out.println("The port must be a positive number");
-            } catch (IOException e){
+            } catch (IOException e) {
                 System.out.println("The server has been disconnected");
             }
         }
 
 
-
-        if(portNumber == 0) {
+        if (portNumber == 0) { // connect to a random port if we type in 0
             portNumber = server.getPort();
 
         }
