@@ -78,6 +78,8 @@ public class ClientConnection extends SocketConnection {
         }
     }
 
+
+
     /**
      * How client handles in case there's a disconnect.
      */
