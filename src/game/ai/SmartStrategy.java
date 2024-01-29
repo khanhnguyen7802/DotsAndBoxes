@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This class is the Smart Strategy of ComputerPlayer.
+ */
 public class SmartStrategy implements Strategy{
     private Random rand = new Random();
 
@@ -14,6 +17,10 @@ public class SmartStrategy implements Strategy{
 
     }
 
+    /**
+     * Get the name of the strategy.
+     * @return name of the strategy
+     */
     @Override
     public String getName() {
         return "Smart";
@@ -31,10 +38,11 @@ public class SmartStrategy implements Strategy{
 
     /**
      * Keep searching for the valid move until it finds one.
+     * The smart strategy doesn't fill in the square that makes it lose.
+     *
      * @param game - current state of the game
      * @return the naive valid move
      */
-
     @Override
     public Move determineMove(Game game) {
 
@@ -65,15 +73,15 @@ public class SmartStrategy implements Strategy{
                                                                  getMark()))) {
                             hasSq.add(new DotsMove(board1.toRow(j + Board.DIM + 1),
                                                    board1.toColumn(j + Board.DIM + 1), getMark()));
-                        } else if (game.isValidMove(new DotsMove(board1.toRow(j + Board.DIM * 2 + 1),
-                                                                 board1.toColumn(j + Board.DIM * 2 + 1),
-                                                                 getMark()))) {
+                        } else if (game.isValidMove(
+                                new DotsMove(board1.toRow(j + Board.DIM * 2 + 1),
+                                             board1.toColumn(j + Board.DIM * 2 + 1), getMark()))) {
                             hasSq.add(new DotsMove(board1.toRow(j + Board.DIM * 2 + 1),
-                                                   board1.toColumn(j + Board.DIM * 2 + 1), getMark()));
+                                                   board1.toColumn(j + Board.DIM * 2 + 1),
+                                                   getMark()));
                         }
-                    break;
-                }
-                    else {
+                        break;
+                    } else {
                         if (game.isValidMove(
                                 new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()))) {
                             noSq.add(new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()));

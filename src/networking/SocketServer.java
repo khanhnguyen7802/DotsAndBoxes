@@ -31,7 +31,8 @@ public abstract class SocketServer {
 
     /**
      * Accepts connections and starts a new thread for each connection.
-     * This method will block until the server socket is closed, for example by invoking closeServerSocket.
+     * This method will block until the server socket is closed,
+     * for example by invoking closeServerSocket.
      * @throws IOException if an I/O error occurs when waiting for a connection
      */
     protected void acceptConnections() throws IOException {
@@ -40,19 +41,22 @@ public abstract class SocketServer {
                 Socket socket = serverSocket.accept();
                 handleConnection(socket);
             } catch (SocketException ignored) {
-                // this can happen if the ServerSocket is closed while accepting, in which case we just ignore the exception
+                // this can happen if the ServerSocket is closed while accepting,
+                // in which case we just ignore the exception
             }
         }
     }
 
     /**
      * Closes the server socket. This will cause the server to stop accepting new connections.
-     * If called from a different thread than the one running acceptConnections, then that thread will return from
-     * acceptConnections.
+     * If called from a different thread than the one running acceptConnections,
+     * then that thread will return from acceptConnections.
      */
     protected synchronized void close() {
         try {
-            if (!serverSocket.isClosed()) serverSocket.close();
+            if (!serverSocket.isClosed()) {
+                serverSocket.close();
+            }
         } catch (IOException ignored) {
             // ignore, we are closing the server socket anyway
         }

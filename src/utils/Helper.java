@@ -1,5 +1,9 @@
 package utils;
 
+/**
+ * This is the Helper class, which has additional self-written functions
+ * to facilitate the flow of program.
+ */
 public class Helper {
     /**
      * Given an index, this method puts a replaced string

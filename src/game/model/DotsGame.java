@@ -178,6 +178,10 @@ public class DotsGame implements Game {
         }
     }
 
+    /**
+     * Given the board, reset it (i.e., all fields = Mark.EMPTY).
+     * @param board - the state of the given board
+     */
     @Override
     public void resetBoard(Board board) {
         this.board = board;

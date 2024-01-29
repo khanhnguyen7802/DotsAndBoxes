@@ -1,5 +1,8 @@
 package protocol;
 
+/**
+ * This is the class that contains all required protocols for communication of the program.
+ */
 public final class Protocol {
     private Protocol() { }
 

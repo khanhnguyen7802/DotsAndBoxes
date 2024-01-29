@@ -5,7 +5,9 @@ import game.model.Mark;
 import game.model.Move;
 import game.model.AbstractPlayer;
 
-
+/**
+ * This is the class of a computer player.
+ */
 public class ComputerPlayer extends AbstractPlayer {
     private final Mark mark;
     private Strategy strategy;
@@ -13,8 +15,8 @@ public class ComputerPlayer extends AbstractPlayer {
     /**
      * Creates a new ComputerPlayer object.
      *
-     * @param strategy
-     * @param mark
+     * @param strategy the strategy that ComputerPlayer will be using
+     * @param mark the mark that computer player uses
      */
     public ComputerPlayer(Mark mark, Strategy strategy) {
         super(strategy.getName() + "-" + mark);
@@ -48,6 +50,12 @@ public class ComputerPlayer extends AbstractPlayer {
         this.strategy = strategy;
     }
 
+    /**
+     * Determine the Move of the player.
+     *
+     * @param game the current game
+     * @return the Move to be determined based on the Strategy that is being used
+     */
     @Override
     public Move determineMove(Game game) {
        return strategy.determineMove(game);

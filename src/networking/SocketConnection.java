@@ -29,7 +29,8 @@ public abstract class SocketConnection {
 
     /**
      * Make a new TCP connection to the given host and port.
-     * The receiving thread is not started yet. Call start on the returned SocketConnection to start receiving messages.
+     * The receiving thread is not started yet. Call start on the returned SocketConnection
+     * to start receiving messages.
      * @param host the address of the server to connect to
      * @param port the port of the server to connect to
      * @throws IOException if the connection cannot be made or there was some other I/O problem
@@ -40,7 +41,8 @@ public abstract class SocketConnection {
 
     /**
      * Make a new TCP connection to the given host and port.
-     * The receiving thread is not started yet. Call start on the returned SocketConnection to start receiving messages.
+     * The receiving thread is not started yet. Call start on the returned SocketConnection
+     * to start receiving messages.
      * @param host the address of the server to connect to
      * @param port the port of the server to connect to
      * @throws IOException if the connection cannot be made or there was some other I/O problem
@@ -76,7 +78,7 @@ public abstract class SocketConnection {
             }
         } catch (IOException | WrongFormatProtocol e) {
             // ignore the exception, just close the connection
-        }  finally {
+        } finally {
             close();
             handleDisconnect();
         }

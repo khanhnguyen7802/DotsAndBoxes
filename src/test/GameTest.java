@@ -1,15 +1,14 @@
 package test;
 
 import game.model.*;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static game.model.Board.DIM;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Testing the gameLogic.
@@ -35,7 +34,7 @@ public class GameTest {
      * It checks whether doMove indeed does a Move correctly.
      */
     @Test
-    public void testDoMove(){
+    public void testDoMove() {
         Move determinedMove = new DotsMove(0, 0, Mark.AA);
         game.doMove(determinedMove);
         assertTrue(Mark.FILLED == game.getBoard().getField(0));
@@ -46,7 +45,7 @@ public class GameTest {
      * are met.
      */
     @Test
-    public void testBox(){
+    public void testBox() {
         game.turnIndex = 1;
         Move move1 = new DotsMove(0, 0, Mark.FILLED);
         game.doMove(move1);
@@ -90,7 +89,7 @@ public class GameTest {
             int col = board.toColumn(i);
             Move move = new DotsMove(row, col, Mark.BB);
             game.doMove(move);
-            if (game.isGameover()){
+            if (game.isGameover()) {
                 assertTrue(game.getWinner() == player2);
             }
         }
@@ -105,7 +104,7 @@ public class GameTest {
     @Test
     public void testRandom(){
         List<Move> possibleMoves = game.getValidMoves();
-        while ((possibleMoves.size()-1 >0)){
+        while (possibleMoves.size() - 1 > 0) {
             possibleMoves = game.getValidMoves();
             Random rand = new Random();
             int index = rand.nextInt(possibleMoves.size());
@@ -116,8 +115,8 @@ public class GameTest {
         System.out.println("The winner is: " + game.getWinner());
         assertTrue(game.isGameover());
         assertTrue(game.getWinner() != null);
-        for(int i = 0; i < Board.DIM * (Board.DIM + 1) * 2 - DIM; i++) {
-            if(i % (DIM*2+1) == 0) {
+        for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2 - DIM; i++) {
+            if (i % (DIM * 2 + 1) == 0) {
                 assertFalse(game.getBoard().getField(i) == Mark.FILLED);
                 assertFalse(game.getBoard().getField(i) == Mark.EMPTY);
             }

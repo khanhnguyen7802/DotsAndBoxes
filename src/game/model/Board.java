@@ -30,11 +30,10 @@ public class Board {
      */
 
     private /*@ spec_public */ Mark[] fields;
-    Board board;
+
     /**
      * Constructor to create an empty board.
      */
-
     public Board() {
         int numberOfLines = Board.DIM * (Board.DIM + 1) * 2;
 
@@ -128,7 +127,7 @@ public class Board {
 
     /**
      * Returns true if the field[i] is empty.
-     * @param i the index of the field (see NUMBERING)
+     * @param i the index of the field
      * @return true if the field is empty
      */
     /*@ requires isField(i);
@@ -173,11 +172,12 @@ public class Board {
      */
     //@ ensures (\forall int i; (i >= 0 && i < DIM*DIM); fields[i] == Mark.AA || fields[i] == Mark.BB);
     public boolean isFull() {
-    	 for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
-             if (isEmptyField(i))
-                 return false;
-         }
-         return true;
+        for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
+            if (isEmptyField(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -217,10 +217,10 @@ public class Board {
      */
     public boolean isDraw() {
         int wins = 0;
-        for (int i = 0; i <= ((Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1))); i++){
-            if(getField(i)==Mark.AA && toRow(i) % 2 == 0){
+        for (int i = 0; i <= (Board.DIM * (Board.DIM + 1) * 2 - 1 - (DIM * 2 + 1)); i++) {
+            if (getField(i) == Mark.AA && toRow(i) % 2 == 0) {
                 wins++;
-                if (wins == (int)(DIM*DIM/2)){
+                if (wins == (int) (DIM * DIM / 2)) {
                     return true;
                 }
             }
@@ -239,21 +239,23 @@ public class Board {
      @*/
     public boolean isWinner(Mark m) {
         int wins = 0;
-        for (int i = 0; i <= ((Board.DIM*(Board.DIM+1)*2-1-(DIM*2+1))); i++){
-            if(getField(i)==m && toRow(i) % 2 == 0){
+        for (int i = 0; i <= (Board.DIM * (Board.DIM + 1) * 2 - 1 - (DIM * 2 + 1)); i++) {
+            if (getField(i) == m && toRow(i) % 2 == 0) {
                 wins++;
-                if (wins >= (int)(DIM*DIM/2)){
+                if (wins >= (int) (DIM * DIM / 2)) {
                     return true;
+                }
             }
-        }
         }
         return false;
     }
 
-
+    /**
+     * Check if there is a winner at the end of the game.
+     * @return true if there is a winner (either A or B); otherwise false.
+     */
     public boolean hasWinner() {
-         return isWinner(Mark.AA) || isWinner(
-                 Mark.BB);
+        return isWinner(Mark.AA) || isWinner(Mark.BB);
     }
 
     /**
@@ -279,7 +281,7 @@ public class Board {
 
                     String choice = getField(i, j).toString().substring(0, 1);
                     String temporaryRowForHorizontal = "";
-                    switch(choice) {
+                    switch (choice) {
                         case "A":
                             temporaryRowForHorizontal += dot + ANSI_RED + "----" + ANSI_RESET;
                             row += temporaryRowForHorizontal;
@@ -372,7 +374,7 @@ public class Board {
 
                             row += "  " + getField(i, j).toString().substring(0, 1)
                                     .replace("E", " ");
-                            if (j <  DIM) {
+                            if (j < DIM) {
                                 row += "  "; // separate the dots
                             }
 
@@ -451,9 +453,9 @@ public class Board {
      */
     public int toRow(int index) {
         if (index % (DIM * 2 + 1) < DIM) {
-            return (int) (index / (DIM + (DIM + 1)))*2;
+            return (int) (index / (DIM + DIM + 1)) * 2;
         } else {
-            return (int) (index / (DIM + (DIM + 1)))*2+1;
+            return (int) (index / (DIM + DIM + 1)) * 2 + 1;
         }
     }
 
@@ -463,11 +465,10 @@ public class Board {
      * @return the corresponding col for that index
      */
     public int toColumn(int index) {
-        if(index % (DIM*2+1) <DIM){
-            return index-(toRow(index)*(DIM+DIM+1))/2;
-        }
-        else {
-            return index % (DIM+DIM+1)-DIM;
+        if (index % (DIM * 2 + 1) < DIM) {
+            return index - (toRow(index) * (DIM + DIM + 1)) / 2;
+        } else {
+            return index % (DIM + DIM + 1) - DIM;
         }
     }
 }

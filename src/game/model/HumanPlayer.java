@@ -2,6 +2,9 @@ package game.model;
 
 import java.util.Scanner;
 
+/**
+ * This is the class for a Human Player.
+ */
 public class HumanPlayer extends AbstractPlayer {
     private Mark mark;
 //    private String name;
@@ -10,7 +13,7 @@ public class HumanPlayer extends AbstractPlayer {
     /**
      * Creates a new Player object.
      *
-     * @param name
+     * @param name name of the player
      */
     public HumanPlayer(String name, Mark mark) {
         super(name);
@@ -30,7 +33,7 @@ public class HumanPlayer extends AbstractPlayer {
     /**
      * Asking for the move on console.
      *
-     * @return the move
+     * @return the move to be determined
      */
     @Override
     public Move determineMove(Game game) {
@@ -52,8 +55,7 @@ public class HumanPlayer extends AbstractPlayer {
             Move move = new DotsMove(rowMove, colMove, getMark());
             if (game.isValidMove(move)) {
                 return move;
-            }
-            else System.out.println("Move is not valid! Please enter again!");
+            } else System.out.println("Move is not valid! Please enter again!");
 
         }
 

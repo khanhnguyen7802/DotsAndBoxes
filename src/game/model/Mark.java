@@ -2,7 +2,7 @@ package game.model;
 
 /**
  * Represents a mark in Dots and Boxes game. There three possible values:
- * Mark. AA, Mark. BB and Mark.EMPTY.
+ * Mark. AA, Mark. BB, Mark.EMPTY and Mark.FILLED.
  */
 public enum Mark {
     EMPTY, AA, BB, FILLED;
@@ -17,9 +17,8 @@ public enum Mark {
             return BB;
         } else if (this == BB) {
             return AA;
-        }
-        else if (this == FILLED) {
-                return AA;
+        } else if (this == FILLED) {
+            return AA;
         } else {
             return EMPTY;
         }

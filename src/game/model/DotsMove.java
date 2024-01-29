@@ -54,6 +54,6 @@ public class DotsMove implements Move {
      * @return a formatted String indicating the current move.
      */
     public String toString() {
-        return ("Row " + this.row + " - Col " + this.col + " - Mark " + this.mark);
+        return "Row " + this.row + " - Col " + this.col + " - Mark " + this.mark;
     }
 }

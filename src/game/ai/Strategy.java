@@ -3,6 +3,9 @@ package game.ai;
 import game.model.Game;
 import game.model.Move;
 
+/**
+ * The interface of Strategy. It's an interface for both smart and naive strategy to implement.
+ */
 public interface Strategy {
     /**
      * Return the name of the strategy.

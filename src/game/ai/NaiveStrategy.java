@@ -6,6 +6,9 @@ import game.model.Game;
 import game.model.Mark;
 import game.model.Move;
 
+/**
+ * This class is the NaiveStrategy of ComputerPlayer.
+ */
 public class NaiveStrategy implements Strategy{
 
     private final Mark mark;

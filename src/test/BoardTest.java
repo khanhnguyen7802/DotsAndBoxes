@@ -2,12 +2,9 @@ package test;
 
 import game.model.Board;
 import game.model.Mark;
-import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static game.model.Board.DIM;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
