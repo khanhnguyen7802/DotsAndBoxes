@@ -4,6 +4,7 @@ import exception.WrongFormatProtocol;
 import game.ai.ComputerPlayer;
 import game.ai.NaiveStrategy;
 import game.ai.SmartStrategy;
+import game.ai.Strategy;
 import game.model.*;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -267,7 +268,6 @@ public class DotAndBoxClient {
 
         this.isInGame = true;
         this.isQueued = false;
-        dotAndBoxClientTUI.stopReceivingUserInput();
 
         // name of the 2 players respectively
         String namePlayer1 = parse[1];
@@ -310,7 +310,8 @@ public class DotAndBoxClient {
         // then print out the board to observe the state
         System.out.println("Current board:");
         System.out.println(game.getBoard());
-
+//        if (game.getTurn() == currentPlayer && currentPlayer instanceof Strategy)
+//
 //        if (game.getTurn() == currentPlayer && isInGame) {
 //
 //            // then, we'll find a move and send this move
@@ -336,7 +337,7 @@ public class DotAndBoxClient {
      * send the command MOVE to the server socket with an index of that move.
      */
     //@pure;
-    public void sendMove() {
+    public void doMove() {
         // if this is our turn
         if (game.getTurn() == currentPlayer && isInGame) {
 
@@ -349,7 +350,7 @@ public class DotAndBoxClient {
             clientConnection.sendMove(actualIndex);
 
         } else if (game.getTurn() != currentPlayer) {
-            System.out.println("Waiting for the other's turn!");
+            System.out.println("Ain't your turn. Just wait for the other!");
         } else {
             System.out.println("You need to join the queue for game first");
         }
@@ -381,18 +382,20 @@ public class DotAndBoxClient {
         if (game.isValidMove(moveToPlaceInCell)) {
             game.doMove(moveToPlaceInCell);
             System.out.println(this.game.getBoard());
+            System.out.println("It's " + game.getTurn() + "'s turn");
             if (game.isGameover()) {
                 System.out.println("Game Over");
+                System.out.println(game.getWinner());
                 this.isInGame = false;
                 return;
             }
         }
 
         // continuously check if the next move is our move or not
-        while (game.getTurn() == this.currentPlayer && !this.game.isGameover()) {
-            System.out.println("Your turn");
-            sendMove();
-        }
+//        while (game.getTurn() == this.currentPlayer && !this.game.isGameover()) {
+//            System.out.println("Your turn");
+//            sendMove();
+//        }
     }
 
 }

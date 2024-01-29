@@ -1,5 +1,9 @@
 package dotandboxclient;
 
+import game.ai.NaiveStrategy;
+import game.ai.SmartStrategy;
+import game.ai.Strategy;
+import game.model.Mark;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -144,46 +148,41 @@ public class DotAndBoxClientTUI implements ClientListener {
         String[] parse = input.split("\\s+");
         String command = parse[0];
 
-//        while(!isValid) {
-            switch (command) {
-                case Protocol.LOGIN:
-                    String username = "";
-                    if (parse.length == 2) { // LOGIN <name>
-                        username = parse[1];
-                    } else if (parse.length > 2) { // LOGIN <first> <last> <blabla>
-                        for (int i = 1; i < parse.length; i++) {
-                            username += parse[i];
-                        }
+
+        switch (command) {
+            case Protocol.LOGIN:
+                String username = "";
+                if (parse.length == 2) { // LOGIN <name>
+                    username = parse[1];
+                } else if (parse.length > 2) { // LOGIN <first> <last> <blabla>
+                    for (int i = 1; i < parse.length; i++) {
+                        username += parse[i];
                     }
-                    dotAndBoxClient.sendLogin(username);
-                    isValid = true;
-                    break;
-                case Protocol.LIST:
-                    dotAndBoxClient.sendList();
-                    isValid = true;
-                    break;
-                case Protocol.QUEUE:
-                    dotAndBoxClient.sendQueue();
-                    isValid = true;
-                    break;
-                case Protocol.MOVE:
-                    dotAndBoxClient.sendMove();
-                    isValid = true;
-                    break;
-                case "HELP":
-                    printMenu();
-                    handleInputCommands();
-                    isValid = true;
-                    break;
-                case "EXIT":
-                    //                client.closeEverything();
-                    System.out.println("Exited successfully! See you again!");
-                    break;
-                default:
-                    System.out.println("Command is not recognized! Please choose again");
-                    handleInputCommands();
-            }
-//        }
+                }
+                dotAndBoxClient.sendLogin(username);
+                break;
+            case Protocol.LIST:
+                dotAndBoxClient.sendList();
+                break;
+            case Protocol.QUEUE:
+                dotAndBoxClient.sendQueue();
+                break;
+            case Protocol.MOVE:
+                dotAndBoxClient.doMove();
+                break;
+            case "HELP":
+                printMenu();
+                handleInputCommands();
+                break;
+            case "EXIT":
+                //                client.closeEverything();
+                System.out.println("Exited successfully! See you again!");
+                break;
+            default:
+                System.out.println("Command is not recognized! Please choose again");
+                handleInputCommands();
+        }
+
     }
 
     public void start() {
@@ -207,5 +206,8 @@ public class DotAndBoxClientTUI implements ClientListener {
      */
     public static void main(String[] args) {
         new DotAndBoxClientTUI().runTUI();
+//        SmartStrategy s = new SmartStrategy(Mark.EMPTY);
+//        NaiveStrategy n;
+//        System.out.println(s instanceof Strategy);
     }
 }
