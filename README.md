@@ -8,6 +8,7 @@ as well
 ## Table of Contents
 
 - [Folder Structure](#folder-structure)
+- [Build](#build)
 - [Testing](#testing)
 - [Documentation](#documentation)
 - [Acknowledgements](#acknowledgements)
@@ -32,6 +33,16 @@ In the .idea and out folder Intellijs files are being stored so that the project
 The testing can be found at the testing folder. Two seperate files are in this folder one for the game and one for the board.
 After running these two files we can see that the board will create a game board with all fields and add all the files to it, whilst also making them empty. Later it checks if after filling in the field, it is actually filled, and also if we can create a box as well and also to mark it correctly.
 The game will then play two games, one with filling in all the lines with a single mark to check if the winner will be the player of that mark. After that it will play a random game and will check if the winner is correct.
+
+You can run these files with the
+
+# Build
+
+1. Clone the repository:
+   $ git clone https://gitlab.utwente.nl/software-systems/2023-2024/student-projects/resit/resit-8/-/blob/main/README.md?ref_type=heads
+   $ cd dotsandboxes_resit8
+
+in intellij with CTRL+F9, you can build the project and then you can just run the files by selecting them (the tests, GameClientTui and GameServer) and then press CTRL+F5
 
 # Documentation
 --GAMEPLAY: 
