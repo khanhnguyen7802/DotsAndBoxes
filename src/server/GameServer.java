@@ -246,10 +246,14 @@ public class GameServer extends SocketServer {
         for (Map.Entry<DotsGame, List<AbstractPlayer>> dotsGame : allGames.entrySet()) {
             // iterate through all games and find the players, having their names as
             //the unique identifier
-            if (Objects.equals(dotsGame.getValue().get(0).getName(),
-                               users.get(0)) || Objects.equals(dotsGame.getValue().get(0).getName(),
-                                                               users.get(1))) {
-                return dotsGame.getKey();
+            try {
+                if (Objects.equals(dotsGame.getValue().get(0).getName(),
+                                   users.get(0)) || Objects.equals(
+                        dotsGame.getValue().get(0).getName(), users.get(1))) {
+                    return dotsGame.getKey();
+                }
+            } catch (IndexOutOfBoundsException g) {
+                System.out.println(Protocol.ERROR + Protocol.SEPARATOR + Protocol.DISCONNECT);
             }
         }
         return null;
@@ -278,33 +282,37 @@ public class GameServer extends SocketServer {
                 }
             }
         }
-        DotsGame dotsGame = currentGame(users);
-        // create a temporary game obj from the stored game
-        for (ClientHandler handler : handlers) {
-            String[] tokens = msg.split(Protocol.SEPARATOR);
-            int integer = Integer.parseInt(tokens[1]);
-            HumanPlayer currentPlayer = (HumanPlayer) dotsGame.getTurn(); // current player
-            Move determinedMove = new DotsMove(dotsGame.getBoard().toRow(integer),
-                                               dotsGame.getBoard().toColumn(integer),
-                                               currentPlayer.getMark());
-            dotsGame.doMove(determinedMove);
-            handler.move(msg); // make the move of the player
-            if (dotsGame.isGameover()){
-                removeQueue(handler);
-            }
-            if (dotsGame.isGameover() || games.size() <= 1) {
-                if (dotsGame.getBoard().hasWinner() && dotsGame.isGameover()) {
-                    // finish game if there is a winner
-                    handler.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + dotsGame.getWinner());
+        if (users.size() == 2) {
+            DotsGame dotsGame = currentGame(users);
+            // create a temporary game obj from the stored game
+            for (ClientHandler handler : handlers) {
+                String[] tokens = msg.split(Protocol.SEPARATOR);
+                int integer = Integer.parseInt(tokens[1]);
+                HumanPlayer currentPlayer = (HumanPlayer) dotsGame.getTurn(); // current player
+                Move determinedMove = new DotsMove(dotsGame.getBoard().toRow(integer),
+                                                   dotsGame.getBoard().toColumn(integer),
+                                                   currentPlayer.getMark());
+                dotsGame.doMove(determinedMove);
+                handler.move(msg); // make the move of the player
+                if (dotsGame.isGameover()) {
+                    removeQueue(handler);
                 }
-                if (dotsGame.isGameover() && !dotsGame.getBoard().hasWinner()) {
-                    // finish game if it ends in a draw
-                    handler.gameOver(Protocol.DRAW);
+                if (dotsGame.isGameover() || games.size() <= 1) {
+                    if (dotsGame.getBoard().hasWinner() && dotsGame.isGameover()) {
+                        // finish game if there is a winner
+                        handler.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + dotsGame.getWinner());
+                    }
+                    if (dotsGame.isGameover() && !dotsGame.getBoard().hasWinner()) {
+                        // finish game if it ends in a draw
+                        handler.gameOver(Protocol.DRAW);
+
+                    }
+                    allGames.remove(dotsGame);
 
                 }
-                allGames.remove(dotsGame);
-
             }
+        } else {
+            current.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + current.getUsername());
         }
 
     }
