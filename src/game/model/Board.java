@@ -265,7 +265,7 @@ public class Board {
         for (int i = 0; i <= (Board.DIM * (Board.DIM + 1) * 2 - 1 - (DIM * 2 + 1)); i++) {
             if (getField(i) == m && toRow(i) % 2 == 0) {
                 wins++;
-                if (wins >= (DIM * DIM / 2)) {
+                if (wins >= Math.round((float) (DIM * DIM) / 2)) {
                     return true;
                 }
             }
