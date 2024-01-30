@@ -82,8 +82,9 @@ public class ClientConnection extends SocketConnection {
      */
     @Override
     protected void handleDisconnect() {
-        System.out.println("[CLIENT_CONNECTION] Closing the socket");
+        System.out.println("Client connection disconnected. Closing the socket");
         super.close();
+        System.exit(0);
     }
 
     /**

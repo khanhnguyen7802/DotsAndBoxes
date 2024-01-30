@@ -12,6 +12,7 @@ public class DotAndBoxClientTUI implements ClientListener {
     //@private invariant keepReading == true || keepReading == false;
 
     private boolean keepReading;
+    private boolean exit;
     BufferedReader in;
 
     /**
@@ -19,6 +20,7 @@ public class DotAndBoxClientTUI implements ClientListener {
      */
     public DotAndBoxClientTUI() {
         this.keepReading = true;
+        this.exit = false;
         this.in = new BufferedReader(new InputStreamReader(System.in));
     }
 
@@ -42,11 +44,10 @@ public class DotAndBoxClientTUI implements ClientListener {
 
     @Override
     public void connectionLost() {
+        closeTUI(); // stop receiving user input
         this.dotAndBoxClient.removeListener(this);
-        System.out.println("[CLIENT_TUI] Connection lost");
-        dotAndBoxClient.handleDisconnect();
         System.out.println("Connection lost");
-        System.exit(0);
+        System.out.println("Client had been disconnected");
     }
 
     /**
@@ -72,14 +73,11 @@ public class DotAndBoxClientTUI implements ClientListener {
 
         }
         System.out.println("[CLIENT_TUI] Client connected to server");
-        boolean connectedToServer = true;
         this.dotAndBoxClient.addListener(this);
 
         // a separate thread is created to read from socket
-        dotAndBoxClient.sendHello();
-
-        while (connectedToServer) {
-            //TODO
+        while (!this.exit) {
+            dotAndBoxClient.sendHello();
             start();
         }
     }
@@ -139,20 +137,14 @@ public class DotAndBoxClientTUI implements ClientListener {
      */
     public void handleInputCommands() {
         String input = "";
-
-        if (dotAndBoxClient.chooseBot()) {
-            input = Protocol.MOVE;
-        } else {
-            try {
-                input = in.readLine();
-            } catch (IOException e) {
-                System.out.println("[CLIENT_TUI] Error in getting input from user");
-            }
+        try {
+            input = in.readLine();
+        } catch (IOException e) {
+            System.out.println("[CLIENT_TUI] Error in getting input from user");
         }
 
         String[] parse = input.split("\\s+");
         String command = parse[0];
-
 
         switch (command) {
             case Protocol.LOGIN:
@@ -180,9 +172,11 @@ public class DotAndBoxClientTUI implements ClientListener {
             case "HELP":
                 printMenu();
                 break;
-            case "EXIT":
-                //                client.closeEverything();
+            case "QUIT":
+                dotAndBoxClient.close();
                 System.out.println("Exited successfully! See you again!");
+                this.keepReading = false;
+                System.exit(0);
                 break;
             default:
                 System.out.println("Command is not recognized! Please choose again");
@@ -202,8 +196,9 @@ public class DotAndBoxClientTUI implements ClientListener {
     }
 
     //@ensures keepReading == false;
-    public void stopReceivingUserInput() {
-        //TODO
+    public void closeTUI() {
+        System.out.println("Stop receiving user input!");
+        this.exit = true;
         this.keepReading = false;
     }
 

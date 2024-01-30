@@ -80,16 +80,19 @@ public class DotAndBoxClient {
      * Close the connection by calling the handleDisconnect method of the
      * Client connection.
      */
-    //TODO
     void close() {
-        clientConnection.handleDisconnect();
+        clientConnection.handleDisconnect(); // close the socket from client connection
+
+        this.usernameLoggedIn = null;
+        this.isLoggedIn = false;
+        this.isQueued = false;
+        this.isInGame = false;
+
+        dotAndBoxClientTUI.closeTUI();
     }
 
     public void handleDisconnect() {
-        System.out.println("[CLIENT]: Disconnected");
-        for (ClientListener listener : listeners) {
-            listener.connectionLost();
-        }
+        dotAndBoxClientTUI.connectionLost();
     }
 
     /**
@@ -154,9 +157,7 @@ public class DotAndBoxClient {
 
             } else {
                 this.usernameLoggedIn = username;
-
                 this.clientConnection.sendLogin(username);
-                isLoggedIn = true;
             }
         }
     }
@@ -174,8 +175,6 @@ public class DotAndBoxClient {
         } else {
             System.out.println("You're already logged in / This name has been taken");
             System.out.println("Please choose another option / name");
-
-            dotAndBoxClientTUI.handleInputCommands();
         }
     }
 
@@ -231,7 +230,7 @@ public class DotAndBoxClient {
                     this.currentState = ClientState.L;
                 }
 
-            } else if (isQueued) {
+            } else if (isInGame) {
                 System.out.println("Cannot queue because you're in a game");
             } else { // join the queue
                 isQueued = true;
@@ -390,8 +389,13 @@ public class DotAndBoxClient {
         // then print out the board to observe the state
         System.out.println("Current board:");
         System.out.println(game.getBoard());
-        aiTUI.changeStet();
-        aiTUI.start();
+        if(namePlayer1.equals(this.usernameLoggedIn)) {
+            System.out.println("It's your turn. Type MOVE to play");
+        } else {
+            System.out.println("Waiting for the other's turn ......");
+        }
+//        aiTUI.changeStet();
+//        aiTUI.start();
     }
 
     /**
@@ -451,7 +455,11 @@ public class DotAndBoxClient {
                 return;
             }
 
-            System.out.println("It's " + game.getTurn() + "'s turn");
+            if (game.getTurn().equals(currentPlayer)) {
+                System.out.println("It's your turn. Type MOVE to play.");
+            } else {
+                System.out.println("Opponent's turn .....");
+            }
         }
     }
 
@@ -469,9 +477,6 @@ public class DotAndBoxClient {
                 break;
             case Protocol.VICTORY:
                 String winner = parse[2];
-                if (winner.equals(usernameLoggedIn)) {
-                    winner = "you";
-                }
                 System.out.println("The winner is " + winner + "!");
         }
     }

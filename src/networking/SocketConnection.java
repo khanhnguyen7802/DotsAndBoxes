@@ -65,7 +65,8 @@ public abstract class SocketConnection {
                 handleMessage(inputLine);
             }
         } catch (IOException e) {
-            System.out.println("Runtime exceptions");
+//            System.out.println("Runtime exceptions");
+            // ignored the exception
         } catch (Exception e) {
             // ignore the exception, just close the connection
         } finally {
