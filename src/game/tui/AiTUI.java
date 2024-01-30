@@ -1,10 +1,8 @@
-package game.TUI;
+package game.tui;
 
 import dotandboxclient.ClientListener;
 import dotandboxclient.DotAndBoxClient;
-import game.ai.ComputerPlayer;
 import game.ai.NaiveStrategy;
-import game.ai.SmartStrategy;
 import game.ai.Strategy;
 import game.model.Mark;
 import java.io.BufferedReader;
@@ -12,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import protocol.Protocol;
-import server.ServerConnection;
 
 public class AiTUI implements ClientListener {
     private Strategy strategy = new NaiveStrategy(Mark.EMPTY);
@@ -125,8 +121,13 @@ public class AiTUI implements ClientListener {
 
     public enum State{
         InQ, InGame
+
     }
     public AiTUI.State currentState = AiTUI.State.InQ;
+    public void changeStet(){
+        currentState = State.InGame;
+    }
+
 
     /**
      * Handle the commands that user types in.
@@ -155,10 +156,11 @@ public class AiTUI implements ClientListener {
                 }
                 dotAndBoxClient.sendLogin(username);
                 dotAndBoxClient.sendQueueAI();
-                currentState = State.InGame;
                 break;
             case InGame:
-                dotAndBoxClient.doMove();
+                System.out.println(currentState);
+                while (true)
+                    dotAndBoxClient.doMove();
             default:
                 System.out.println("Command is not recognized! Please choose again");
                 handleInputCommands();
@@ -167,7 +169,8 @@ public class AiTUI implements ClientListener {
     }
 
     public void start() {
-        while (keepReading && currentState == State.InQ) {
+
+        while (keepReading) {
             try {
                 handleInputCommands();
             } catch (RuntimeException e) {

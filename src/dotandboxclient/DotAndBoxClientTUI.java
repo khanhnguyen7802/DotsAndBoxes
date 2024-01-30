@@ -79,6 +79,7 @@ public class DotAndBoxClientTUI implements ClientListener {
         dotAndBoxClient.sendHello();
 
         while (connectedToServer) {
+            //TODO
             start();
         }
     }
@@ -164,21 +165,20 @@ public class DotAndBoxClientTUI implements ClientListener {
                     }
                 }
                 dotAndBoxClient.sendLogin(username);
-                dotAndBoxClient.setCurrentState(DotAndBoxClient.ClientState.LOGGED_IN);
+                dotAndBoxClient.setCurrentState(DotAndBoxClient.ClientState.L);
                 break;
             case Protocol.LIST:
                 dotAndBoxClient.sendList();
                 break;
             case Protocol.QUEUE:
                 dotAndBoxClient.sendQueue();
-                dotAndBoxClient.setCurrentState(DotAndBoxClient.ClientState.IN_QUEUE);
+                dotAndBoxClient.setCurrentState(DotAndBoxClient.ClientState.Q);
                 break;
             case Protocol.MOVE:
                 dotAndBoxClient.doMove();
                 break;
             case "HELP":
                 printMenu();
-//                handleInputCommands();
                 break;
             case "EXIT":
                 //                client.closeEverything();
@@ -203,6 +203,7 @@ public class DotAndBoxClientTUI implements ClientListener {
 
     //@ensures keepReading == false;
     public void stopReceivingUserInput() {
+        //TODO
         this.keepReading = false;
     }
 
@@ -212,8 +213,5 @@ public class DotAndBoxClientTUI implements ClientListener {
      */
     public static void main(String[] args) {
         new DotAndBoxClientTUI().runTUI();
-//        SmartStrategy s = new SmartStrategy(Mark.EMPTY);
-//        NaiveStrategy n;
-//        System.out.println(s instanceof Strategy);
     }
 }

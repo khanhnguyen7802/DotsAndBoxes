@@ -9,15 +9,11 @@ import game.model.Move;
 /**
  * This class is the NaiveStrategy of ComputerPlayer.
  */
-public class NaiveStrategy implements Strategy {
-    private final Mark mark;
-
-    public NaiveStrategy(Mark mark) {
-        this.mark = mark;
-    }
+public record NaiveStrategy(Mark mark) implements Strategy {
 
     /**
      * Get the name of the strategy (in this case, Naive).
+     *
      * @return the name of Naive strategy
      */
     //@ensures \result.equals("Naive");
@@ -31,15 +27,16 @@ public class NaiveStrategy implements Strategy {
      *
      * @return the mark of the player
      */
-    //@ensures getMark().equals(mark);
     //@ensures \result instanceof Mark;
-    public Mark getMark() {
+    @Override
+    public Mark mark() {
         return mark;
     }
 
 
     /**
      * Keep searching for the valid move until it finds one.
+     *
      * @param game - current state of the game
      * @return the naive valid move
      */
@@ -51,8 +48,7 @@ public class NaiveStrategy implements Strategy {
         List<Move> possibleMoves = game.getValidMoves();
         Random rand = new Random();
         int index = rand.nextInt(possibleMoves.size());
-        Move randomMove = possibleMoves.get(index);
 
-        return randomMove;
+        return possibleMoves.get(index);
     }
 }

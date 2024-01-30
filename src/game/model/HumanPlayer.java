@@ -6,8 +6,7 @@ import java.util.Scanner;
  * This is the class for a Human Player.
  */
 public class HumanPlayer extends AbstractPlayer {
-    private Mark mark;
-//    private String name;
+    private final Mark mark;
 
 
     /**
@@ -58,7 +57,9 @@ public class HumanPlayer extends AbstractPlayer {
             Move move = new DotsMove(rowMove, colMove, getMark());
             if (game.isValidMove(move)) {
                 return move;
-            } else System.out.println("Move is not valid! Please enter again!");
+            } else {
+                System.out.println("Move is not valid! Please enter again!");
+            }
 
         }
 

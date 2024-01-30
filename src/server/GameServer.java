@@ -166,6 +166,7 @@ public class GameServer extends SocketServer {
         List<String> user = new ArrayList<>();
         List<ClientHandler> inHandler = new ArrayList<>();
         int counter = 0;
+        System.out.println(inQueue.size());
         if (inQueue.size() > 1 && inQueue.size() % 2 == 0) {
             // if there are enough players create
             //a game
@@ -268,7 +269,7 @@ public class GameServer extends SocketServer {
                     // finish game if it ends in a draw
                     handler.gameOver(Protocol.DRAW);
 
-                } else if (games.size() <= 1) {
+                } else if (handlers.size() < 2) {
                     // finish game if a player loses connection
                     handler.gameOver(
                             Protocol.DISCONNECT + Protocol.SEPARATOR + handler.getUsername());

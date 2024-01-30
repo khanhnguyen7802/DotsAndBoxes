@@ -10,7 +10,7 @@ import game.model.AbstractPlayer;
  */
 public class ComputerPlayer extends AbstractPlayer {
     private final Mark mark;
-    private Strategy strategy;
+    private final Strategy strategy;
 
     /**
      * Creates a new ComputerPlayer object.
@@ -33,26 +33,6 @@ public class ComputerPlayer extends AbstractPlayer {
     //@ensures \result.equals(mark);
     public Mark getMark() {
         return mark;
-    }
-
-    /**
-     * Get the strategy.
-     * @return the strategy
-     */
-    //@ensures \result instanceof Strategy;
-    //@ensures \result.equals(strategy);
-    public Strategy getStrategy() {
-        return strategy;
-    }
-
-
-    /**
-     * Set the strategy.
-     * @param strategy the strategy we want to set into
-     */
-    //@ensures getStrategy().equals(strategy);
-    public void setStrategy(Strategy strategy) {
-        this.strategy = strategy;
     }
 
     /**

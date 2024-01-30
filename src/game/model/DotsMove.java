@@ -4,53 +4,54 @@ package game.model;
  * Represent a move in the game, i.e.,
  * store the mark to place and the location to place it.
  */
-public class DotsMove implements Move {
-    private Mark mark;
-    private int row;
-    private int col;
-
+public record DotsMove(int row, int col, Mark mark) implements Move {
     /**
      * Constructor to initialize a specific Mark.
-     * @param row - row of the current move
-     * @param col - column of the current move
+     *
+     * @param row  - row of the current move
+     * @param col  - column of the current move
      * @param mark - what the mark of the current move is
      */
-    public DotsMove(int row, int col, Mark mark) {
-        this.row = row;
-        this.col = col;
-        this.mark = mark;
+    public DotsMove {
     }
 
     /**
      * Get the mark of the current move.
+     *
      * @return the current mark of the move
      */
     //@pure;
-    public Mark getMark() {
+    @Override
+    public Mark mark() {
         return mark;
     }
 
     /**
      * Get the row of the current move.
+     *
      * @return the row accordingly.
      */
     //@pure;
-    public int getRow() {
+    @Override
+    public int row() {
         return row;
     }
 
     /**
      * Get the column of the current move.
+     *
      * @return the column accordingly.
      */
     //@pure;
-    public int getCol() {
+    @Override
+    public int col() {
         return col;
     }
 
 
     /**
      * toString() method to print out the info of the current move.
+     *
      * @return a formatted String indicating the current move.
      */
     public String toString() {

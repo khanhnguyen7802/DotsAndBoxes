@@ -24,7 +24,7 @@ public class ServerConnection extends SocketConnection {
      * Constructor for ServerConnection.
      *
      * @param socket The socket to establish the connection.
-     * @throws IOException If an I/O error occurs.
+     * @throws IOException - If an I/O error occurs.
      */
     protected ServerConnection(Socket socket) throws IOException {
         super(socket);
@@ -40,6 +40,7 @@ public class ServerConnection extends SocketConnection {
     }
 
     /**
+     * This class defines States.
      * These are the States of a client.
      * I : IDLE
      * H : HELLO

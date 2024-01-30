@@ -1,4 +1,4 @@
-package game.TUI;
+package game.tui;
 
 import game.ai.ComputerPlayer;
 import game.ai.NaiveStrategy;
@@ -11,12 +11,10 @@ import java.util.Scanner;
  * This is the game TUI, which was made to test an offline game between 2 people.
  */
 public class GameTUI {
-    private DotsGame game;
-    private DotsMove move;
     private AbstractPlayer player1;
     private AbstractPlayer player2;
-    private Strategy strategy = new NaiveStrategy(Mark.EMPTY);
-    private ComputerPlayer dummy = new ComputerPlayer(Mark.EMPTY, strategy);
+    private final Strategy strategy = new NaiveStrategy(Mark.EMPTY);
+    private final ComputerPlayer dummy = new ComputerPlayer(Mark.EMPTY, strategy);
 
     public static void main(String[] args) {
         GameTUI dotsTUI = new GameTUI();
@@ -58,7 +56,7 @@ public class GameTUI {
             player2 = new HumanPlayer(pl2, Mark.BB);
         }
 
-        game = new DotsGame(player1, player2);
+        DotsGame game = new DotsGame(player1, player2);
 
         while (playAgain) {
             while (!game.isGameover()) {
@@ -89,7 +87,9 @@ public class GameTUI {
             System.out.print("Do u want to play again? (yes/no): ");
             Scanner sc = new Scanner(System.in);
             String answer = sc.nextLine();
-            if (answer.equals("no")) playAgain = false;
+            if (answer.equals("no")) {
+                playAgain = false;
+            }
 
             game.getBoard().reset();
         }

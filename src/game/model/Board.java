@@ -12,7 +12,7 @@ public class Board {
     @public invariant ANSI_BLUE == "\033[0;34m";
     @public invariant ANSI_RESET == "\u001B[0m";
     @public invariant ANSI_GREEN == "\033[1;92m";
-    @public invariant fullVertical == String.valueOf('\u2502');
+    @public invariant FULL_VERTICAL == String.valueOf('│');
      */
 
     public static final int DIM = 5;
@@ -21,21 +21,26 @@ public class Board {
     public static final String ANSI_BLUE = "\033[0;34m";
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_GREEN = "\033[1;92m";
-    public static final String fullVertical = String.valueOf('\u2502');
+    public static final String FULL_VERTICAL = String.valueOf('│');
 
-    //@ public invariant (fields.length == DIM * (DIM + 1) * 2);
-    //@ public invariant (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2; fields[i] == Mark.AA) <= 25;
-    //@ public invariant (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2; fields[i] == Mark.BB) <= 25;
-
+    /*@ public invariant (fields.length == DIM * (DIM + 1) * 2);
+    @ public invariant (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2;
+    fields[i] == Mark.AA) <= 25;
+    @ public invariant (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2;
+    fields[i] == Mark.BB) <= 25;
+    */
     /**
      * The DIM by DIM fields of the Tic Tac Toe board. See NUMBERING for the
      * coding of the fields.
      */
 
-    private /*@ spec_public */ Mark[] fields;
+    private final /*@ spec_public */ Mark[] fields;
 
     /**
      * Constructor to create an empty board.
+     */
+    /*@ ensures (\forall int i; 0 <= i && i < Board.DIM * (Board.DIM + 1) * 2;
+     fields[i] == Mark.EMPTY);
      */
     public Board() {
         int numberOfLines = Board.DIM * (Board.DIM + 1) * 2;
@@ -50,13 +55,13 @@ public class Board {
      * Creates a deep copy of this field.
      */
     /*@ ensures \result != this;
-     ensures (\forall int i; (i >= 0 && i < Board.DIM * (Board.DIM + 1) * 2); \result.fields[i] == this.fields[i]);
+     ensures (\forall int i; (i >= 0 && i < Board.DIM * (Board.DIM + 1) * 2);
+     \result.fields[i] == this.fields[i]);
      @*/
     public Board deepCopy() {
         Board newBoard = new Board();
-        for (int i = 0; i <= Board.DIM * (Board.DIM + 1) * 2 - 1; i++) {
-            newBoard.fields[i] = this.fields[i];
-        }
+        System.arraycopy(this.fields, 0, newBoard.fields, 0,
+                         Board.DIM * (Board.DIM + 1) * 2 - 1 + 1);
 
         return newBoard;
     }
@@ -68,6 +73,7 @@ public class Board {
      * @return the corresponding index of a field
      */
     //@requires isField(row, col);
+    //@pure;
     public int index(int row, int col) {
         if (row % 2 == 0) {
             return (DIM + DIM + 1) * row / 2 + col;
@@ -81,6 +87,7 @@ public class Board {
      * @param index the index we want to check
      * @return True if it is a valid field; otherwise False.
      */
+    //@ ensures index >= 0 && index < Board.DIM * (Board.DIM + 1) * 2 ==> \result == true;
     public boolean isField(int index) {
         return index >= 0 && index < Board.DIM * (Board.DIM + 1) * 2;
     }
@@ -91,6 +98,9 @@ public class Board {
      * @param col the index of the col
      * @return True if it is valid; otherwise False
      */
+    /*@ ensures row >= 0 && row <= DIM * 2 && col >= 0 && (col <= DIM - 1 || col <= DIM)
+    ==> \result == true;
+    */
     public boolean isField(int row, int col) {
         if (row % 2 == 0) {
             return row >= 0 && col >= 0 && row <= DIM * 2 && col <= DIM - 1;
@@ -107,9 +117,11 @@ public class Board {
     /*@ requires isField(i);
     ensures \result == Mark.EMPTY || \result == Mark.BB || \result == Mark.AA;
      @*/
+    //@pure;
     public Mark getField(int i) {
-        if (isField(i))
+        if (isField(i)) {
             return fields[i];
+        }
 
         return null;
     }
@@ -121,7 +133,8 @@ public class Board {
      * @return the mark on the field
      */
     /*@ requires isField(row, col);
-    ensures \result == Mark.EMPTY || \result == Mark.BB || \result == Mark.AA || \result == Mark.FILLED;
+    ensures \result == Mark.EMPTY || \result == Mark.BB
+    || \result == Mark.AA || \result == Mark.FILLED;
      @*/
     public Mark getField(int row, int col) {
         int indexConvert = index(row, col);
@@ -138,9 +151,7 @@ public class Board {
     ensures getField(i) == Mark.EMPTY ==> \result == true;
      @*/
     public boolean isEmptyField(int i) {
-        if (isField(i) && fields[i] == Mark.EMPTY) return true;
-
-        return false;
+        return isField(i) && fields[i] == Mark.EMPTY;
     }
 
     /**
@@ -166,16 +177,16 @@ public class Board {
     ensures getField(i) == Mark.FILLED ==> \result == true;
      @*/
     public boolean isMarkedField(int i) {
-        if (isField(i) && (fields[i] == Mark.FILLED)) return true;
-
-        return false;
+        return isField(i) && (fields[i] == Mark.FILLED);
     }
 
     /**
      * Tests if the whole board is full.
      * @return true if all fields are occupied
      */
-    //@ ensures (\forall int i; (i >= 0 && i < Board.DIM * (Board.DIM + 1) * 2); fields[i] == Mark.AA || fields[i] == Mark.BB);
+    /*@ ensures (\forall int i; (i >= 0 && i < Board.DIM * (Board.DIM + 1) * 2);
+    fields[i] == Mark.AA || fields[i] == Mark.BB);
+    */
     public boolean isFull() {
         for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
             if (isEmptyField(i)) {
@@ -204,13 +215,9 @@ public class Board {
         int sq2 = index + DIM + 1;
         int sq3 = index + DIM + DIM + 1;
         //if the player has all sides of a box mark the box as the player's box
-        if (toRow(index) % 2 == 0 && getField(index) == Mark.FILLED && isMarkedField(
+        return toRow(index) % 2 == 0 && getField(index) == Mark.FILLED && isMarkedField(
                 sq1) && isMarkedField(sq2) && (getField(
-                sq3) != Mark.EMPTY) && index <= Board.DIM * (Board.DIM + 1) * 2 - 1 - (DIM * 2 + 1)) {
-            return true;
-        } else {
-            return false;
-        }
+                sq3) != Mark.EMPTY) && index <= Board.DIM * (Board.DIM + 1) * 2 - 1 - (DIM * 2 + 1);
     }
 
 
@@ -228,13 +235,15 @@ public class Board {
      * Check if the game is draw or not.
      * @return True if game is draw; otherwise False
      */
-    //@ensures (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2; fields[i] == Mark.AA) == (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2; fields[i] == Mark.BB);
+    /*@ensures (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2; fields[i] == Mark.AA)
+    == (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2; fields[i] == Mark.BB);
+    */
     public boolean isDraw() {
         int wins = 0;
         for (int i = 0; i <= (Board.DIM * (Board.DIM + 1) * 2 - 1 - (Board.DIM * 2 + 1)); i++) {
             if (getField(i) == Mark.AA && toRow(i) % 2 == 0) {
                 wins++;
-                if (wins == (int) (DIM * DIM / 2)) {
+                if (wins == (DIM * DIM / 2)) {
                     return true;
                 }
             }
@@ -256,7 +265,7 @@ public class Board {
         for (int i = 0; i <= (Board.DIM * (Board.DIM + 1) * 2 - 1 - (DIM * 2 + 1)); i++) {
             if (getField(i) == m && toRow(i) % 2 == 0) {
                 wins++;
-                if (wins >= (int) (DIM * DIM / 2)) {
+                if (wins >= (DIM * DIM / 2)) {
                     return true;
                 }
             }
@@ -280,17 +289,17 @@ public class Board {
      * @return the game situation as String
      */
     public String toString() {
-        String dot = String.valueOf('\u2022'); // unicode hex
+        String dot = String.valueOf('•'); // unicode hex
         int indexNumbering = 0;
-        String s = ""; // for both left and right board
+        StringBuilder s = new StringBuilder(); // for both left and right board
 
         for (int i = 0; i < DIM * 2 + 1; i++) {
-            String row = "";
+            StringBuilder row = new StringBuilder();
             if (i % 2 == 0) { // horizontal row
                 // TODO: for the horizontal row on the left
                 for (int j = 0; j < DIM + 1; j++) {
                     if (j == DIM) {
-                        row += dot + "  ";
+                        row.append(dot).append("  ");
                         continue;
                     }
 
@@ -299,134 +308,135 @@ public class Board {
                     switch (choice) {
                         case "A":
                             temporaryRowForHorizontal += dot + ANSI_RED + "----" + ANSI_RESET;
-                            row += temporaryRowForHorizontal;
+                            row.append(temporaryRowForHorizontal);
 
                             break;
                         case "B":
                             temporaryRowForHorizontal += dot + ANSI_BLUE + "----" + ANSI_RESET;
-                            row += temporaryRowForHorizontal;
+                            row.append(temporaryRowForHorizontal);
 
                             break;
                         case "F":
                             temporaryRowForHorizontal += dot + ANSI_GREEN + "----" + ANSI_RESET;
-                            row += temporaryRowForHorizontal;
+                            row.append(temporaryRowForHorizontal);
 
                             break;
                         default:
-                            row += dot + " " + getField(i, j).toString().substring(0, 1)
-                                    .replace("E", " ");
+                            row.append(dot).append(" ")
+                                    .append(getField(i, j).toString().substring(0, 1)
+                                                    .replace("E", " "));
 
-                            if (j < DIM) {
-                                row += "  "; // separate the dots
+                            row.append("  "); // separate the dots
 
-                            }
                     }
 
 
                 }
 
-                s += row + DELIM;
+                s.append(row).append(DELIM);
 
                 // TODO: for the horizontal row on the right
                 for (int k = 0; k < DIM; k++) {
                     String temporaryRowForHorizontal = dot + "    ";
                     String indexStr = Integer.toString(indexNumbering);
-                    temporaryRowForHorizontal = Helper.myReplace(temporaryRowForHorizontal, indexStr, 2);
+                    temporaryRowForHorizontal = Helper.myReplace(temporaryRowForHorizontal,
+                                                                 indexStr, 2);
 
-                    s += temporaryRowForHorizontal;
+                    s.append(temporaryRowForHorizontal);
 
                     indexNumbering++;
                 }
-                s = s + dot; // last dot on the upper line
+                s.append(dot); // last dot on the upper line
 
-                s += "\n";
+                s.append("\n");
 
-            } else if (i % 2 != 0) { // vertical row
+            } else { // vertical row
 
                 // TODO: for the vertical row on the left
                 for (int j = 0; j < DIM + 1; j++) {
 
                     String choice = getField(i, j).toString().substring(0, 1);
-                    String temporaryRowForVertical = "";
-                    switch(choice) {
+                    String tempVerRow = "";
+                    switch (choice) {
                         case "A":
                             if (j == DIM) {
-                                temporaryRowForVertical += ANSI_RED + fullVertical + " " + ANSI_RESET;
-                                row += temporaryRowForVertical;
+                                tempVerRow += ANSI_RED + FULL_VERTICAL + " " + ANSI_RESET;
+                                row.append(tempVerRow);
                                 continue;
                             }
 
-                            temporaryRowForVertical += ANSI_RED + fullVertical + "    " + ANSI_RESET;
-                            row += temporaryRowForVertical;
+                            tempVerRow += ANSI_RED + FULL_VERTICAL + "    " + ANSI_RESET;
+                            row.append(tempVerRow);
 
                             break;
                         case "B":
                             if (j == DIM) {
-                                temporaryRowForVertical += ANSI_BLUE + fullVertical + " " + ANSI_RESET;
-                                row += temporaryRowForVertical;
+                                tempVerRow += ANSI_BLUE + FULL_VERTICAL + " " + ANSI_RESET;
+                                row.append(tempVerRow);
                                 continue;
                             }
 
-                            temporaryRowForVertical += ANSI_BLUE + fullVertical + "    " + ANSI_RESET;
-                            row += temporaryRowForVertical;
+                            tempVerRow += ANSI_BLUE + FULL_VERTICAL + "    " + ANSI_RESET;
+                            row.append(tempVerRow);
                             break;
                         case "F":
                             if (j == DIM) {
-                                temporaryRowForVertical += ANSI_GREEN + fullVertical + " " + ANSI_RESET;
-                                row += temporaryRowForVertical;
+                                tempVerRow += ANSI_GREEN + FULL_VERTICAL + " " + ANSI_RESET;
+                                row.append(tempVerRow);
                                 continue;
                             }
 
-                            temporaryRowForVertical += ANSI_GREEN + fullVertical + "    " + ANSI_RESET;
-                            row += temporaryRowForVertical;
+                            tempVerRow += ANSI_GREEN + FULL_VERTICAL + "    " + ANSI_RESET;
+                            row.append(tempVerRow);
                             break;
                         default:
                             if (j == DIM) {
-                                row += " " + getField(i, j).toString().substring(0, 1)
-                                        .replace("E", " ");
+                                row.append(" ").append(getField(i, j).toString().substring(0, 1)
+                                                               .replace("E", " "));
                                 continue;
                             }
 
-                            row += "  " + getField(i, j).toString().substring(0, 1)
-                                    .replace("E", " ");
-                            if (j < DIM) {
-                                row += "  "; // separate the dots
-                            }
+                            row.append("  ").append(getField(i, j).toString().substring(0, 1)
+                                                            .replace("E", " "));
+                            row.append("  "); // separate the dots
 
                     }
 
 
                 }
 
-                s += row + DELIM; // separate the two boards
+                s.append(row).append(DELIM); // separate the two boards
 
                 // TODO: for vertical row on the right
                 for (int m = 0; m <= DIM; m++) {
                     String indexStr = Integer.toString(indexNumbering);
                     String temporaryRowForVertical = "     ";
-                    temporaryRowForVertical = Helper.myReplace(temporaryRowForVertical, indexStr, 0);
+                    temporaryRowForVertical = Helper.myReplace(temporaryRowForVertical, indexStr,
+                                                               0);
 
-                    s += temporaryRowForVertical;
+                    s.append(temporaryRowForVertical);
 
 
                     indexNumbering++;
                 }
 
-                s += "\n";
+                s.append("\n");
 
             }
 
         }
 
-        return s;
+        return s.toString();
     }
 
 
     /**
      * Empties all fields of this board (i.e., let them refer to the value
-     * Mark.EMPTY).
+     * Mark. EMPTY).
      */
-    //@ ensures (\forall int i; (i >= 0 && i < Board.DIM * (Board.DIM + 1) * 2); fields[i] == Mark.EMPTY);
+    /*@ ensures (\forall int i; (i >= 0 && i < Board.DIM * (Board.DIM + 1) * 2);
+    fields[i] == Mark.EMPTY);
+    */
     public void reset() {
         for (int i = 0; i <= Board.DIM * (Board.DIM + 1) * 2 - 1; i++) {
             setField(i, Mark.EMPTY);
@@ -470,9 +480,9 @@ public class Board {
     //@requires isField(index);
     public int toRow(int index) {
         if (index % (DIM * 2 + 1) < DIM) {
-            return (int) (index / (DIM + DIM + 1)) * 2;
+            return (index / (DIM + DIM + 1)) * 2;
         } else {
-            return (int) (index / (DIM + DIM + 1)) * 2 + 1;
+            return (index / (DIM + DIM + 1)) * 2 + 1;
         }
     }
 

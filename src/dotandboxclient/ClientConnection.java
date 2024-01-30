@@ -10,17 +10,17 @@ import protocol.Protocol;
  * This is the class which is in charge of handling and sending messages to the server socket.
  */
 public class ClientConnection extends SocketConnection {
-    private DotAndBoxClient client;
+    private final DotAndBoxClient client;
 
     /**
-     * The constructor fot the CLientConnection.
+     * The constructor fot the ClientConnection.
      * As soon as a ClientConnection is created, it invokes start() method
      * to start a thread reading messages.
      *
      * @param host the address of the host
      * @param port the port that server is at
      * @param client the particular client
-     * @throws IOException
+     * @throws IOException - If an I/O error occurs.
      */
     protected ClientConnection(InetAddress host, int port, DotAndBoxClient client) throws IOException {
         super(host, port);
@@ -71,14 +71,11 @@ public class ClientConnection extends SocketConnection {
             case Protocol.GAMEOVER:
                 client.handleGameOver(messageFromServer);
                 break;
-//            case Protocol.ERROR:
-//                break;
+
             default:
                 throw new WrongFormatProtocol("The command is in wrong format");
         }
     }
-
-
 
     /**
      * How client handles in case there's a disconnect.
@@ -94,7 +91,7 @@ public class ClientConnection extends SocketConnection {
      */
     //@pure;
     public void sendHello() {
-        sendMessage(Protocol.HELLO + Protocol.SEPARATOR + DotAndBoxClient.gameName);
+        sendMessage(Protocol.HELLO + Protocol.SEPARATOR + DotAndBoxClient.GAME_NAME);
     }
 
     /**

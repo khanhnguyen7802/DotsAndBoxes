@@ -90,6 +90,8 @@ public class DotsGame implements Game {
     /**
      * Switch the turn index (i.e., give turn to the other player).
      */
+    /*@ensures this.turnIndex != \old(this.turnIndex);
+       @*/
     public void switchTurnIndex() {
         if (this.turnIndex == 0) {
             this.turnIndex = 1;
@@ -133,22 +135,25 @@ public class DotsGame implements Game {
      * @param move - the move to check
      * @return True if the move is valid; otherwise False
      */
-    //@requires board.isField(((DotsMove) move).getRow(), ((DotsMove) move).getCol());
-    //@ensures board.isEmptyField(((DotsMove) move).getRow(), ((DotsMove) move).getCol()) ==> \result == true;
+    /*@requires board.isField(((DotsMove) move).row(), ((DotsMove) move).col());
+    @ensures board.isEmptyField(((DotsMove) move).row(),
+    ((DotsMove) move).col()) ==> \result == true;
+    */
     @Override
     public boolean isValidMove(Move move) {
         if (!(move instanceof DotsMove dotsMove)) {
             return false;
         }
-        return board.isEmptyField(dotsMove.getRow(), dotsMove.getCol()) && board.isField(
-                dotsMove.getRow(), dotsMove.getCol());
+        return board.isEmptyField(dotsMove.row(), dotsMove.col()) && board.isField(dotsMove.row(),
+                                                                                   dotsMove.col());
     }
 
     /**
      * Do a move in the game of DotsAndBoxes.
      * @param move the move to play
      */
-    //@ensures board != null && isValidMove(move);
+    /*@ ensures board != null && isValidMove(move);
+      @*/
     @Override
     public void doMove(Move move) {
         DotsMove tm = (DotsMove) move;
@@ -156,25 +161,25 @@ public class DotsGame implements Game {
         if (isValidMove(move)) {
             if (getTurn() == player1) {
                 // if it's player one do move
-                board.setField(tm.getRow(), tm.getCol(), Mark.FILLED);
-                this.turnIndex = 1;
+                board.setField(tm.row(), tm.col(), Mark.FILLED);
+                switchTurnIndex();
                 //if player one fills a box, do another move and mark the box
                 for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
                     if (board.hasSquare(i)) {
                         board.setField(i, Mark.AA);
-                        this.turnIndex = 0;
+                        switchTurnIndex();
                     }
                 }
             } else {
                 // simply fill in the line
-                board.setField(tm.getRow(), tm.getCol(), Mark.FILLED);
+                board.setField(tm.row(), tm.col(), Mark.FILLED);
                 this.turnIndex = 0;
                 for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
                     if (board.hasSquare(i)) {
                         //mark the box
                         board.setField(i, Mark.BB);
                         //do another turn
-                        this.turnIndex = 1;
+                        switchTurnIndex();
                     }
                 }
             }
@@ -182,13 +187,16 @@ public class DotsGame implements Game {
     }
 
     /**
-     * Given the board, reset it (i.e., all fields = Mark.EMPTY).
-     * @param board - the state of the given board
+     * Given the currentBoard, reset it (i.e., all fields = Mark.EMPTY).
+     * @param currentBoard - the state of the given currentBoard
      */
-    //@ensures (\forall int i; i > 0 && i < DIM * (DIM + 1) * 2; board.getField(i) == Mark.EMPTY);
+    /*@ requires board != null;
+      @ ensures (\forall int i; i > 0 && i < Board.DIM * (Board.DIM + 1) * 2;
+      board.getField(i) == Mark.EMPTY);
+    */
     @Override
-    public void resetBoard(Board board) {
-        this.board = board;
+    public void resetBoard(Board currentBoard) {
+        this.board = currentBoard;
     }
 
 }

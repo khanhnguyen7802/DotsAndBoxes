@@ -20,6 +20,7 @@ public class SmartStrategy implements Strategy {
 
     /**
      * Get the name of the strategy.
+     *
      * @return name of the strategy
      */
     //@ensures \result.equals("Smart");
@@ -54,7 +55,7 @@ public class SmartStrategy implements Strategy {
         int index;
         List<Move> possibleMoves = game.getValidMoves();
         while (System.currentTimeMillis() < end) {
-
+            //TODO
             Board board1 = ((DotsGame) game).getBoard().deepCopy();
 
 
