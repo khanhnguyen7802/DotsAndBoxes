@@ -124,6 +124,9 @@ public class GameServer extends SocketServer {
     public synchronized void removeClient(ClientHandler client) {
         this.clientHandlerList.remove(client);
         System.out.println("client is removed");
+        if (inQueue.contains(client)){
+            removeQueue(client);
+        }
     }
 
     /**
@@ -166,7 +169,6 @@ public class GameServer extends SocketServer {
         List<String> user = new ArrayList<>();
         List<ClientHandler> inHandler = new ArrayList<>();
         int counter = 0;
-        System.out.println(inQueue.size());
         if (inQueue.size() > 1 && inQueue.size() % 2 == 0) {
             // if there are enough players create
             //a game
@@ -269,13 +271,13 @@ public class GameServer extends SocketServer {
                     // finish game if it ends in a draw
                     handler.gameOver(Protocol.DRAW);
 
-                } else if (handlers.size() < 2) {
-                    // finish game if a player loses connection
-                    handler.gameOver(
-                            Protocol.DISCONNECT + Protocol.SEPARATOR + handler.getUsername());
                 }
+                removeQueue(current);
                 allGames.remove(dotsGame);
 
+            } else if (!new HashSet<>(inQueue).containsAll(handlers) && !dotsGame.isGameover()) {
+                // finish game if a player loses connection
+                handler.gameOver(Protocol.DISCONNECT + Protocol.SEPARATOR + handler.getUsername());
             }
         }
 
