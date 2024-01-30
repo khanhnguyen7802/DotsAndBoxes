@@ -246,10 +246,14 @@ public class GameServer extends SocketServer {
         for (Map.Entry<DotsGame, List<AbstractPlayer>> dotsGame : allGames.entrySet()) {
             // iterate through all games and find the players, having their names as
             //the unique identifier
-            if (Objects.equals(dotsGame.getValue().get(0).getName(),
-                               users.get(0)) || Objects.equals(dotsGame.getValue().get(0).getName(),
-                                                               users.get(1))) {
-                return dotsGame.getKey();
+            try {
+                if (Objects.equals(dotsGame.getValue().get(0).getName(),
+                                   users.get(0)) || Objects.equals(
+                        dotsGame.getValue().get(0).getName(), users.get(1))) {
+                    return dotsGame.getKey();
+                }
+            } catch (IndexOutOfBoundsException g) {
+                System.out.println(Protocol.ERROR + Protocol.SEPARATOR + Protocol.DISCONNECT);
             }
         }
         return null;
