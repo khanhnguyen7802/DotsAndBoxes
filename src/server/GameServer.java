@@ -124,8 +124,26 @@ public class GameServer extends SocketServer {
     public synchronized void removeClient(ClientHandler client) {
         this.clientHandlerList.remove(client);
         System.out.println("client is removed");
-        if (inQueue.contains(client)){
+        if (inQueue.contains(client)) {
+            ArrayList<String> users = new ArrayList<>();
+            // finish game if a player loses connection
             removeQueue(client);
+            if (getGameId(client) != -1) {
+                for (Map.Entry<ClientHandler, Integer> current : games.entrySet()) {
+                    // iterate through all games and find the players, having their names as
+                    //the unique identifier
+                    if (current.getValue() == getGameId(client)) {
+                        current.getKey().gameOver(
+                                Protocol.DISCONNECT + Protocol.SEPARATOR + current.getKey()
+                                        .getUsername());
+                        users.add(current.getKey().getUsername());
+                        removeQueue(current.getKey());
+                        DotsGame ownGame = currentGame(users);
+                        allGames.remove(ownGame);
+
+                    }
+                }
+            }
         }
     }
 
@@ -207,6 +225,17 @@ public class GameServer extends SocketServer {
         allGames.put(dotGame, currentPlayers); // add the game to the list of all games
     }
 
+    public int getGameId(ClientHandler user) {
+        for (Map.Entry<ClientHandler, Integer> current : games.entrySet()) {
+            // iterate through all games and find the players, having their names as
+            //the unique identifier
+            if (Objects.equals(current.getKey(), user)) {
+                return current.getValue();
+            }
+        }
+        return -1;
+    }
+
     /**
      * This method checks if players are in a game together. And checks
      * where is their game stored in the list of all games
@@ -251,9 +280,7 @@ public class GameServer extends SocketServer {
         }
         DotsGame dotsGame = currentGame(users);
         // create a temporary game obj from the stored game
-
         for (ClientHandler handler : handlers) {
-
             String[] tokens = msg.split(Protocol.SEPARATOR);
             int integer = Integer.parseInt(tokens[1]);
             HumanPlayer currentPlayer = (HumanPlayer) dotsGame.getTurn(); // current player
@@ -262,6 +289,9 @@ public class GameServer extends SocketServer {
                                                currentPlayer.getMark());
             dotsGame.doMove(determinedMove);
             handler.move(msg); // make the move of the player
+            if (dotsGame.isGameover()){
+                removeQueue(handler);
+            }
             if (dotsGame.isGameover() || games.size() <= 1) {
                 if (dotsGame.getBoard().hasWinner() && dotsGame.isGameover()) {
                     // finish game if there is a winner
@@ -272,12 +302,8 @@ public class GameServer extends SocketServer {
                     handler.gameOver(Protocol.DRAW);
 
                 }
-                removeQueue(current);
                 allGames.remove(dotsGame);
 
-            } else if (!new HashSet<>(inQueue).containsAll(handlers) && !dotsGame.isGameover()) {
-                // finish game if a player loses connection
-                handler.gameOver(Protocol.DISCONNECT + Protocol.SEPARATOR + handler.getUsername());
             }
         }
 
