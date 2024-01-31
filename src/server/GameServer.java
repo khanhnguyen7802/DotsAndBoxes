@@ -183,7 +183,6 @@ public class GameServer extends SocketServer {
      * @param handlers - client requesting to join the queue
      */
     public synchronized void handleQueue(ClientHandler handlers) {
-        System.out.println(inQueue);
         addQueue(handlers); // add handlers to be in the queue
         List<String> user = new ArrayList<>();
         List<ClientHandler> inHandler = new ArrayList<>();
