@@ -137,10 +137,11 @@ public class GameServer extends SocketServer {
                                 Protocol.DISCONNECT + Protocol.SEPARATOR + current.getKey()
                                         .getUsername());
                         users.add(current.getKey().getUsername());
-                        removeQueue(current.getKey());
+                        removeQueue(current.getKey()); // remove the game from the queue
+                        // (players in game stay in the queue)
                         DotsGame ownGame = currentGame(users);
-                        allGames.remove(ownGame);
-                        games.put(client, -1);
+                        allGames.remove(ownGame); // remove the game it has been part of
+                        games.put(client, -1); // set the id back to -1 removing it from the games
 
                     }
                 }
