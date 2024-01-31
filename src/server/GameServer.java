@@ -192,7 +192,6 @@ public class GameServer extends SocketServer {
             // if there are enough players create
             //a game
             for (ClientHandler handler : inQueue) { //iterate through only the players in queue
-                System.out.println("handler: " + handler + "gameID: " + getGameId(handler));
                 if (getGameId(handler) == -1) {
                     user.add(handler.getUsername());
                     inHandler.add(handler);
@@ -250,7 +249,6 @@ public class GameServer extends SocketServer {
                 numberOfPLayers++;
             }
         }
-        System.out.println("no players: "+numberOfPLayers);
         return numberOfPLayers == 2;
     }
 
