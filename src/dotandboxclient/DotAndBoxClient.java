@@ -22,7 +22,7 @@ public class DotAndBoxClient {
 
     private final ClientConnection clientConnection;
     private final DotAndBoxClientTUI dotAndBoxClientTUI;
-    private final AiTUI aiTUI;
+    private final AiTUI aiTUI = null;
     private String usernameLoggedIn;
     private AbstractPlayer currentPlayer;
     private DotsGame game;
@@ -63,7 +63,7 @@ public class DotAndBoxClient {
         this.clientConnection = new ClientConnection(address, port, this);
         this.dotAndBoxClientTUI = new DotAndBoxClientTUI();
         this.listeners = new ArrayList<>();
-        this.aiTUI = new AiTUI();
+//        this.aiTUI = new AiTUI();
 
 
         this.usernameLoggedIn = null;
@@ -224,8 +224,8 @@ public class DotAndBoxClient {
                 String answer = scanner.nextLine();
 
                 if (answer.equalsIgnoreCase("Y")) {
-                    clientConnection.sendQueue();
                     isQueued = false;
+                    clientConnection.sendQueue();
                     System.out.println("Successfully left the queue !!!");
                     this.currentState = ClientState.L;
                 }
@@ -389,7 +389,7 @@ public class DotAndBoxClient {
         // then print out the board to observe the state
         System.out.println("Current board:");
         System.out.println(game.getBoard());
-        if(namePlayer1.equals(this.usernameLoggedIn)) {
+        if (namePlayer1.equals(this.usernameLoggedIn)) {
             System.out.println("It's your turn. Type MOVE to play");
         } else {
             System.out.println("Waiting for the other's turn ......");
@@ -479,6 +479,9 @@ public class DotAndBoxClient {
                 String winner = parse[2];
                 System.out.println("The winner is " + winner + "!");
         }
+
+        System.out.println(
+                "Type QUEUE to join the queue again or QUIT if you don't want to play anymore");
     }
 
 }
