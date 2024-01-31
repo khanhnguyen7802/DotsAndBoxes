@@ -15,7 +15,7 @@ public class Board {
     @public invariant FULL_VERTICAL == String.valueOf('│');
      */
 
-    public static final int DIM = 5;
+    public static final int DIM = 1;
     private static final String DELIM = "        ";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_BLUE = "\033[0;34m";

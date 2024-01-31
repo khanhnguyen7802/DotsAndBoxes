@@ -510,7 +510,7 @@ public class DotAndBoxClient {
                 String winner = parse[2];
                 System.out.println("The winner is " + winner + "!");
         }
-        if (aiTUI.currentState == AiTUI.State.InGame){
+        if (aiTUI != null){
             System.exit(0);
         }
 
