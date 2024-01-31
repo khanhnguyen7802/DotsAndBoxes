@@ -167,7 +167,7 @@ public class DotsGame implements Game {
                 for (int i = 0; i < Board.DIM * (Board.DIM + 1) * 2; i++) {
                     if (board.hasSquare(i)) {
                         board.setField(i, Mark.AA);
-                        switchTurnIndex();
+                        turnIndex = 0;
                     }
                 }
             } else {
@@ -179,7 +179,7 @@ public class DotsGame implements Game {
                         //mark the box
                         board.setField(i, Mark.BB);
                         //do another turn
-                        switchTurnIndex();
+                        turnIndex = 1;
                     }
                 }
             }
