@@ -51,53 +51,44 @@ public class SmartStrategy implements Strategy {
     @Override
     public Move determineMove(Game game) {
         long start = System.currentTimeMillis();
-        long end = start + 2000;
         int index;
         List<Move> possibleMoves = game.getValidMoves();
-        while (System.currentTimeMillis() < end) {
-            //TODO
-            Board board1 = ((DotsGame) game).getBoard().deepCopy();
+
+        Board board1 = ((DotsGame) game).getBoard().deepCopy();
 
 
-            List<Move> hasSq = new ArrayList<>();
-            List<Move> noSq = new ArrayList<>();
+        List<Move> hasSq = new ArrayList<>();
+        List<Move> noSq = new ArrayList<>();
 
-            findMoves(game, board1, hasSq, noSq);
-            if (noSq.isEmpty()) {
-                if (!((Board.DIM * Board.DIM - moves) % 2 == 0)) {
-                    //it checks how many turns are left
-                    if (!hasSq.isEmpty()) {
-                        // Make random move to potentially complete a square
-                        index = rand.nextInt(hasSq.size());
-                        Move thisMove = hasSq.get(index);
-                        moves++;
-                        return thisMove;
-                    }
-
-                    // If there are moves that don't complete a square, prioritize them
-                    index = rand.nextInt(possibleMoves.size());
-                    Move noMove = possibleMoves.get(index);
+        findMoves(game, board1, hasSq, noSq);
+        if (noSq.isEmpty()) {
+            if (!((Board.DIM * Board.DIM - moves) % 2 == 0)) {
+                //it checks how many turns are left
+                if (!hasSq.isEmpty()) {
+                    // Make random move to potentially complete a square
+                    index = rand.nextInt(hasSq.size());
+                    Move thisMove = hasSq.get(index);
                     moves++;
-                    return noMove;
+                    return thisMove;
                 }
             }
-            if (!hasSq.isEmpty() || (((Board.DIM * Board.DIM - moves) % 2 == 0) && noSq.isEmpty())) {
-                // Make random move to potentially complete a square
-                index = rand.nextInt(hasSq.size());
-                Move thisMove = hasSq.get(index);
-                moves++;
-                return thisMove;
-            }
-
             // If there are moves that don't complete a square, prioritize them
-            index = rand.nextInt(noSq.size());
-            Move noSqMove = noSq.get(index);
+            index = rand.nextInt(possibleMoves.size());
+            Move noMove = possibleMoves.get(index);
             moves++;
-            return noSqMove;
+            return noMove;
         }
-        // If the AI thinks too long return a random possible move
-        index = rand.nextInt(possibleMoves.size());
-        Move noSqMove = possibleMoves.get(index);
+        if (!hasSq.isEmpty() || (((Board.DIM * Board.DIM - moves) % 2 == 0) && noSq.isEmpty())) {
+            // Make random move to potentially complete a square
+            index = rand.nextInt(hasSq.size());
+            Move thisMove = hasSq.get(index);
+            moves++;
+            return thisMove;
+        }
+
+        // If there are moves that don't complete a square, prioritize them
+        index = rand.nextInt(noSq.size());
+        Move noSqMove = noSq.get(index);
         moves++;
         return noSqMove;
     }
@@ -140,12 +131,12 @@ public class SmartStrategy implements Strategy {
                         // at the end of the correct if statement add the possible move to the
                         // hasSQ as after completing one of these moves the AI will have a box
                         break;
-                    } else {
-                        if (game.isValidMove(
-                                //if the move did not yield a box store it in noSq
-                                new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()))) {
-                            noSq.add(new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()));
-                        }
+                    }
+                } else {
+                    if (game.isValidMove(
+                            //if the move did not yield a box store it in noSq
+                            new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()))) {
+                        noSq.add(new DotsMove(board1.toRow(j), board1.toColumn(j), getMark()));
                     }
                 }
                 // set the temporary board back to its initial state where we haven't

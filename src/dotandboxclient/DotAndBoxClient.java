@@ -22,7 +22,7 @@ public class DotAndBoxClient {
 
     private final ClientConnection clientConnection;
     private final DotAndBoxClientTUI dotAndBoxClientTUI;
-    private final AiTUI aiTUI = null;
+    private AiTUI aiTUI = null;
     private String usernameLoggedIn;
     private AbstractPlayer currentPlayer;
     private DotsGame game;
@@ -33,6 +33,9 @@ public class DotAndBoxClient {
     private boolean isQueued;
     private boolean isInGame;
     private final List<ClientListener> listeners;
+
+    private boolean hasDoneMove = false;
+
 
     /**
      * This class defines States.
@@ -63,7 +66,6 @@ public class DotAndBoxClient {
         this.clientConnection = new ClientConnection(address, port, this);
         this.dotAndBoxClientTUI = new DotAndBoxClientTUI();
         this.listeners = new ArrayList<>();
-//        this.aiTUI = new AiTUI();
 
 
         this.usernameLoggedIn = null;
@@ -172,10 +174,21 @@ public class DotAndBoxClient {
         if (receivedMessage.equals(Protocol.LOGIN)) { // if the user is not logged in yet
             System.out.println("Logged in as " + this.usernameLoggedIn);
             this.isLoggedIn = true;
+            if(aiTUI.currentState == AiTUI.State.InQ){
+                sendQueueAI();
+            }
         } else {
             System.out.println("You're already logged in / This name has been taken");
             System.out.println("Please choose another option / name");
         }
+    }
+
+    public void setAiTUI(AiTUI obj){
+        aiTUI = obj;
+    }
+
+    public boolean isLoggedIn(){
+        return isLoggedIn;
     }
 
     /**
@@ -308,6 +321,7 @@ public class DotAndBoxClient {
                 Scanner scanner = new Scanner(System.in);
                 String typeOfAI;
                 typeOfAI = scanner.nextLine();
+                System.out.println(typeOfAI);
                 while (!typeOfAI.equalsIgnoreCase("-n") && !typeOfAI.equalsIgnoreCase("-s")) {
                     System.out.print("Please enter your option again (-n/-s): ");
                     typeOfAI = scanner.nextLine();
@@ -320,7 +334,7 @@ public class DotAndBoxClient {
                 }
 
                 System.out.println("Successfully joined the queue !!!");
-                aiTUI.stopReceivingUserInput();
+                //aiTUI.stopReceivingUserInput();
                 clientConnection.sendQueue();
             }
 
@@ -391,11 +405,16 @@ public class DotAndBoxClient {
         System.out.println(game.getBoard());
         if (namePlayer1.equals(this.usernameLoggedIn)) {
             System.out.println("It's your turn. Type MOVE to play");
+            submitMove();
         } else {
             System.out.println("Waiting for the other's turn ......");
         }
-//        aiTUI.changeStet();
-//        aiTUI.start();
+        if (aiTUI.currentState == AiTUI.State.InQ){
+            aiTUI.changeStet();
+        }
+        if (aiTUI.currentState == AiTUI.State.InGame) {
+            aiTUI.handleInputCommands();
+        }
     }
 
     /**
@@ -430,6 +449,7 @@ public class DotAndBoxClient {
      * Receive the index of the move from server, then place that move to the board.
      */
     public void handleMove(String messageReceived) {
+        System.out.println(messageReceived);
         // the server responses the MOVE
         String[] parse = messageReceived.split(Protocol.SEPARATOR); // MOVE~index
         int index = Integer.parseInt(parse[1]);
@@ -445,9 +465,9 @@ public class DotAndBoxClient {
         }
 
         Move moveToPlaceInCell = new DotsMove(rowConvert, colConvert, currentMark);
-
         if (game.isValidMove(moveToPlaceInCell)) {
             game.doMove(moveToPlaceInCell);
+            submitMove();
             System.out.println(this.game.getBoard());
             if (game.isGameover()) {
                 System.out.println("Game Over");
@@ -457,10 +477,19 @@ public class DotAndBoxClient {
 
             if (game.getTurn().equals(currentPlayer)) {
                 System.out.println("It's your turn. Type MOVE to play.");
+                submitMove();
             } else {
                 System.out.println("Opponent's turn .....");
             }
         }
+    }
+
+    public boolean hasMoved() {
+        return hasDoneMove;
+    }
+
+    public void submitMove(){
+        hasDoneMove = !hasDoneMove;
     }
 
     public void handleGameOver(String messageReceived) {
@@ -478,6 +507,9 @@ public class DotAndBoxClient {
             case Protocol.VICTORY:
                 String winner = parse[2];
                 System.out.println("The winner is " + winner + "!");
+        }
+        if (aiTUI.currentState == AiTUI.State.InGame){
+            System.exit(0);
         }
 
         System.out.println(

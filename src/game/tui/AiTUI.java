@@ -155,12 +155,14 @@ public class AiTUI implements ClientListener {
                     }
                 }
                 dotAndBoxClient.sendLogin(username);
-                dotAndBoxClient.sendQueueAI();
+                dotAndBoxClient.setAiTUI(this);
                 break;
             case InGame:
-                System.out.println(currentState);
-                while (true)
+                while (dotAndBoxClient.hasMoved()) {
                     dotAndBoxClient.doMove();
+                    dotAndBoxClient.submitMove();
+                }
+                break;
             default:
                 System.out.println("Command is not recognized! Please choose again");
                 handleInputCommands();

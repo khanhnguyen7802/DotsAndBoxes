@@ -2,6 +2,7 @@ package dotandboxclient;
 
 import exception.WrongFormatProtocol;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import networking.SocketConnection;
 import protocol.Protocol;
@@ -44,7 +45,7 @@ public class ClientConnection extends SocketConnection {
      * @param messageFromServer the messageFromServer received from the connection
      */
     @Override
-    public void handleMessage(String messageFromServer) throws WrongFormatProtocol {
+    public void handleMessage(String messageFromServer) throws WrongFormatProtocol, UnsupportedEncodingException {
         String[] parse = messageFromServer.split(Protocol.SEPARATOR);
 
         switch (parse[0]) {
