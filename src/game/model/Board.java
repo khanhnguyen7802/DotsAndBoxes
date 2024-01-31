@@ -21,7 +21,7 @@ public class Board {
     public static final String ANSI_BLUE = "\033[0;34m";
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_GREEN = "\033[1;92m";
-    public static final String FULL_VERTICAL = String.valueOf('│');
+    public static final String FULL_VERTICAL = String.valueOf("│");
 
     /*@ public invariant (fields.length == DIM * (DIM + 1) * 2);
     @ public invariant (\num_of int i ; 0 <= i && i < DIM * (DIM + 1) * 2;
@@ -289,7 +289,7 @@ public class Board {
      * @return the game situation as String
      */
     public String toString() {
-        String dot = String.valueOf('•'); // unicode hex
+        String dot = String.valueOf("•"); // unicode hex
         int indexNumbering = 0;
         StringBuilder s = new StringBuilder(); // for both left and right board
 
