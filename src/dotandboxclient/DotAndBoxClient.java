@@ -249,38 +249,6 @@ public class DotAndBoxClient {
                 isQueued = true;
                 this.currentState = ClientState.Q;
 
-                Scanner scanner = new Scanner(System.in);
-                String typeOfPlayer;
-                String typeOfAI;
-
-                // Choose AI or not?
-                System.out.println("Do you want AI to play for you? (y/n):");
-                typeOfPlayer = scanner.nextLine();
-
-                while (!typeOfPlayer.equalsIgnoreCase("y") && !typeOfPlayer.equalsIgnoreCase("n")) {
-                    System.out.println("Please enter your option again (y/n):");
-                    typeOfPlayer = scanner.nextLine();
-                }
-
-                // if AI is chosen
-                if (typeOfPlayer.equalsIgnoreCase("y")) {
-                    isBot = true;
-                    // Ask which AI
-                    System.out.print("What type (naive/smart) of AI do you want to use (-n/-s)?: ");
-                    typeOfAI = scanner.nextLine();
-
-                    while (!typeOfAI.equalsIgnoreCase("-n") && !typeOfAI.equalsIgnoreCase("-s")) {
-                        System.out.print("Please enter your option again (-n/-s): ");
-                        typeOfAI = scanner.nextLine();
-                    }
-
-                    // if this is indeed our turn
-                    // then create a corresponding player
-                    if (typeOfAI.equalsIgnoreCase("-s")) {
-                        isSmart = true;
-                    }
-                }
-
                 System.out.println("Successfully joined the queue !!!");
 
                 clientConnection.sendQueue();
