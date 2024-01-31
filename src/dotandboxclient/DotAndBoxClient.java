@@ -174,7 +174,7 @@ public class DotAndBoxClient {
         if (receivedMessage.equals(Protocol.LOGIN)) { // if the user is not logged in yet
             System.out.println("Logged in as " + this.usernameLoggedIn);
             this.isLoggedIn = true;
-            if(aiTUI.currentState == AiTUI.State.InQ){
+            if(aiTUI != null){
                 sendQueueAI();
             }
         } else {
@@ -409,11 +409,13 @@ public class DotAndBoxClient {
         } else {
             System.out.println("Waiting for the other's turn ......");
         }
-        if (aiTUI.currentState == AiTUI.State.InQ){
-            aiTUI.changeStet();
-        }
-        if (aiTUI.currentState == AiTUI.State.InGame) {
-            aiTUI.handleInputCommands();
+        if(aiTUI != null) {
+            if (aiTUI.currentState == AiTUI.State.InQ) {
+                aiTUI.changeStet();
+            }
+            if (aiTUI.currentState == AiTUI.State.InGame) {
+                aiTUI.handleInputCommands();
+            }
         }
     }
 
