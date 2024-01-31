@@ -183,6 +183,7 @@ public class GameServer extends SocketServer {
      * @param handlers - client requesting to join the queue
      */
     public synchronized void handleQueue(ClientHandler handlers) {
+        System.out.println(inQueue);
         addQueue(handlers); // add handlers to be in the queue
         List<String> user = new ArrayList<>();
         List<ClientHandler> inHandler = new ArrayList<>();
@@ -191,9 +192,11 @@ public class GameServer extends SocketServer {
             // if there are enough players create
             //a game
             for (ClientHandler handler : inQueue) { //iterate through only the players in queue
-                user.add(handler.getUsername());
+                if (getGameId(handler) == - 1) {
+                    user.add(handler.getUsername());
                 inHandler.add(handler);
                 counter++;
+                }
                 if (counter == 2) {
                     for (int i = 0; i < 2; i++) {
                         inHandler.get(i).startGame(user.get(0), user.get(1));
@@ -308,6 +311,7 @@ public class GameServer extends SocketServer {
 
                     }
                     allGames.remove(dotsGame);
+                    games.put(handler, -1);
 
                 }
             }
