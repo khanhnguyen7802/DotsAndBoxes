@@ -53,6 +53,7 @@ public class Board {
 
     /**
      * Creates a deep copy of this field.
+     * @return return a deep copy of a new board
      */
     /*@ ensures \result != this;
      ensures (\forall int i; (i >= 0 && i < Board.DIM * (Board.DIM + 1) * 2);

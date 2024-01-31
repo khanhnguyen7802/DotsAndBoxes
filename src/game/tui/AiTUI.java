@@ -11,6 +11,9 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/**
+ * This is the class to run the AI by using TUI.
+ */
 public class AiTUI implements ClientListener {
     private Strategy strategy = new NaiveStrategy(Mark.EMPTY);
     private DotAndBoxClient dotAndBoxClient;
@@ -117,11 +120,22 @@ public class AiTUI implements ClientListener {
         return portNumber;
     }
 
+    /**
+     * The state of the AI.
+     */
     public enum State{
         InQ, InGame
 
     }
+
+    /**
+     * Set the AI state to InQ.
+     */
     public AiTUI.State currentState = AiTUI.State.InQ;
+
+    /**
+     * Change state to InGame.
+     */
     public void changeStet(){
         currentState = State.InGame;
     }
@@ -167,6 +181,9 @@ public class AiTUI implements ClientListener {
 
     }
 
+    /**
+     * Method to start running the AI.
+     */
     public void start() {
 
         while (keepReading) {
@@ -176,11 +193,6 @@ public class AiTUI implements ClientListener {
                 System.out.println("[AI_TUI] Runtime exception");
             }
         }
-    }
-
-    //@ensures keepReading == false;
-    public void stopReceivingUserInput() {
-        this.keepReading = false;
     }
 
     /**

@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Scanner;
 import protocol.Protocol;
 
+/**
+ * This is a concrete class of a single client.
+ */
 public class DotAndBoxClient {
     public static final String GAME_NAME = "Resit-8 game";
     //@ private invariant clientConnection != null;
@@ -89,6 +92,9 @@ public class DotAndBoxClient {
         dotAndBoxClientTUI.closeTUI();
     }
 
+    /**
+     * Handle disconnect when a client disconnects.
+     */
     public void handleDisconnect() {
         dotAndBoxClientTUI.connectionLost();
     }
@@ -124,6 +130,8 @@ public class DotAndBoxClient {
      * Handle HELLO command from the server,
      * which is HELLO~<server description>.
      * Then print out the help menu and ask the user to perform LOGIN operation.
+     *
+     * @param receivedMsg message received from the server
      */
     public void handleHello(String receivedMsg) throws WrongFormatProtocol {
         System.out.println("[CLIENT] Handle hello");
@@ -141,6 +149,8 @@ public class DotAndBoxClient {
      * by delegating to the clientConnection to do its job.
      * ClientConnection will use the sendMessage() method to
      * send the command LOGIN to the server socket.
+     *
+     * @param username the username of player
      */
     //@pure;
     public void sendLogin(String username) {
@@ -200,6 +210,8 @@ public class DotAndBoxClient {
      * Handle LIST command from the server,
      * which is LIST.
      * Show all the users that are currently logged into the server.
+     *
+     * @param receivedMessage received message from the server.
      */
     //@pure;
     public void handleList(String receivedMessage) {
@@ -307,6 +319,8 @@ public class DotAndBoxClient {
      * Handle NEWGAME command from the server,
      * which is NEWGAME~<pl1_name>~<pl2_name>.
      * Determine a new DotAndBox game with the pre-chosen players.
+     *
+     * @param receivedMessage message received from the server.
      */
     public void handleNewGame(String receivedMessage) {
         this.currentState = ClientState.G;
