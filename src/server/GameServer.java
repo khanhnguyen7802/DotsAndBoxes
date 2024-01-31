@@ -140,6 +140,7 @@ public class GameServer extends SocketServer {
                         removeQueue(current.getKey());
                         DotsGame ownGame = currentGame(users);
                         allGames.remove(ownGame);
+                        games.put(client,-1);
 
                     }
                 }
@@ -183,7 +184,6 @@ public class GameServer extends SocketServer {
      * @param handlers - client requesting to join the queue
      */
     public synchronized void handleQueue(ClientHandler handlers) {
-        System.out.println(inQueue);
         addQueue(handlers); // add handlers to be in the queue
         List<String> user = new ArrayList<>();
         List<ClientHandler> inHandler = new ArrayList<>();
@@ -192,10 +192,11 @@ public class GameServer extends SocketServer {
             // if there are enough players create
             //a game
             for (ClientHandler handler : inQueue) { //iterate through only the players in queue
-                if (getGameId(handler) == - 1) {
+                System.out.println("handler: " + handler + "gameID: " + getGameId(handler));
+                if (getGameId(handler) == -1) {
                     user.add(handler.getUsername());
-                inHandler.add(handler);
-                counter++;
+                    inHandler.add(handler);
+                    counter++;
                 }
                 if (counter == 2) {
                     for (int i = 0; i < 2; i++) {
@@ -233,10 +234,24 @@ public class GameServer extends SocketServer {
             // iterate through all games and find the players, having their names as
             //the unique identifier
             if (Objects.equals(current.getKey(), user)) {
+                if (!hasOpponent(current.getValue())) {
+                    return -1;
+                }
                 return current.getValue();
             }
         }
         return -1;
+    }
+
+    public boolean hasOpponent(int gameID) {
+        int numberOfPLayers = 0;
+        for (int id : games.values()) {
+            if (id == gameID) {
+                numberOfPLayers++;
+            }
+        }
+        System.out.println("no players: "+numberOfPLayers);
+        return numberOfPLayers == 2;
     }
 
     /**
@@ -317,6 +332,7 @@ public class GameServer extends SocketServer {
             }
         } else {
             current.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + current.getUsername());
+            games.put(current, -1);
         }
 
     }
