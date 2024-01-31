@@ -74,10 +74,6 @@ public class DotAndBoxClient {
         this.isInGame = false;
     }
 
-    public boolean chooseBot() {
-        return isBot;
-    }
-
     /**
      * Close the connection by calling the handleDisconnect method of the
      * Client connection.
@@ -174,7 +170,7 @@ public class DotAndBoxClient {
         if (receivedMessage.equals(Protocol.LOGIN)) { // if the user is not logged in yet
             System.out.println("Logged in as " + this.usernameLoggedIn);
             this.isLoggedIn = true;
-            if(aiTUI != null){
+            if(aiTUI != null) {
                 sendQueueAI();
             }
         } else {
@@ -183,12 +179,8 @@ public class DotAndBoxClient {
         }
     }
 
-    public void setAiTUI(AiTUI obj){
+    public void setAiTUI(AiTUI obj) {
         aiTUI = obj;
-    }
-
-    public boolean isLoggedIn(){
-        return isLoggedIn;
     }
 
     /**
@@ -302,7 +294,6 @@ public class DotAndBoxClient {
                 }
 
                 System.out.println("Successfully joined the queue !!!");
-                //aiTUI.stopReceivingUserInput();
                 clientConnection.sendQueue();
             }
 

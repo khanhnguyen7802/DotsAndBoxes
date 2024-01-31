@@ -67,8 +67,6 @@ public class AiTUI implements ClientListener {
         start();
         dotAndBoxClient.doMove();
 
-        //        while (connectedToServer) {
-        //        }
     }
 
     /**
@@ -145,7 +143,6 @@ public class AiTUI implements ClientListener {
                 }
 
                 String[] parse = input.split("\\s+");
-                String command = parse[0];
                 String username = parse[1];
                 if (parse.length == 2) { // LOGIN <name>
                     username = parse[1];
