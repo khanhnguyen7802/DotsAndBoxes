@@ -140,7 +140,7 @@ public class GameServer extends SocketServer {
                         removeQueue(current.getKey());
                         DotsGame ownGame = currentGame(users);
                         allGames.remove(ownGame);
-                        games.put(client,-1);
+                        games.put(client, -1);
 
                     }
                 }
@@ -228,6 +228,11 @@ public class GameServer extends SocketServer {
         allGames.put(dotGame, currentPlayers); // add the game to the list of all games
     }
 
+    /**
+     * This method returns the game id of a player, -1 if it is not in a game.
+     * @param user - the user we are checking
+     * @return gameId
+     */
     public int getGameId(ClientHandler user) {
         for (Map.Entry<ClientHandler, Integer> current : games.entrySet()) {
             // iterate through all games and find the players, having their names as
@@ -242,6 +247,11 @@ public class GameServer extends SocketServer {
         return -1;
     }
 
+    /**
+     * This method checks if the player has an opponent or not.
+     * @param gameID - the game id of a player
+     * @return true if the opponent is there
+     */
     public boolean hasOpponent(int gameID) {
         int numberOfPLayers = 0;
         for (int id : games.values()) {
@@ -316,7 +326,8 @@ public class GameServer extends SocketServer {
                 if (dotsGame.isGameover() || games.size() <= 1) {
                     if (dotsGame.getBoard().hasWinner() && dotsGame.isGameover()) {
                         // finish game if there is a winner
-                        handler.gameOver(Protocol.VICTORY + Protocol.SEPARATOR + dotsGame.getWinner());
+                        handler.gameOver(
+                                Protocol.VICTORY + Protocol.SEPARATOR + dotsGame.getWinner());
                     }
                     if (dotsGame.isGameover() && !dotsGame.getBoard().hasWinner()) {
                         // finish game if it ends in a draw
