@@ -16,7 +16,6 @@ as well
 # Folder Structure
 ![Alt text](image.png)
 
-In the .idea and out folder Intellijs files are being stored so that the project is correctly handled
 --in the src is the written code for the java
 -- in the dotsandboxclient we store the client's data as well as the AI client data
 -- in the exception we handle our own exceptions
@@ -50,9 +49,12 @@ after we are in a game, we can type in the command MOVE and press enter, then we
 
 --CLIENT:
 the client requests the ip of the server, if we host the server we can just type in localhost. After that we have to type in the port of the server, followed by a username of our choice (this has to be unique else the game will request another one). The we can either QUEUE or LIST or EXIT, the list command will list all players logged in, the exit will exit the program, the QUEUE will queue us up for a game, or if we type it in again it will remove us from the queue or if we are in a game from the game. After we are in a game if its our turn (shown by the TUI). Then we can follow the steps of the GAMEPLAY. After the game end
-
+-if we chose the AI we will need to press MOVE every time its the AI s turn.
 --AI CLIENT
 the client requests the ip of the server, if we host the server we can just type in localhost. After that we have to type in the port of the server, followed by a username of our choice (this has to be unique else the game will request another one). Then the ai will request us to choose a difficulty (-n for naive or -s for smart AI). After these steps the AI will automatically queue and play a game.
+-Issues with the AI CLient, after typing in -s or -n once you will have to type in -s or -n again.
+-After the game starts the AI will stop making a move after the second step, you will have to press ENTER twice, and it will finish the game.
+-The AI questionably when it is the first player to play in the game.
 
 --Server
 Starting the server will only require us to type in a port number, or 0 for a random port. Then we can view the connecting and disconnecting clients printed out by the server.
