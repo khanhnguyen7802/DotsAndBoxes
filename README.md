@@ -10,7 +10,10 @@ The player who has completed the most boxes at the end of the game is declared t
 
 If there is an odd number of boxes in the game, for example in 5x5 Dots and Boxes, then a draw is not possible.
 
-![Alt text](dot-and-box-game.png)
+<div align = "center">
+  <img src = dot-and-box-game.png>
+  <p><i>Source: Wikipedia</i></p>
+</div>
 
 ## Table of Contents
 
